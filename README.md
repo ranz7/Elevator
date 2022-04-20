@@ -58,6 +58,6 @@ _____
 
 ### Authors
 
-* Radek Mysliwiec (dodaj swój git radek, bo jestem leniwy)
-* Michał Miziołek (to samo, bo to samogit )
+* Radek Mysliwiec ([@ranz7](https://github.com/ranz7))
+* Michał Miziołek ([@PiJayson](https://github.com/PiJayson))
 * Vladislav Kozulin ([@watislaf](https://github.com/watislaf))
