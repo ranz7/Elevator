@@ -13,7 +13,7 @@ In work
 Download source files.
 
 ```bat
-  https://github.com/ranz7/Elevator.git # install
+  git clone https://github.com/ranz7/Elevator.git # install
   cd ./Elevator
 ```
 
