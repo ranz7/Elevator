@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-if [[ `grep 'test'` ]]; then
-  echo "You really don't want to push this branch. Aborting."
+if [[ $(grep 'test') ]]; then
+  echo "Nie rób tak proszę."
   exit 1
 fi
