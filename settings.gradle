@@ -1,0 +1,3 @@
+rootProject.name = 'ElevatorSystem'
+include ':app'
+include ':window'
