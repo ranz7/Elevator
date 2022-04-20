@@ -2,7 +2,7 @@
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
-if [ "$branch" = "main" ]; then
+if [ "$branch" = "main" || "$branch" = "test" ]; then
   echo "Nie rób tak proszę."
   exit 1
 fi
