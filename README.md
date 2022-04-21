@@ -6,7 +6,7 @@ ___
 
 ## Development status
 
-In work
+In progress
 
 ## Install
 
@@ -30,30 +30,6 @@ To build and run project u can either use gradle (if u have installed one)
   ./gradlew :window:build -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
   ./gradlew :window:run -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
  ```
-
-____
-
-## Gradle Build / Run remote
-
-### if Docker is not installed on the server
-
-```bat
-  sudo bash ./installDocker  
-```
-
-### Run server
-
-```bat
-  sudo bash ./setupDocker  
-```
-
-### Gradle on your desktop
-
-```bat
-  ./gradlew :window:buld -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
-  ./gradlew :window:run -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2" --args="IP_OF_YOUR_SERVER"
- ```
-
 _____
 
 ### Authors
