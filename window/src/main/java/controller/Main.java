@@ -1,14 +1,11 @@
 package controller;
 
 
+import model.WindowModel;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("HELLO I AM VIEW");
-
-        if (args.length == 0) {
-            System.out.println("local host");
-        } else {
-            System.out.println(args[1]);
-        }
+        var windowModel = new WindowModel();
+        var controller = new WindowController(windowModel);
     }
 }
