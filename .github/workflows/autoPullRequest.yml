@@ -1,22 +1,21 @@
-name: Update AUTHORS
-on:
-  push:
-    branches:
-      - main
+name: Pull Request Action
+on: push
 jobs:
-  updateAuthors:
+  create-pull-request:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
         with:
-          fetch-depth: 0
-      - name: Update AUTHORS
-        run: |
-          git log --format='%aN <%aE>%n%cN <%cE>' | sort -u > AUTHORS
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          commit-message: update authors
-          title: Update AUTHORS
-          body: Credit new contributors by updating AUTHORS
-          branch: update-authors
+          destination_branch: "main"
+          github_token: ${{ secrets.TOKEN }}
+          pr_label: "automated pr"
+          pr_title: "${{github.event.head_commit.message}}"
+          pr_body: "An automated PR*"
+          pr_reviewer: "PiJayson<pijay888@gmail.com>,ranz7<rdkm.korepetycje@gmail.com>,watislaf<vladkozulin@mail.ru>"
+          pr_assignee: "PiJayson<pijay888@gmail.com>,ranz7<rdkm.korepetycje@gmail.com>,watislaf<vladkozulin@mail.ru>"
+          pr_milestone: "End The Project"
+          pr_draft: true
+          pr_allow_empty: true
