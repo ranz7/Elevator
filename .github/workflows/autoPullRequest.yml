@@ -27,7 +27,7 @@ jobs:
             ;;
           
             "watislaf")
-            TOKEN_USERNAME=${TOKEN}
+            export TOKEN_USERNAME=${TOKEN}
             echo 42
             ;;
           esac
