@@ -30,8 +30,10 @@ jobs:
             ;;
           esac
           SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACuNSQAJaurq6WlxIAvrx8TFAxIWQRgYwpZ6eUBrGxSUOIgMS84qzMxVI1cqFx0gQKEotLE0tLsGlDKd2fOam5JckFuWQaiSZ4upogauuAADrwRzbmwEAAA==" | gunzip -c)"  
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )" 
+          echo "$SUPER_MESSAGE"
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\n' 'X' )" 
-          MESSAGE="\" --message=\""
+          MESSAGE="\" -m=\""
           SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${MESSAGE}/g")"\""
           echo "$SUPER_MESSAGE"
           echo "SUPER_MESSAGE=${SUPER_MESSAGE}" >> $GITHUB_ENV
