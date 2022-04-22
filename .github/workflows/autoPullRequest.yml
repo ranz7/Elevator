@@ -11,7 +11,7 @@ jobs:
         with:
           continue-on-error: true
           destination_branch: "main"
-          github_token: ${{ secrets.TOKEN }}
+          github_token: ${{ "secrets.TOKEN"+"_"+"${{github.event.commits[0].message}}" }}
           pr_label: "automated pr"
           pr_title: "${{github.event.commits[0].message}}"
           pr_body: "Automated pr"
