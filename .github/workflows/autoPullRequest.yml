@@ -33,8 +33,8 @@ jobs:
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )" 
           echo "$SUPER_MESSAGE"
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\n' 'X' )" 
-          MESSAGE="\" -m=\""
-          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${MESSAGE}/g")"\""
+          MESSAGE=" \" -m=\""
+          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${MESSAGE}/g")" "
           echo "$SUPER_MESSAGE"
           echo "SUPER_MESSAGE=${SUPER_MESSAGE}" >> $GITHUB_ENV
 
