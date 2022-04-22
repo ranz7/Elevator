@@ -1,5 +1,7 @@
 name: Pull Request Action
 on: push
+env:
+  TOKEN_USERNAME: ""
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
@@ -10,7 +12,7 @@ jobs:
         env:
           USER_NAME: "${{github.event.head_commit.author.name}}"
           TOKEN: "${{ secrets.TOKEN }}"
-          TOKEN_USERNAME: ""
+
 #          TOKEN_PJ: "${{ secrets.TOKEN_PJ }}"
 #          TOKEN_VK: "${{ secrets.TOKEN_VK }}"
 #          TOKEN_RD: "${{ secrets.TOKEN_RD }}"
