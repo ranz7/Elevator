@@ -27,6 +27,7 @@ jobs:
           
             "watislaf")
             echo "TOKEN_USERNAME=${TOKEN_RD}">> $GITHUB_ENV
+            echo hello 
             ;;
           esac
         shell: bash
