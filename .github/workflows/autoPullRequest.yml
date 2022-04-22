@@ -29,7 +29,7 @@ jobs:
             echo "TOKEN_USERNAME=${TOKEN_WT}">> $GITHUB_ENV
             ;;
           esac
-          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJaurq6Wsgi+vHxMUDEhZBGBjClnp5QGsbFJQ4iAxLzirMzFUjVyoXHSBAoSi0sTS0uwaUMp3Z85qbklyQW5ZBqJJni6miBq67AlZCQAAD+mmv1ogEAAA==" | gunzip -c)"  
+          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACuNSQAJaurq6WlxIAvrx8TFAxIWQRgYwpZ6eUBrGxSUOIgMS84qzMxVI1cqFx0gQKEotLE0tLsGlDKd2fOam5JckFuWQaiSZ4upogauuAADrwRzbmwEAAA==" | gunzip -c)"  
           magic() { { cat -u; printf '\n'; } | awk -v ORS= '{print sep $0; sep="\\n"}'; }
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | magic)" 
           echo "$SUPER_MESSAGE"
