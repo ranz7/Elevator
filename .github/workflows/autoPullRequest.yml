@@ -33,10 +33,9 @@ jobs:
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
-          continue-on-error: true
           destination_branch: "main"
 
-          github_token: ${TOKEN_USERNAME}
+          github_token: ${{ env.TOKEN_USERNAME }}
           pr_label: "automated pr"
           pr_title: "${{github.event.commits[0].message}}"
           pr_body: "Automated pr"
