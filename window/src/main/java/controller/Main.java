@@ -1,14 +1,13 @@
 package controller;
 
 
+import view.SwingWindow;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("HELLO I AM VIEW");
+        SwingWindow GUI = new SwingWindow();
+        GUI.startWindow();
 
-        if (args.length == 0) {
-            System.out.println("local host");
-        } else {
-            System.out.println(args[1]);
-        }
+        GUI.repaint();
     }
 }
