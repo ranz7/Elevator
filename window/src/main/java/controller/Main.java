@@ -1,6 +1,5 @@
 package controller;
 
-
 import model.WindowModel;
 
 public class Main {
