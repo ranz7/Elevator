@@ -25,6 +25,7 @@ jobs:
           
             "watislaf")
             TOKEN_USERNAME=${TOKEN}
+            echo 42
             ;;
           esac
         shell: bash
