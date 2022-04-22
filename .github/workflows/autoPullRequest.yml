@@ -13,7 +13,7 @@ jobs:
           destination_branch: "main"
           github_token: ${{ secrets.TOKEN }}
           pr_label: "automated pr"
-          pr_title: "${{github.event.commits[0]}}"
+          pr_title: "${{github.event.commits[0].message}}"
           pr_body: "Automated pr"
           pr_milestone: "End The Project"
           pr_reviewer: "PiJayson,ranz7,watislaf"
