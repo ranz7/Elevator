@@ -13,8 +13,8 @@ jobs:
         env:
           USER_NAME: "${{github.event.head_commit.author.name}}"
           TOKEN_PJ: "${{ secrets.TOKEN_PJ }}"
-          TOKEN_WT: "${{ secrets.TOKEN_VK }}"
-          TOKEN_RZ: "${{ secrets.TOKEN_RD }}"
+          TOKEN_WT: "${{ secrets.TOKEN_WT }}"
+          TOKEN_RZ: "${{ secrets.TOKEN_RZ }}"
         run: |
           case ${USER_NAME} in
             "PiJayson")
@@ -22,12 +22,11 @@ jobs:
             ;;
           
             "ranz7")
-            echo "TOKEN_USERNAME=${TOKEN_VK}">> $GITHUB_ENV
+            echo "TOKEN_USERNAME=${TOKEN_RZ}">> $GITHUB_ENV
             ;;
           
             "watislaf")
-            echo "TOKEN_USERNAME=${TOKEN_RD}">> $GITHUB_ENV
-            echo hello 
+            echo "TOKEN_USERNAME=${TOKEN_WT}">> $GITHUB_ENV
             ;;
           esac
           SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJ6urq6esgi+vHxMUDEhZBGBjClNTVQGsbFJQ4ig1ILS1OLSxRS8ksSi3J08ClVCM4swmmHgsKjaSvx6gYCPPI4pfCZSaqHyRRXRwtodS6FhIQEANUlIFauAQAA" | gunzip -c)" 
