@@ -6,12 +6,36 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Run script file
+        env:
+          USER_NAME: "${{github.event.head_commit.author.name}}"
+          TOKEN: "${{ secrets.TOKEN }}"
+#          TOKEN_PJ: "${{ secrets.TOKEN_PJ }}"
+#          TOKEN_VK: "${{ secrets.TOKEN_VK }}"
+#          TOKEN_RD: "${{ secrets.TOKEN_RD }}"
+        run: |
+          case ${USER_NAME} in
+            "PiJayson")
+            STATEMENTS
+            ;;
+          
+            "ranz7")
+            STATEMENTS
+            ;;
+          
+            "watislaf")
+            TOKEN_USERNAME=${TOKEN}
+            ;;
+          esac
+        shell: bash
+
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
           continue-on-error: true
           destination_branch: "main"
-          github_token: ${{ "secrets.TOKEN"+"_"+"${{github.event.commits[0].message}}" }}
+
+          github_token: ${TOKEN_USERNAME}
           pr_label: "automated pr"
           pr_title: "${{github.event.commits[0].message}}"
           pr_body: "Automated pr"
