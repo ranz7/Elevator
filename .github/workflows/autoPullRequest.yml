@@ -41,7 +41,7 @@ jobs:
           SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${REPLACE}/g")
           echo "${SUPER_MESSAGE}"
           echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
-          echo \'\'\'"${SUPER_MESSAGE}" >> $GITHUB_ENV
+          echo <pre>"${SUPER_MESSAGE}" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         shell: bash
 
