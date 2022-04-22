@@ -27,8 +27,7 @@ jobs:
             ;;
           
             "watislaf")
-            export TOKEN_USERNAME=${TOKEN}
-            echo 42
+            echo "TOKEN_USERNAME=${TOKEN}">> $GITHUB_ENV
             ;;
           esac
         shell: bash
