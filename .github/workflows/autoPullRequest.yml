@@ -33,7 +33,10 @@ jobs:
       - name: Run script file
         run: |
           SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJ6urq6esgi+vHxMUDEhZBGBjClNTVQGsbFJQ4ig1ILS1OLSxRS8ksSi3J08ClVCM4swmmHgsKjaSvx6gYCPPI4pfCZSaqHyRRXRwtodS6FhIQEANUlIFauAQAA" | gunzip -c)" 
-          echo "SUPER_MESSAGE<<${SUPER_MESSAGE}">> $GITHUB_ENV
+          echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
+          echo ${SUPER_MESSAGE} >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
         shell: bash
 
       - name: pull-request
