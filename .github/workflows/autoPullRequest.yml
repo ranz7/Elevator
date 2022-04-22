@@ -43,7 +43,7 @@ jobs:
 
           github_token: ${{ env.TOKEN_USERNAME }}
           pr_label: "automated pr"
-          pr_title: "${{github.event.commits[0].message}}"
+          pr_title: ${{github.event.commits[0].message}}
           pr_body: ${{ env.SUPER_MESSAGE }}
           pr_milestone: "End The Project"
           pr_reviewer: "PiJayson,ranz7,watislaf"
