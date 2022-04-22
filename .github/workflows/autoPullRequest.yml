@@ -1,20 +1,50 @@
 name: Pull Request Action
 on: push
+env:
+  TOKEN_USERNAME: ""
+  SUPER_MESSAGE: ""
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Run script file
+        env:
+          USER_NAME: "${{github.event.head_commit.author.name}}"
+          TOKEN_PJ: "${{ secrets.TOKEN_PJ }}"
+          TOKEN_WT: "${{ secrets.TOKEN_VK }}"
+          TOKEN_RZ: "${{ secrets.TOKEN_RD }}"
+        run: |
+          case ${USER_NAME} in
+            "PiJayson")
+            echo "TOKEN_USERNAME=${TOKEN_PJ}">> $GITHUB_ENV
+            ;;
+          
+            "ranz7")
+            echo "TOKEN_USERNAME=${TOKEN_VK}">> $GITHUB_ENV
+            ;;
+          
+            "watislaf")
+            echo "TOKEN_USERNAME=${TOKEN_RD}">> $GITHUB_ENV
+            ;;
+          esac
+        shell: bash
+      - name: Run script file
+        run: |
+          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJ6urq6esgi+vHxMUDEhZBGBjClNTVQGsbFJQ4ig1ILS1OLSxRS8ksSi3J08ClVCM4swmmHgsKjaSvx6gYCPPI4pfCZSaqHyRRXRwtodS6FhIQEANUlIFauAQAA" | gunzip -c)" 
+          echo "SUPER_MESSAGE=${SUPER_MESSAGE}">> $GITHUB_ENV
+        shell: bash
+
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
-          continue-on-error: true
           destination_branch: "main"
-          github_token: ${{ secrets.TOKEN }}
+
+          github_token: ${{ env.TOKEN_USERNAME }}
           pr_label: "automated pr"
           pr_title: "${{github.event.commits[0].message}}"
-          pr_body: "Automated pr"
+          pr_body: ${{ env.SUPER_MESSAGE }}
           pr_milestone: "End The Project"
           pr_reviewer: "PiJayson,ranz7,watislaf"
           pr_assignee: "${{github.event.head_commit.author.name}}"
