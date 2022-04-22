@@ -29,25 +29,15 @@ jobs:
             echo "TOKEN_USERNAME=${TOKEN_WT}">> $GITHUB_ENV
             ;;
           esac
-#          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACuNSQAJaurq6WlxIAvrx8TFAxIWQRgYwpZ6eUBrGxSUOIgMS84qzMxVI1cqFx0gQKEotLE0tLsGlDKd2fOam5JckFuWQaiSZ4upogauuAADrwRzbmwEAAA==" | gunzip -c)"
-#          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )"
-#          echo "$SUPER_MESSAGE"
-#          SUPER_MESSAGE="\`\`\`X$(echo "${SUPER_MESSAGE}" | tr '\n' 'X' )\`\`\`X"
-#          MESSAGE=" \" -m \""
-#          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${MESSAGE}/g")" "
-#          echo "$SUPER_MESSAGE"
-#          echo "SUPER_MESSAGE=${SUPER_MESSAGE}" >> $GITHUB_ENV
-
-
-           SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJ6urq6esgi+vHxMUDEhZBGBjClnp5QGsbFJQ4iAxLzirMzFUjVyoXHSBAoSi0sTS0uwaUMp3Z85qbklyQW5ZBqJJni6miBq86lkJCQAAC0G9wfogEAAA==" | gunzip -c)"
-           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )" 
-           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\`' 'X' )"
-           REPLACE=""
-           SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${REPLACE}/g")
-           echo "${SUPER_MESSAGE}"
-           echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
-           echo "${SUPER_MESSAGE}" >> $GITHUB_ENV
-           echo 'EOF' >> $GITHUB_ENV
+          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJ6urq6esgi+vHxMUDEhZBGBjClnp5QGsbFJQ4iAxLzirMzFUjVyoXHSBAoSi0sTS0uwaUMp3Z85qbklyQW5ZBqJJni6miBq86lkJCQAAC0G9wfogEAAA==" | gunzip -c)"
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\`' 'X' )"
+          REPLACE=""
+          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${REPLACE}/g")
+          echo "${SUPER_MESSAGE}"
+          echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
+          echo "${SUPER_MESSAGE}" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
         shell: bash
 
       - name: pull-request
