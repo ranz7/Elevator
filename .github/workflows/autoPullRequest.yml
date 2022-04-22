@@ -29,10 +29,10 @@ jobs:
             echo "TOKEN_USERNAME=${TOKEN_WT}">> $GITHUB_ENV
             ;;
           esac
-          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJaurq6Wsgi+vHxMUDEhZBGBjClnp5QGsbFJQ4iAxLzirMzFUjVyoXHSBAoSi0sTS0uwaUMp3Z85qbklyQW5ZBqJJni6miBq67AlZCQAAD+mmv1ogEAAA==" | gunzip -c)" 
-          echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
-          echo ${SUPER_MESSAGE} >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACktISOBSQAJaurq6Wsgi+vHxMUDEhZBGBjClnp5QGsbFJQ4iAxLzirMzFUjVyoXHSBAoSi0sTS0uwaUMp3Z85qbklyQW5ZBqJJni6miBq67AlZCQAAD+mmv1ogEAAA==" | gunzip -c)"  
+          magic() { { cat -u; printf '\n'; } | awk -v ORS= '{print sep $0; sep="\\n"}'; }
+          SUPER_MESSAGE=$(echo ${SUPER_MESSAGE} | magic) 
+          echo "SUPER_MESSAGE=${SUPER_MESSAGE}" >> $GITHUB_ENV
 
         shell: bash
 
