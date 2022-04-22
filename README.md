@@ -1,12 +1,12 @@
-# Elevator Emulator
-
+# Elevator Emulator ![](https://us-central1-progress-markdown.cloudfunctions.net/progress/12)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Franz7%2FElevator%2F&count_bg=%237AAA56&title_bg=%236F1C1C&icon=github.svg&icon_color=%23C17878&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 This project simulates elevators in a building. The project is divided into two parts, the Server part that manipulates
 objects and the Client part that draws them in real time.
 ___
 
 ## Development status
 
-In work
+In progress
 
 ## Install
 
@@ -30,30 +30,6 @@ To build and run project u can either use gradle (if u have installed one)
   ./gradlew :window:build -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
   ./gradlew :window:run -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
  ```
-
-____
-
-## Gradle Build / Run remote
-
-### if Docker is not installed on the server
-
-```bat
-  sudo bash ./installDocker  
-```
-
-### Run server
-
-```bat
-  sudo bash ./setupDocker  
-```
-
-### Gradle on your desktop
-
-```bat
-  ./gradlew :window:buld -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
-  ./gradlew :window:run -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2" --args="IP_OF_YOUR_SERVER"
- ```
-
 _____
 
 ### Authors
