@@ -23,7 +23,7 @@ public class WindowController {
         GUI.startWindow(WINDOW_MODEL, this);
         while (true) {
             if (!GUI.resized()) {
-                GUI.updateButtonsAndSliders(WINDOW_MODEL);
+                GUI.updateButtons(WINDOW_MODEL);
             }
             GUI.repaint();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / 50));

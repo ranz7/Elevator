@@ -70,7 +70,7 @@ public class SwingWindow {
         return resize == startPanel.getSize();
     }
 
-    public void updateButtonsAndSliders(WindowModel windowMODEL) {
+    public void updateButtons(WindowModel windowMODEL) {
         resize = startPanel.getSize();
         Iterator<JButton> button = ADD_CLIENT_BUTTONS.iterator();
         int num_of_floors =  3;
