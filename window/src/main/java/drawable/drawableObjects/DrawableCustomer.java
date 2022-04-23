@@ -27,8 +27,8 @@ public class DrawableCustomer extends Creature implements Drawable {
             behindElevator = false;
             return;
         }
-        g2d.setColor(new Color(124,123,12));
-        g2d.fillRect((int)this.position.x,(int)this.position.y, this.size.x, this.size.y);
+        g2d.setColor(new Color(124, 123, 12));
+        g2d.fillRect((int) this.position.x, (int) this.position.y, this.size.x, this.size.y);
     }
 
     @Override
