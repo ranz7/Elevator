@@ -73,8 +73,8 @@ public class SwingWindow {
     public void updateButtons(WindowModel windowMODEL) {
         resize = startPanel.getSize();
         Iterator<JButton> button = ADD_CLIENT_BUTTONS.iterator();
-        int num_of_floors =  3;
-        double heightOfButton = (resize.height - 100.) /num_of_floors;
+        int num_of_floors = 3;
+        double heightOfButton = (resize.height - 100.) / num_of_floors;
         for (int i = 0; i < 16; i++) {
             JButton currentButton = button.next();
             currentButton.setText("->");
