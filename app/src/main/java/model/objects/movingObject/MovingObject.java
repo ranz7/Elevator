@@ -25,12 +25,6 @@ public class MovingObject extends Creature {
         this.SPEED = speed;
     }
 
-    public MovingObject(Vector2D position, double speed) {
-        super(position);
-        this.destination = position;
-        this.SPEED = speed;
-    }
-
     public void tick(long delta_time) {
         if (!isReachedDestination()) {
             position = position.trendTo(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
