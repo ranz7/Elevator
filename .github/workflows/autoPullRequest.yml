@@ -1,22 +1,60 @@
-name: Update AUTHORS
-on:
-  push:
-    branches:
-      - main
+name: Pull Request Action
+on: push
+env:
+  TOKEN_USERNAME: ""
+  SUPER_MESSAGE: ""
 jobs:
-  updateAuthors:
+  create-pull-request:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Update AUTHORS
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Run script file
+        env:
+          USER_NAME: "${{github.event.head_commit.author.name}}"
+          TOKEN_PJ: "${{ secrets.TOKEN_PJ }}"
+          TOKEN_WT: "${{ secrets.TOKEN_WT }}"
+          TOKEN_RZ: "${{ secrets.TOKEN_RZ }}"
         run: |
-          git log --format='%aN <%aE>%n%cN <%cE>' | sort -u > AUTHORS
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+          case ${USER_NAME} in
+            "PiJayson")
+            echo "TOKEN_USERNAME=${TOKEN_PJ}">> $GITHUB_ENV
+            ;;
+          
+            "ranz7")
+            echo "TOKEN_USERNAME=${TOKEN_RZ}">> $GITHUB_ENV
+            ;;
+          
+            "watislaf")
+            echo "TOKEN_USERNAME=${TOKEN_WT}">> $GITHUB_ENV
+            ;;
+          esac
+          SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACuNSQAJaurq6WlxIAvrx8TFAxIWQRgZaUHFPTygN4+ISB5EBiXnF2ZkKpGrFZyQIFKUWlqYWl+A0F0Sm5JckFuWQa7U6mu/VFQDnnCQKPAEAAA==" | gunzip -c)"
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '.' 'O' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '*' 'O' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr "\'" 'O' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\`' 'X' )"
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\\' 'I' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '/' 'I' )" 
+          REPLACE=""
+          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${REPLACE}/g")
+          echo "${SUPER_MESSAGE}"
+          echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
+          echo "<pre>${SUPER_MESSAGE}" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+        shell: bash
+
+      - name: pull-request
+        uses: repo-sync/pull-request@v2
         with:
-          commit-message: update authors
-          title: Update AUTHORS
-          body: Credit new contributors by updating AUTHORS
-          branch: update-authors
+          destination_branch: "main"
+
+          github_token: ${{ env.TOKEN_USERNAME }}
+          pr_label: "automated pr"
+          pr_title: ${{github.event.commits[0].message}}
+          pr_body: ${{ env.SUPER_MESSAGE }}
+          pr_milestone: "End The Project"
+          pr_reviewer: "PiJayson,ranz7,watislaf"
+          pr_assignee: "${{github.event.head_commit.author.name}}"
+          pr_allow_empty: true
