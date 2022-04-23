@@ -1,6 +1,7 @@
 package controller;
 
 import model.WindowModel;
+import view.SwingWindow;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,16 +11,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class WindowController {
     private final WindowModel WINDOW_MODEL;
-//  GUI;
+    private final SwingWindow GUI;
 
     public WindowController(WindowModel windowModel) {
         WINDOW_MODEL = windowModel;
+        GUI = new SwingWindow();
     }
 
 
     public void start() throws InterruptedException {
+        GUI.startWindow(WINDOW_MODEL, this);
         while (true) {
-//            GUI.repaint();
+            if (!GUI.resized()) {
+                GUI.updateButtonsAndSliders(WINDOW_MODEL);
+            }
+            GUI.repaint();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / 50));
         }
     }

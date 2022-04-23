@@ -1,12 +1,14 @@
 package view;
 
 import lombok.RequiredArgsConstructor;
+import model.WindowModel;
 
 import javax.swing.*;
 import java.awt.*;
 
 @RequiredArgsConstructor
 class SwingPanel extends JPanel {
+    private final WindowModel VIEW_MODEL;
 
     @Override
     public void paintComponent(Graphics g) {
@@ -22,12 +24,12 @@ class SwingPanel extends JPanel {
         var floorHeight = height / floors_count;
 
         for (int i = 0; i < floors_count; i++) {
-            gameDrawer.setColor(new Color(83, 152, 80));
+            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BETON_COLOR);
             gameDrawer.drawRect((int) width / 2, (int) (i * floorHeight),
                     (int) width, (int) floorHeight);
 
             //black zones
-            gameDrawer.setColor(new Color(0, 0, 0));
+            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
             gameDrawer.fillRect(
                     0 - 15, (int) (i * floorHeight - 2),
                     15 * 4, (int) floorHeight
