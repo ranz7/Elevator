@@ -1,7 +1,6 @@
 package controller;
 
 import model.WindowModel;
-import view.SwingWindow;
 
 public class Main {
     public static void main(String[] args) {
