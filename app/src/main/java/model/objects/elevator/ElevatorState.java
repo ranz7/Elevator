@@ -1,5 +1,5 @@
 package model.objects.elevator;
 
 public enum ElevatorState {
-      OPENING , CLOSING
+      WAIT, OPENING, OPENED, CLOSING, IN_MOTION
 }

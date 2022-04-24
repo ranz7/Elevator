@@ -25,7 +25,6 @@ public class Customer extends MovingObject {
     @Override
     public void tick(long deltaTime) {
         super.tick(deltaTime);
-        position.x+=4;
     }
 
 }
