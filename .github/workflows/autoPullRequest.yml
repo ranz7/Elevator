@@ -30,15 +30,16 @@ jobs:
             ;;
           esac
           SUPER_MESSAGE="$(base64 -d <<<"H4sIAAAAAAAACuNSQAJaurq6WlxIAvrx8TFAxIWQRgZaUHFPTygN4+ISB5EBiXnF2ZkKpGrFZyQIFKUWlqYWl+A0F0Sm5JckFuWQa7U6mu/VFQDnnCQKPAEAAA==" | gunzip -c)"
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr 'I' 'l' )" 
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '-' '_' )" 
-          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '.' 'O' )" 
-          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '*' 'O' )" 
-          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr "\'" 'O' )" 
-          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\`' 'X' )"
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '.' '°' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '*' '°' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr "\'" '°' )" 
+          SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\`' '®' )"
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '\\' 'I' )" 
           SUPER_MESSAGE="$(echo "${SUPER_MESSAGE}" | tr '/' 'I' )" 
           REPLACE=""
-          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${REPLACE}/g")
+          SUPER_MESSAGE=$(echo "${SUPER_MESSAGE}" | sed "s/X/${REPLACE}/g")" <- ( to jest winda jak co)"
           echo "${SUPER_MESSAGE}"
           echo 'SUPER_MESSAGE<<EOF' >> $GITHUB_ENV
           echo "<pre>${SUPER_MESSAGE}" >> $GITHUB_ENV
