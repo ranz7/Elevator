@@ -20,11 +20,4 @@ public class Timer {
     public void restart(long timeToCount) {
         startTime = currentTime = timeToCount;
     }
-
-    public double getPercent() {
-        if (currentTime <= 0) {
-            return 0;
-        }
-        return currentTime * 1. / startTime;
-    }
 }

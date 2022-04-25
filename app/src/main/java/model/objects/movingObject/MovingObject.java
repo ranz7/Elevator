@@ -10,10 +10,6 @@ import java.awt.*;
 public class MovingObject extends Creature {
     protected static final int SPEED_COEFFICIENT = 1000;
     private final double SPEED;
-
-    @Getter
-    @Setter
-    private double speedMultiPly = 1;
     @Getter
     @Setter
     protected boolean isDead = false;
@@ -36,10 +32,15 @@ public class MovingObject extends Creature {
     }
 
     public double getSpeed() {
-        return SPEED * speedMultiPly;
+        return SPEED ;
     }
 
     public void setDestination(Vector2D destination) {
         this.destination = destination;
+    }
+
+    public void setPosition(Vector2D newPosition) {
+        destination = destination.add(newPosition.sub(position));
+        position = newPosition;
     }
 }

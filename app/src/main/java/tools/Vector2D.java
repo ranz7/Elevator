@@ -21,10 +21,6 @@ public class Vector2D extends Point2D.Double implements Serializable {
         super(position.x, position.y);
     }
 
-    public Vector2D(Point position) {
-        super(position.x, position.y);
-    }
-
     public static double distance(Point2D.Double positionA, Point2D.Double positionB) {
         return Math.sqrt((positionA.x - positionB.x) * (positionA.x - positionB.x)
                 + (positionA.y - positionB.y) * (positionA.y - positionB.y));
@@ -48,6 +44,14 @@ public class Vector2D extends Point2D.Double implements Serializable {
 
     public Vector2D add(Point2D.Double second) {
         return new Vector2D(x + second.x, y + second.y);
+    }
+
+    public Vector2D getNearest(Vector2D vectorA, Vector2D vectorB) {
+        if (Vector2D.distance(this, vectorA) <
+                Vector2D.distance(this, vectorB)) {
+            return vectorA;
+        }
+        return vectorB;
     }
 
     public Vector2D sub(Vector2D vectorB) {

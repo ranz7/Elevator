@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Creature implements Serializable {
     @Setter
     protected boolean isVisible = true;
-    protected Point size;
+    protected Point size = new Point();
     protected Vector2D position;
 
     public Creature(Creature creatureA) {
@@ -27,4 +27,5 @@ public class Creature implements Serializable {
         this.position = position;
         this.size = size;
     }
+
 }
