@@ -23,7 +23,7 @@ public class MovingObject extends Creature {
 
     public void tick(long delta_time) {
         if (!isReachedDestination()) {
-            position = position.trendTo(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
+            position = position.getShiftedByDistance(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
         }
     }
 
@@ -32,7 +32,7 @@ public class MovingObject extends Creature {
     }
 
     public double getSpeed() {
-        return SPEED ;
+        return SPEED;
     }
 
     public void setDestination(Vector2D destination) {
@@ -40,7 +40,7 @@ public class MovingObject extends Creature {
     }
 
     public void setPosition(Vector2D newPosition) {
-        destination = destination.add(newPosition.sub(position));
+        destination = destination.getAdded(newPosition.getSubbed(position));
         position = newPosition;
     }
 }

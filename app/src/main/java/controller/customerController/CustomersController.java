@@ -6,11 +6,8 @@ import model.objects.customer.CustomerState;
 import model.objects.customer.Customer;
 import controller.Controller;
 
-import java.util.LinkedList;
 import java.util.Random;
 
-import model.objects.movingObject.Creature;
-import model.objects.movingObject.MovingObject;
 import tools.Timer;
 import tools.Vector2D;
 
@@ -105,7 +102,7 @@ public class CustomersController {
                             -makeSpaceInElevator,
                             makeSpaceInElevator - customer.getSize().x), 0);
             ELEVATOR_SYSTEM_CONTROLLER.setFloorToReach(customer.getCurrentElevator(), customer.getFLOOR_TO_END());
-            customer.setDestination(customer.getPosition().add(newDestination));
+            customer.setDestination(customer.getPosition().getAdded(newDestination));
         }
     }
 

@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Creature  {
     @Setter
     protected boolean isVisible = true;
-    protected Point size = new Point();
+    protected Point size;
     protected Vector2D position;
 
     public Creature(Creature creatureA) {

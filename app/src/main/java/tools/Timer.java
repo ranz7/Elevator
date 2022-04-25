@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 public class Timer {
     @Getter
     private long currentTime;
-    private long startTime;
 
     public void tick(long deltaTime) {
         currentTime -= deltaTime;
@@ -18,6 +17,6 @@ public class Timer {
     }
 
     public void restart(long timeToCount) {
-        startTime = currentTime = timeToCount;
+        currentTime = timeToCount;
     }
 }
