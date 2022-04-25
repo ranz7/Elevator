@@ -6,8 +6,11 @@ import model.objects.customer.CustomerState;
 import model.objects.customer.Customer;
 import controller.Controller;
 
+import java.util.LinkedList;
 import java.util.Random;
 
+import model.objects.movingObject.Creature;
+import model.objects.movingObject.MovingObject;
 import tools.Timer;
 import tools.Vector2D;
 
@@ -31,6 +34,21 @@ public class CustomersController {
     public void tick(long deltaTime) {
         spawnTimer.tick(deltaTime);
 
+        createClientIfPossible();
+        CONTROLLER.MODEL.CUSTOMERS.forEach(this::processCustomer);
+
+        CONTROLLER.MODEL.CUSTOMERS.forEach(creature -> creature.tick(deltaTime));
+    }
+
+    private void processCustomer(Customer customer) {
+        switch (customer.getState()) {
+            case GO_TO_BUTTON -> processGoToButton(customer);
+            case WAIT_UNTIL_ARRIVED -> processWaitUntilArrived(customer);
+            case GET_IN -> processGetIn(customer);
+        }
+    }
+
+    private void createClientIfPossible() {
         if (spawnTimer.isReady() && CONTROLLER.MODEL.CUSTOMERS.size() < CUSTOMERS_SETTINGS.MAX_CUSTOMERS) {
             var maxFloor = ELEVATOR_SYSTEM_CONTROLLER.SETTINGS.FLOORS_COUNT;
             var randomStartFloor = new Random().nextInt(0, maxFloor);
@@ -39,15 +57,6 @@ public class CustomersController {
             CreateCustomer(randomStartFloor, randomEndFloor);
 
             spawnTimer.restart(CUSTOMERS_SETTINGS.SPAWN_RATE);
-        }
-
-        for (var customer : CONTROLLER.MODEL.CUSTOMERS) {
-            switch (customer.getState()) {
-                case GO_TO_BUTTON -> processGoToButton(customer);
-                case WAIT_UNTIL_ARRIVED -> processWaitUntilArrived(customer);
-                case GET_IN -> processGetIn(customer);
-            }
-            customer.tick(deltaTime);
         }
     }
 
@@ -99,14 +108,10 @@ public class CustomersController {
             customer.setDestination(customer.getPosition().add(newDestination));
         }
     }
+
     public void CreateCustomer(int floorStart, int floorEnd) {
-        double speed = new Random().nextDouble(
-                CUSTOMERS_SETTINGS.CUSTOMER_SPEED
-                        - CUSTOMERS_SETTINGS.CUSTOMER_SPEED / 3,
-                CUSTOMERS_SETTINGS.CUSTOMER_SPEED
-                        + CUSTOMERS_SETTINGS.CUSTOMER_SPEED / 3);
         var startPosition = getStartPositionForCustomer(floorStart);
-        var customer = new Customer(floorStart, floorEnd, startPosition, speed,
+        var customer = new Customer(floorStart, floorEnd, startPosition, CUSTOMERS_SETTINGS.CUSTOMER_SPEED,
                 CUSTOMERS_SETTINGS.CUSTOMER_SIZE);
 
         customer.setState(CustomerState.GO_TO_BUTTON);

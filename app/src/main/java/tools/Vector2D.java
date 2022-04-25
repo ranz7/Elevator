@@ -2,15 +2,13 @@ package tools;
 
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 
 /*
- * Personal Point class with usefull methods
+ * Personal Point class with useful methods
  */
 @NoArgsConstructor
-public class Vector2D extends Point2D.Double implements Serializable {
+public class Vector2D extends Point2D.Double {
     public static final double EPSILON = 0.0001;
 
     public Vector2D(double x, double y) {
@@ -18,12 +16,11 @@ public class Vector2D extends Point2D.Double implements Serializable {
     }
 
     public Vector2D(Point2D.Double position) {
-        super(position.x, position.y);
+        this(position.x, position.y);
     }
 
     public static double distance(Point2D.Double positionA, Point2D.Double positionB) {
-        return Math.sqrt((positionA.x - positionB.x) * (positionA.x - positionB.x)
-                + (positionA.y - positionB.y) * (positionA.y - positionB.y));
+        return Math.sqrt(Math.pow(positionA.x - positionB.x, 2) + Math.pow(positionA.y - positionB.y, 2));
     }
 
     public Vector2D getVectorTo(Point2D.Double destination) {

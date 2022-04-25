@@ -15,7 +15,7 @@ import java.awt.Point;
  * @see ElevatorSystemController
  */
 
-public class ElevatorSystemSettings implements Serializable {
+public class ElevatorSystemSettings  {
     public final Point BUILDING_SIZE = new Point(800, 896);
     public final long ELEVATOR_AFTER_CLOSE_AFK_TIME = 500;
     public final long ELEVATOR_WAIT_AS_OPENED_TIME = 3000;

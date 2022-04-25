@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 
 /**
- * Manipulate all elevators in game.
+ * Manipulates all elevators in game.
  *
  * @see ElevatorSystemSettings
  */
@@ -33,9 +33,6 @@ public class ElevatorSystemController {
     public void tick(long deltaTime) {
         PENDING_ELEVATOR_REQUESTS.removeIf(this::tryToCallElevator);
         for (var elevator : MODEL.getBuilding().ELEVATORS) {
-            if (!elevator.isVisible()) {
-                break;
-            }
             switch (elevator.getState()) {
                 case WAIT -> processWait(elevator);
                 case IN_MOTION -> processInMotion(elevator);
@@ -54,10 +51,6 @@ public class ElevatorSystemController {
 
     public void getCustomerIntoElevator(Elevator nearestOpenedElevator) {
         nearestOpenedElevator.put();
-    }
-
-    public void getOutFromElevator(Elevator currentElevator) {
-        currentElevator.remove();
     }
 
     public void setFloorToReach(Elevator currentElevator, int floorEnd) {
@@ -125,10 +118,10 @@ public class ElevatorSystemController {
     }
 
     private Elevator closestElevator(ElevatorRequest request, Elevator elevatorA, Elevator elevatorB) {
-        if (elevatorA == null || !elevatorA.isVisible()) {
+        if (elevatorA == null ) {
             return elevatorB;
         }
-        if (elevatorB == null || !elevatorB.isVisible()) {
+        if (elevatorB == null) {
             return elevatorA;
         }
 

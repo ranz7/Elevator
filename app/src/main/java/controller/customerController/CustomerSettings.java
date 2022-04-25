@@ -8,7 +8,7 @@ import java.io.Serializable;
  *
  * @see CustomersController
  */
-public class CustomerSettings implements Serializable {
+public class CustomerSettings  {
     public final Point CUSTOMER_SIZE = new Point(30, 50);
     public final double CUSTOMER_SPEED = 100;
     public final int MAX_CUSTOMERS = 2;
