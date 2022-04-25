@@ -1,11 +1,8 @@
 package controller.elevatorSystemController;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.awt.Point;
 
 
@@ -27,6 +24,7 @@ public class ElevatorSystemSettings  {
     public final double ELEVATOR_SPEED = 150;
     public final int FLOORS_COUNT = 6;
 
+    public static final int UNEXISTING_FLOOR = 999;
     @Getter
     @Setter
     public int elevatorsCount= 5;

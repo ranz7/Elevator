@@ -14,7 +14,7 @@ import java.util.*;
  * calculating distance to came from floor A to floor B and all intermediate floors.
  */
 public class Elevator extends MovingObject {
-    public static final int UNEXISTING_FLOOR = 999;
+    public static final int UNEXISTING_FLOOR = ElevatorSystemSettings.UNEXISTING_FLOOR;
     public final Timer TIMER = new Timer();
 
     private final long TIME_TO_STOP_ON_FLOOR;
@@ -103,11 +103,7 @@ public class Elevator extends MovingObject {
     public void addFloorToPickUp(int toAddFloor) {
         currentBookedCount++;
         TreeMap<Integer, Integer> mapToWorkWith;
-        if (toAddFloor > getCurrentFloor()) {
-            mapToWorkWith = PICK_UP_TOP;
-        } else {
-            mapToWorkWith = PICK_UP_BOTTOM;
-        }
+        mapToWorkWith = toAddFloor > getCurrentFloor() ? PICK_UP_TOP : PICK_UP_BOTTOM;
         if (mapToWorkWith.containsKey(toAddFloor)) {
             mapToWorkWith.put(toAddFloor, mapToWorkWith.get(toAddFloor) + 1);
         } else {

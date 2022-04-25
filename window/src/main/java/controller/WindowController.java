@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * @see SwingWindow
  */
 public class WindowController {
+    // need to be set dynamically and in a clever way
     static private final int TPS = 50;
 
     private final WindowModel WINDOW_MODEL;

@@ -17,7 +17,7 @@ public class Controller {
     public final ElevatorSystemController ELEVATOR_SYSTEM_CONTROLLER;
     private final CustomersController CUSTOMER_CONTROLLER;
     public final Model MODEL;
-
+    // need to be set dynamically and in a clever way
     private final int TPS = 50;
 
     @Setter
