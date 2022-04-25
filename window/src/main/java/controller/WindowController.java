@@ -1,18 +1,21 @@
 package controller;
 
+import connector.clientServer.Client;
+import connector.clientServer.SocketCompactData;
+import connector.clientServer.SocketEventListener;
+import connector.protocol.ProtocolMessage;
 import model.WindowModel;
 import view.SwingWindow;
 import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 /*
  * control window, created with Swing
  * @see SwingWindow
  */
-public class WindowController {
+public class WindowController implements SocketEventListener {
     static private final int TPS = 50;
 
     private final WindowModel WINDOW_MODEL;
@@ -21,6 +24,10 @@ public class WindowController {
     @Setter
     private long currentTime;
     private double gameSpeed = 1;
+    @Setter
+    private Client client;
+
+    private final Logger LOGGER = Logger.getLogger(WindowController.class.getName());
 
     public WindowController(WindowModel windowModel) {
         WINDOW_MODEL = windowModel;
@@ -42,5 +49,15 @@ public class WindowController {
             GUI.repaint();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
         }
+    }
+
+    @Override
+    public void onReceiveSocket(ProtocolMessage message) {
+        LOGGER.info("RECIEVED MESSAGE");
+    }
+
+    @Override
+    public void onNewSocketConnection(SocketCompactData message) {
+        LOGGER.info("RECIEVED CONNECTION");
     }
 }

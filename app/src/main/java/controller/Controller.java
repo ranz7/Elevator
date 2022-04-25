@@ -1,13 +1,22 @@
 package controller;
 
+import connector.clientServer.Server;
+import connector.clientServer.SocketCompactData;
+import connector.clientServer.SocketEventListener;
+import connector.protocol.ProtocolMessage;
 import lombok.Setter;
 import model.Model;
-import java.util.concurrent.TimeUnit;
 
-public class Controller {
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+public class Controller implements SocketEventListener {
     public final Model MODEL;
+    private final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private final int TPS = 50;
+    @Setter
+    private Server server;
 
     @Setter
     private double gameSpeed = 1;
@@ -34,7 +43,17 @@ public class Controller {
     }
 
     private void tickControllers(long deltaTime) {
-       // controllers tick tu
+        // controllers tick tu
         MODEL.clearDead();
+    }
+
+    @Override
+    public void onReceiveSocket(ProtocolMessage message) {
+        LOGGER.info("RECIEVED MESSAGE");
+    }
+
+    @Override
+    public void onNewSocketConnection(SocketCompactData message) {
+        LOGGER.info("RECIEVED CONNECTION");
     }
 }
