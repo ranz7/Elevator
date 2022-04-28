@@ -10,10 +10,6 @@ import java.awt.*;
 public class MovingObject extends Creature {
     protected static final int SPEED_COEFFICIENT = 1000;
     private final double SPEED;
-
-    @Getter
-    @Setter
-    private double speedMultiPly = 1;
     @Getter
     @Setter
     protected boolean isDead = false;
@@ -27,7 +23,7 @@ public class MovingObject extends Creature {
 
     public void tick(long delta_time) {
         if (!isReachedDestination()) {
-            position = position.trendTo(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
+            position = position.getShiftedByDistance(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
         }
     }
 
@@ -36,10 +32,15 @@ public class MovingObject extends Creature {
     }
 
     public double getSpeed() {
-        return SPEED * speedMultiPly;
+        return SPEED;
     }
 
     public void setDestination(Vector2D destination) {
         this.destination = destination;
+    }
+
+    public void setPosition(Vector2D newPosition) {
+        destination = destination.getAdded(newPosition.getSubbed(position));
+        position = newPosition;
     }
 }

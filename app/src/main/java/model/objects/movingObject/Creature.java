@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Basic object of all objects in project
  */
 @Getter
-public class Creature implements Serializable {
+public class Creature  {
     @Setter
     protected boolean isVisible = true;
     protected Point size;
@@ -27,4 +27,5 @@ public class Creature implements Serializable {
         this.position = position;
         this.size = size;
     }
+
 }

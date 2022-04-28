@@ -1,17 +1,22 @@
 package model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import model.objects.movingObject.MovingObject;
 import model.objects.building.Building;
 import model.objects.customer.Customer;
-import model.objects.movingObject.MovingObject;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
+
 /*
  * Class to store all objects.
  */
+@NoArgsConstructor
 public class Model {
-    @Getter @Setter
+    @Getter
+    @Setter
     private Building building;
     public final LinkedList<Customer> CUSTOMERS = new LinkedList<>();
 

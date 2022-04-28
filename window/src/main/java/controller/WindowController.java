@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 /*
  * control window, created with Swing
  * @see SwingWindow
- */
-public class WindowController implements SocketEventListener {
+ */ 
+public class WindowController implements SocketEventListener { 
     static private final int TPS = 50;
 
     private final WindowModel WINDOW_MODEL;
