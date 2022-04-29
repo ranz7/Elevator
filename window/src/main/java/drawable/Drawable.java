@@ -1,8 +1,8 @@
 package drawable;
 
-import java.awt.*;
+import view.GameDrawer;
 
 public interface Drawable {
-    void draw(Graphics2D g2d);
+    void draw(GameDrawer gameDrawer);
     void tick(long deltaTime);
 }
