@@ -3,13 +3,17 @@ package model.objects.movingObject;
 
 import lombok.Getter;
 import lombok.Setter;
-import tools.Vector2D;
 
+import tools.Vector2D;
 import java.awt.*;
 
 public class MovingObject extends Creature {
     protected static final int SPEED_COEFFICIENT = 1000;
     private final double SPEED;
+
+    @Getter
+    @Setter
+    private double speedMultiPly = 1;
     @Getter
     @Setter
     protected boolean isDead = false;
@@ -17,6 +21,12 @@ public class MovingObject extends Creature {
 
     public MovingObject(Vector2D position, double speed, Point size) {
         super(position, size);
+        this.destination = position;
+        this.SPEED = speed;
+    }
+
+    public MovingObject(Vector2D position, double speed) {
+        super(position);
         this.destination = position;
         this.SPEED = speed;
     }
@@ -32,7 +42,7 @@ public class MovingObject extends Creature {
     }
 
     public double getSpeed() {
-        return SPEED;
+        return SPEED * speedMultiPly;
     }
 
     public void setDestination(Vector2D destination) {

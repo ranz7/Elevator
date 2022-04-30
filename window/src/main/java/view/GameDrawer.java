@@ -5,8 +5,8 @@ import tools.Vector2D;
 
 import java.awt.*;
 /*
-* this class transforms game coordinates to normal coordinates and viceversa , so u can change
-* real coordinates and have an image streched in a normal natural way.
+ * this class transform game coordinates to normal coordinates and viceversa , so u can change
+ * real coordinates and have an image streched in a normal natural way.
  */
 public class GameDrawer {
     // The ratio of game coordinates to real
@@ -50,6 +50,15 @@ public class GameDrawer {
                 (int) (size.y / SCALING_COEFFICIENT)
         );
         GRAPHICS_2D.setStroke(oldStroke);
+    }
+
+    public void setFont(String fontName, int type, int size) {
+        GRAPHICS_2D.setFont(new Font(fontName, type, (int) (size / SCALING_COEFFICIENT)));
+    }
+
+    public void drawString(String text, Vector2D position) {
+        GRAPHICS_2D.drawString(text, (int) (position.x / SCALING_COEFFICIENT + originalOffset.x),
+                (int) (REAL_SIZE.y - position.y / SCALING_COEFFICIENT - originalOffset.y));
     }
 
     public void fillRect(Creature creature) {
