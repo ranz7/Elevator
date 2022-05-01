@@ -36,6 +36,10 @@ public class MovingObject extends Creature {
             position = position.getShiftedByDistance(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
         }
     }
+    public void setPosition(Vector2D newPosition) {
+        destination = destination.getAdded(newPosition.getSubbed(position));
+        position = newPosition;
+    }
 
     public boolean isReachedDestination() {
         return new Vector2D(this.destination).getVectorTo(this.position).getLength() < Vector2D.EPSILON;
@@ -49,8 +53,5 @@ public class MovingObject extends Creature {
         this.destination = destination;
     }
 
-    public void setPosition(Vector2D newPosition) {
-        destination = destination.getAdded(newPosition.getSubbed(position));
-        position = newPosition;
-    }
+
 }

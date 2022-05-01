@@ -1,13 +1,14 @@
 package model.objects.customer;
 
 import model.objects.movingObject.MovingObject;
-import tools.Vector2D;
 import model.objects.elevator.Elevator;
 import lombok.Setter;
 import lombok.Getter;
 import tools.Timer;
+import tools.Vector2D;
 
 import java.awt.Point;
+
 
 @Getter
 public class Customer extends MovingObject {
@@ -17,6 +18,7 @@ public class Customer extends MovingObject {
     private int currentFlor;
     private Elevator currentElevator;
     private double lastCurrentElevatorXPosition;
+    @Setter
     private CustomerState state = CustomerState.GO_TO_BUTTON;
 
     public Customer(int currentFlor, int floorEnd, Vector2D position, double speed, Point size) {
@@ -61,7 +63,4 @@ public class Customer extends MovingObject {
         return currentFlor < FLOOR_TO_END;
     }
 
-    public void setState(CustomerState state) {
-        this.state = state;
-    }
 }
