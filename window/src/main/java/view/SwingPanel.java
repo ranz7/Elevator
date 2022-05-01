@@ -2,6 +2,7 @@ package view;
 
 import lombok.RequiredArgsConstructor;
 import model.WindowModel;
+import tools.Vector2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,31 +14,53 @@ class SwingPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawBuilding(g);
+        Graphics2D g2d = (Graphics2D) g;
 
+        var gameSize = VIEW_MODEL.getSettings().BUILDING_SIZE;
+        var realSize = this.getSize();
+        var blackZone = new Point(100, 100);
+
+        g2d.translate(blackZone.x / 2, blackZone.y / 2);
+        GameDrawer gameDrawer = new GameDrawer(gameSize, new Point(
+                realSize.width - blackZone.x,
+                realSize.height - blackZone.y), g2d);
+
+        drawWall(gameDrawer);
+        VIEW_MODEL.getDrawableOjects().forEach(drawable -> drawable.draw(gameDrawer));
+        drawBuilding(gameDrawer);
+
+        g2d.translate(-blackZone.x / 2, -blackZone.y / 2);
     }
 
-    private void drawBuilding(Graphics gameDrawer) {
-        var height = 100.;
-        var width = 100.;
-        var floors_count = 3;
-        var floorHeight = height / floors_count;
-
-        for (int i = 0; i < floors_count; i++) {
+    private void drawBuilding(GameDrawer gameDrawer) {
+        var floorHeight = VIEW_MODEL.getSettings().BUILDING_SIZE.y / VIEW_MODEL.getSettings().FLOORS_COUNT;
+        for (int i = 0; i < VIEW_MODEL.getSettings().FLOORS_COUNT; i++) {
             gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BETON_COLOR);
-            gameDrawer.drawRect((int) width / 2, (int) (i * floorHeight),
-                    (int) width, (int) floorHeight);
+            gameDrawer.drawRect(
+                    new Vector2D(VIEW_MODEL.getSettings().BUILDING_SIZE.x / 2., i * floorHeight),
+                    new Point(VIEW_MODEL.getSettings().BUILDING_SIZE.x, floorHeight), 7);
 
-            //black zones
             gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
             gameDrawer.fillRect(
-                    0 - 15, (int) (i * floorHeight - 2),
-                    15 * 4, (int) floorHeight
+                    new Vector2D(0 - VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4., i * floorHeight - 2),
+                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, floorHeight)
             );
-            gameDrawer.fillRect((int) width, (int) (i * floorHeight - 2),
-                    15, (int) floorHeight);
+            gameDrawer.fillRect(
+                    new Vector2D(
+                            VIEW_MODEL.getSettings().BUILDING_SIZE.x, i * floorHeight - 2),
+                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, floorHeight)
+            );
         }
 
     }
 
+    private void drawWall(GameDrawer gameDrawer) {
+        var floorHeight = VIEW_MODEL.getSettings().BUILDING_SIZE.y / VIEW_MODEL.getSettings().FLOORS_COUNT;
+        for (int i = 0; i < VIEW_MODEL.getSettings().FLOORS_COUNT; i++) {
+            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.WALL_COLOR);
+            gameDrawer.fillRect(
+                    new Vector2D(0, i * floorHeight),
+                    new Point(VIEW_MODEL.getSettings().BUILDING_SIZE.x, floorHeight));
+        }
+    }
 }

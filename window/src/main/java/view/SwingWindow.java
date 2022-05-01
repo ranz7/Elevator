@@ -1,6 +1,7 @@
 
 package view;
 
+
 import controller.WindowController;
 import model.WindowModel;
 
@@ -9,14 +10,19 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class SwingWindow {
+    private ActionListener listener;
+    private WindowController controller;
     private SwingPanel startPanel;
     final Point WINDOW_SIZE = new Point(800, 800);
-    private WindowController controller;
-    private ActionListener listener;
 
     private final LinkedList<JButton> ADD_CLIENT_BUTTONS = new LinkedList<>();
+    private final LinkedList<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new LinkedList<>();
+    private final LinkedList<JButton> CHANGE_SPEED_BUTTONS = new LinkedList<>();
+    private final LinkedList<JButton> SELECT_FLOOR_BUTTONS = new LinkedList<>();
+
     private JFrame frame;
     private Dimension resize;
 
@@ -37,7 +43,12 @@ public class SwingWindow {
                     String.valueOf(1),
                     windowModel.COLOR_SETTINGS.JBUTTONS_COLOR);
             floorButton.setVisible(false);
+            SELECT_FLOOR_BUTTONS.add(floorButton);
         }
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
+        CHANGE_SPEED_BUTTONS.add(createButton("<", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
+        CHANGE_SPEED_BUTTONS.add(createButton(">", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
     }
 
     private JButton createButton(String text, Color buttonColor) {
@@ -49,6 +60,7 @@ public class SwingWindow {
         startPanel.add(startButton);
         return startButton;
     }
+
 
     private void initializeWindow(WindowModel windowModel) {
         startPanel = new SwingPanel(windowModel);
@@ -63,22 +75,19 @@ public class SwingWindow {
     }
 
 
-    public boolean resized() {
-        if (resize == null) {
-            return false;
-        }
-        return resize == startPanel.getSize();
+    public void repaint() {
+        frame.repaint();
     }
 
     public void updateButtons(WindowModel windowMODEL) {
         resize = startPanel.getSize();
         Iterator<JButton> button = ADD_CLIENT_BUTTONS.iterator();
-        int num_of_floors = 3;
-        double heightOfButton = (resize.height - 100.) / num_of_floors;
+        Iterator<JButton> floorButton = SELECT_FLOOR_BUTTONS.iterator();
+        double heightOfButton = (resize.height - 100.) / windowMODEL.getSettings().FLOORS_COUNT;
         for (int i = 0; i < 16; i++) {
             JButton currentButton = button.next();
             currentButton.setText("->");
-            if (i >= num_of_floors) {
+            if (i >= windowMODEL.getSettings().FLOORS_COUNT) {
                 currentButton.setVisible(false);
                 continue;
             }
@@ -87,25 +96,39 @@ public class SwingWindow {
             currentButton.setBounds(
                     new Rectangle(0, (int) heightOfButton * i + 50,
                             50, (int) heightOfButton));
+
+            JButton currentFloorButton = floorButton.next();
+            currentFloorButton.setVisible(true);
+            currentFloorButton.setEnabled(true);
+            currentFloorButton.setBounds(
+                    new Rectangle(windowMODEL.getSettings().BUILDING_SIZE.x - 50, (int) heightOfButton * i + 50,
+                            50, (int) heightOfButton));
         }
-
+        for (int i = 0; i < 2; i++) {
+            ADD_REDUCE_ELEVATORS_BUTTONS.get(i).setBounds(
+                    new Rectangle(50, 50 + i * 100, 50, 50));
+            CHANGE_SPEED_BUTTONS.get(i).setBounds(
+                    new Rectangle(50 + i * 50, 100, 50, 50));
+        }
     }
 
-
-    public void repaint() {
-        frame.repaint();
+    public boolean resized() {
+        if (resize == null) {
+            return false;
+        }
+        return resize == startPanel.getSize();
     }
-
 
     public void clicked(JButton source) {
-
         Iterator<JButton> buttonIterator = ADD_CLIENT_BUTTONS.iterator();
+        Iterator<JButton> newFloorButtonIterator = SELECT_FLOOR_BUTTONS.iterator();
         for (int i = 0; i < 16; i++) {
-            JButton currentButton = buttonIterator.next();
+           JButton newFloorButton = newFloorButtonIterator.next();
+            if (newFloorButton == source) {
+                var newFloorNumber = (Integer.parseInt(newFloorButton.getText())) % 6 + 1;
 
-            if (currentButton == source) {
-                System.out.println("CLICKED" + i);
-                return;
+                newFloorButton.setText(String.valueOf(newFloorNumber));
+
             }
         }
 
