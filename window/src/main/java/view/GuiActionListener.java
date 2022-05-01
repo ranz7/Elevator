@@ -6,10 +6,10 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 
-public record GuiActionListener(SwingWindow WINDOW) implements ActionListener {
+public record GuiActionListener(Window WINDOW) implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-        WINDOW.clicked((JButton) e.getSource());
+        WINDOW.buttonClicked((JButton) e.getSource());
         WINDOW.repaint();
     }
 }

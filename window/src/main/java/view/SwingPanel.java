@@ -10,26 +10,20 @@ import java.awt.*;
 @RequiredArgsConstructor
 class SwingPanel extends JPanel {
     private final WindowModel VIEW_MODEL;
+    GameDrawer gameDrawer = new GameDrawer();
+
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-
-        var gameSize = VIEW_MODEL.getSettings().BUILDING_SIZE;
-        var realSize = this.getSize();
-        var blackZone = new Point(100, 100);
-
-        g2d.translate(blackZone.x / 2, blackZone.y / 2);
-        GameDrawer gameDrawer = new GameDrawer(gameSize, new Point(
-                realSize.width - blackZone.x,
-                realSize.height - blackZone.y), g2d);
+        gameDrawer.updateGameDrawerWithSizes(
+                this.getSize(), VIEW_MODEL.getSettings().BUILDING_SIZE, g);
 
         drawWall(gameDrawer);
         VIEW_MODEL.getDrawableOjects().forEach(drawable -> drawable.draw(gameDrawer));
         drawBuilding(gameDrawer);
 
-        g2d.translate(-blackZone.x / 2, -blackZone.y / 2);
+        gameDrawer.restore();
     }
 
     private void drawBuilding(GameDrawer gameDrawer) {
