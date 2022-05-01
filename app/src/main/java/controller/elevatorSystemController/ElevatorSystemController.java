@@ -4,6 +4,7 @@ import model.objects.elevator.ElevatorRequest;
 import model.objects.elevator.ElevatorState;
 import model.objects.building.Building;
 import model.objects.elevator.Elevator;
+import connector.protocol.Protocol;
 import controller.Controller;
 import model.Model;
 
@@ -12,7 +13,7 @@ import java.util.LinkedList;
 
 
 /**
- * Manipulates all elevators in game.
+ * Manipulate all elevators in game.
  *
  * @see ElevatorSystemSettings
  */
@@ -20,19 +21,21 @@ public class ElevatorSystemController {
     public final ElevatorSystemSettings SETTINGS = new ElevatorSystemSettings();
 
     private final LinkedList<ElevatorRequest> PENDING_ELEVATOR_REQUESTS = new LinkedList<>();
-    private final Building BUILDING = new Building(SETTINGS);
     private final Controller CONTROLLER;
     private final Model MODEL;
 
     public ElevatorSystemController(Controller controller) {
         this.CONTROLLER = controller;
         this.MODEL = CONTROLLER.MODEL;
-        MODEL.Initialize(BUILDING);
+        MODEL.Initialize(new Building(SETTINGS));
     }
 
     public void tick(long deltaTime) {
         PENDING_ELEVATOR_REQUESTS.removeIf(this::tryToCallElevator);
         for (var elevator : MODEL.getBuilding().ELEVATORS) {
+            if (!elevator.isVisible()) {
+                break;
+            }
             switch (elevator.getState()) {
                 case WAIT -> processWait(elevator);
                 case IN_MOTION -> processInMotion(elevator);
@@ -51,6 +54,10 @@ public class ElevatorSystemController {
 
     public void getCustomerIntoElevator(Elevator nearestOpenedElevator) {
         nearestOpenedElevator.put();
+    }
+
+    public void getOutFromElevator(Elevator currentElevator) {
+        currentElevator.remove();
     }
 
     public void setFloorToReach(Elevator currentElevator, int floorEnd) {
@@ -111,21 +118,21 @@ public class ElevatorSystemController {
         Elevator closestElevator = elevatorsAvailable.stream()
                 .reduce(null, (elevatorA, elevatorB) -> this.closestElevator(request, elevatorA, elevatorB));
 
-        var requestFloor = (int) Math.round(request.button_position().y / BUILDING.getWallSize());
+        var requestFloor = (int) Math.round(request.button_position().y / MODEL.getBuilding().getWallSize());
         closestElevator.addFloorToPickUp(requestFloor);
         closestElevator.findBestFloor();
         return true;
     }
 
     private Elevator closestElevator(ElevatorRequest request, Elevator elevatorA, Elevator elevatorB) {
-        if (elevatorA == null ) {
+        if (elevatorA == null || !elevatorA.isVisible()) {
             return elevatorB;
         }
-        if (elevatorB == null) {
+        if (elevatorB == null || !elevatorB.isVisible()) {
             return elevatorA;
         }
 
-        var requestFloor = (int) Math.round(request.button_position().y / BUILDING.getWallSize());
+        var requestFloor = (int) Math.round(request.button_position().y / MODEL.getBuilding().getWallSize());
         double timeToBeForElevatorA = elevatorA.getTimeToBeHere(requestFloor);
         double timeToBeForElevatorB = elevatorB.getTimeToBeHere(requestFloor);
         if (timeToBeForElevatorA > timeToBeForElevatorB) {
