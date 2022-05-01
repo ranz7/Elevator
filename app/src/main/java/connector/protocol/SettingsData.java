@@ -1,5 +1,7 @@
 package connector.protocol;
 
+import tools.Vector2D;
+
 import java.awt.Point;
 import java.io.Serializable;
 
@@ -12,7 +14,7 @@ import java.io.Serializable;
  */
 
 public class SettingsData implements Serializable {
-    public final Point BUILDING_SIZE = new Point(800, 896);
+    public final Vector2D BUILDING_SIZE = new Vector2D(700, 730);
     public final Point ELEVATOR_SIZE = new Point(50, 80);
     public final Point CUSTOMER_SIZE = new Point(30, 50);
     public final long ELEVATOR_OPEN_CLOSE_TIME = 3500;

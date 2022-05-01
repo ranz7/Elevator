@@ -5,6 +5,7 @@ package view.Window;
 import controller.WindowController;
 import lombok.Getter;
 import model.WindowModel;
+import tools.Vector2D;
 import view.Canvas.GameCanvas;
 import view.Canvas.GuiMouseListener;
 import view.buttons.ButtonsComponent;
@@ -38,11 +39,11 @@ public class Window {
         gameCanvas.resize(size);
     }
 
-    public void rightMouseClicked(Point point) {
+    public void rightMouseClicked(Vector2D point) {
         if (gameCanvas.zoomedIn()) {
-            gameCanvas.zoomOut();
+            gameCanvas.zoomIn(point, 1/4.);
         } else {
-            gameCanvas.zoomIn(point, 4.);
+            gameCanvas.zoomOut();
         }
     }
 

@@ -1,5 +1,6 @@
 package view.Canvas;
 
+import tools.Vector2D;
 import view.Window.Window;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ public record GuiMouseListener(Window WINDOW) implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-            WINDOW.rightMouseClicked(e.getPoint());
+            WINDOW.rightMouseClicked(new Vector2D(e.getPoint()));
         }
     }
 

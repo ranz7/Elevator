@@ -82,7 +82,4 @@ public class GameDrawer {
         graphics2D = (Graphics2D) g;
     }
 
-    public void zoomIn(Point point, double zoomScale) {
-
-    }
 }

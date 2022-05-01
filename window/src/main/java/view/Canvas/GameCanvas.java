@@ -2,21 +2,18 @@ package view.Canvas;
 
 import model.WindowModel;
 import tools.Vector2D;
-import view.Window.GuiResizeListener;
 import view.Window.Window;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
 
 public class GameCanvas extends JPanel {
     private JFrame frame;
     private WindowModel VIEW_MODEL;
     GameScaler gameScaler;
     GameDrawer gameDrawer;
-
     public GameCanvas(Window window, WindowModel viewModel) {
         VIEW_MODEL = viewModel;
         setBackground(VIEW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
@@ -56,17 +53,17 @@ public class GameCanvas extends JPanel {
             gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BETON_COLOR);
             gameDrawer.drawRect(
                     new Vector2D(VIEW_MODEL.getSettings().BUILDING_SIZE.x / 2., i * floorHeight),
-                    new Point(VIEW_MODEL.getSettings().BUILDING_SIZE.x, floorHeight), 7);
+                    new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) floorHeight), 7);
 
             gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
             gameDrawer.fillRect(
                     new Vector2D(0 - VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4., i * floorHeight - 2),
-                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, floorHeight)
+                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, (int) floorHeight)
             );
             gameDrawer.fillRect(
                     new Vector2D(
                             VIEW_MODEL.getSettings().BUILDING_SIZE.x, i * floorHeight - 2),
-                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, floorHeight)
+                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, (int) floorHeight)
             );
         }
 
@@ -78,25 +75,24 @@ public class GameCanvas extends JPanel {
             gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.WALL_COLOR);
             gameDrawer.fillRect(
                     new Vector2D(0, i * floorHeight),
-                    new Point(VIEW_MODEL.getSettings().BUILDING_SIZE.x, floorHeight));
+                    new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) floorHeight));
         }
     }
 
     public boolean zoomedIn() {
-//        return gameDrawer.getAdditionalZoom() == 1.;
-        return false;
+        return gameScaler.getAdditionalZoomFinishValue() == 1.;
     }
 
     public void zoomOut() {
-        //gameDrawer.zoomOut();
+        gameScaler.zoomOut();
     }
 
-    public void zoomIn(Point point, double zoomScale) {
-        System.out.println("123");
-        gameDrawer.zoomIn(point, zoomScale);
+    public void zoomIn(Vector2D point, double zoomScale) {
+        gameScaler.zoomIn(point, zoomScale);
     }
 
     public void update() {
+        gameScaler.tick();
         frame.repaint();
     }
 }

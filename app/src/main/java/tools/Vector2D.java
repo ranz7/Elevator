@@ -2,6 +2,7 @@ package tools;
 
 import lombok.NoArgsConstructor;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 /*
@@ -17,6 +18,10 @@ public class Vector2D extends Point2D.Double {
 
     public Vector2D(Point2D.Double position) {
         this(position.x, position.y);
+    }
+
+    public Vector2D(Point point) {
+        this(point.x, point.y);
     }
 
     public double distanceTo(Point2D.Double positionA) {
@@ -75,5 +80,21 @@ public class Vector2D extends Point2D.Double {
 
     private Vector2D makeUnit() {
         return getDivided(getLength());
+    }
+
+    public Point toPoint() {
+        return new Point((int) x, (int) y);
+    }
+
+    public Double getMultiplied(Vector2D multiply) {
+        return new Vector2D(x * multiply.x, y * multiply.y);
+    }
+
+    public Vector2D getDivided(Vector2D division) {
+        return new Vector2D(x / division.x, y / division.y);
+    }
+
+    public double getMaxOfTwo() {
+        return Math.max(x,y);
     }
 }
