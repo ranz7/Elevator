@@ -5,7 +5,7 @@ import connector.clientServer.SocketCompactData;
 import connector.clientServer.SocketEventListener;
 import connector.protocol.ProtocolMessage;
 import model.WindowModel;
-import view.SwingWindow;
+import view.Window.Window;
 import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
@@ -19,7 +19,7 @@ public class WindowController implements SocketEventListener {
     static private final int TPS = 50;
 
     private final WindowModel WINDOW_MODEL;
-    private final SwingWindow GUI;
+    private final Window GUI;
 
     @Setter
     private long currentTime;
@@ -31,7 +31,7 @@ public class WindowController implements SocketEventListener {
 
     public WindowController(WindowModel windowModel) {
         WINDOW_MODEL = windowModel;
-        GUI = new SwingWindow();
+        GUI = new Window();
     }
 
     public void start() throws InterruptedException {
@@ -42,11 +42,8 @@ public class WindowController implements SocketEventListener {
             long deltaTime = System.currentTimeMillis() - lastTime;
             lastTime += deltaTime;
             currentTime += deltaTime;
-            if (!GUI.resized()) {
-                GUI.updateButtons(WINDOW_MODEL);
-            }
             WINDOW_MODEL.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
-            GUI.repaint();
+            GUI.update();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
         }
     }
@@ -59,5 +56,20 @@ public class WindowController implements SocketEventListener {
     @Override
     public void onNewSocketConnection(SocketCompactData message) {
         LOGGER.info("RECIEVED CONNECTION");
+    }
+
+    public void changeElevatorsCount(boolean isAdding) {
+    }
+
+    public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
+        //send to main controller
+    }
+
+    public void increaseSpeed() {
+        //send to main controller
+    }
+
+    public void decreaseGameSpeed() {
+        //send to main controller
     }
 }

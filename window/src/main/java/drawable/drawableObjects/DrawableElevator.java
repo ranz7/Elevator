@@ -3,9 +3,8 @@ package drawable.drawableObjects;
 import model.objects.movingObject.Creature;
 import drawable.Drawable;
 import tools.Vector2D;
-import view.GameDrawer;
+import view.drawTools.GameDrawer;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.awt.*;
 

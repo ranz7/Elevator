@@ -81,7 +81,7 @@ public class WindowModel {
         for (int i = 0; i < settings.FLOORS_COUNT; i++) {
             hidingWall.add(new HidingWall(
                     new Vector2D(settings.BUILDING_SIZE.x / 2., wallSize * i + settings.ELEVATOR_SIZE.y),
-                    new Point(settings.BUILDING_SIZE.x, (wallSize - settings.ELEVATOR_SIZE.y)),
+                    new Point((int) settings.BUILDING_SIZE.x, (int) (wallSize - settings.ELEVATOR_SIZE.y)),
                     COLOR_SETTINGS.WALL_COLOR
             ));
             for (int j = 0; j < settings.ELEVATORS_COUNT; j++) {
@@ -94,7 +94,7 @@ public class WindowModel {
                 border.add(new ElevatorBorder(
                         new Vector2D(distanceBetweenElevators * (j + 1), i * wallSize),
                         elevators.get(j),
-                        wallSize, COLOR_SETTINGS.BORDER_COLOR, COLOR_SETTINGS.NUMBER_COLOR));
+                        (int) wallSize, COLOR_SETTINGS.BORDER_COLOR, COLOR_SETTINGS.NUMBER_COLOR));
 
                 blackSpaces.add(new BlackSpace(
                         new Vector2D(distanceBetweenElevators * (j + 1), i * wallSize),
@@ -102,7 +102,6 @@ public class WindowModel {
             }
         }
     }
-
 
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();

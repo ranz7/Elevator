@@ -1,6 +1,6 @@
 package drawable;
 
-import view.GameDrawer;
+import view.drawTools.GameDrawer;
 
 public interface Drawable {
     void draw(GameDrawer gameDrawer);

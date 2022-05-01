@@ -3,7 +3,7 @@ package drawable.drawableObjects;
 import drawable.Drawable;
 import model.objects.movingObject.Creature;
 import tools.Vector2D;
-import view.GameDrawer;
+import view.drawTools.GameDrawer;
 
 import java.awt.*;
 
