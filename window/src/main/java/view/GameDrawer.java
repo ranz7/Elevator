@@ -35,30 +35,42 @@ public class GameDrawer {
         graphics2D.setColor(borderColor);
         graphics2D.setStroke(new BasicStroke((float) (thickness / scalingCoefficient)));
         graphics2D.drawRect(
-                (int) (drawOffset.x + (position.x) / scalingCoefficient),
-                (int) (screenSizeAfterShift.height - drawOffset.y - (position.y + size.y) / scalingCoefficient),
-                (int) (size.x / scalingCoefficient),
-                (int) (size.y / scalingCoefficient)
+                (int) getFromRealToGameCoordinate(position, size.y).x,
+                (int) getFromRealToGameCoordinate(position, size.y).y,
+                (int) getFromRealToGameLength(size.x),
+                (int) getFromRealToGameLength(size.y)
         );
         graphics2D.setStroke(oldStroke);
     }
 
+    private double getFromRealToGameLength(double length) {
+        return length / scalingCoefficient;
+    }
+
+    private Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+        return new Vector2D(
+                drawOffset.x + (realPosition.x) / scalingCoefficient,
+                (screenSizeAfterShift.height - drawOffset.y - (realPosition.y + heigthOfTheObject) / scalingCoefficient));
+
+    }
+
     public void setFont(String fontName, int type, int size) {
-        graphics2D.setFont(new Font(fontName, type, (int) (size / scalingCoefficient)));
+        graphics2D.setFont(new Font(fontName, type, (int) getFromRealToGameLength(size)));
     }
 
     public void drawString(String text, Vector2D position) {
-        graphics2D.drawString(text, (int) (position.x / scalingCoefficient + drawOffset.x),
-                (int) (screenSizeAfterShift.height - position.y / scalingCoefficient - drawOffset.y));
+        graphics2D.drawString(text,
+                (int) getFromRealToGameCoordinate(position, 0).x,
+                (int) getFromRealToGameCoordinate(position, 0).y);
     }
 
     public void fillRect(Creature creature) {
+        Vector2D positionOfTheCreature = creature.getPosition().getSubbed(new Vector2D(creature.getSize().x / 2, 0));
         graphics2D.fillRect(
-                (int) (drawOffset.x + (creature.getPosition().x - creature.getSize().x / 2) / scalingCoefficient),
-                (int) (screenSizeAfterShift.height - drawOffset.y -
-                        (creature.getSize().y + creature.getPosition().y) / scalingCoefficient),
-                (int) (creature.getSize().x / scalingCoefficient),
-                (int) (creature.getSize().y / scalingCoefficient)
+                (int) getFromRealToGameCoordinate(positionOfTheCreature, creature.getSize().y).x,
+                (int) getFromRealToGameCoordinate(positionOfTheCreature, creature.getSize().y).y,
+                (int) getFromRealToGameLength(creature.getSize().x),
+                (int) getFromRealToGameLength(creature.getSize().y)
         );
     }
 
@@ -66,15 +78,14 @@ public class GameDrawer {
         Stroke oldStroke = graphics2D.getStroke();
         graphics2D.setStroke(new BasicStroke((float) (thickness / scalingCoefficient)));
 
+        Vector2D positionOfTheRect = position.getSubbed(new Vector2D(size.x / 2, 0));
         graphics2D.drawRect(
-                (int) (drawOffset.x + (position.x - size.x / 2) / scalingCoefficient),
-                (int) (screenSizeAfterShift.height - drawOffset.y - (position.y + size.y) / scalingCoefficient),
-                (int) (size.x / scalingCoefficient),
-                (int) (size.y / scalingCoefficient)
-        );
+                (int) getFromRealToGameCoordinate(positionOfTheRect, size.y).x,
+                (int) getFromRealToGameCoordinate(positionOfTheRect, size.y).y,
+                (int) getFromRealToGameLength(size.x),
+                (int) getFromRealToGameLength(size.y));
 
         graphics2D.setStroke(oldStroke);
-
     }
 
     public void updateGameDrawerWithSizes(Dimension screenSize, Point buildingSize, Graphics g) {

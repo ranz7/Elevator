@@ -160,8 +160,10 @@ public class Window {
     }
 
     public void rightMouseClicked(Point point) {
-        if(swingPanel){
-            
+        if(swingPanel.zoomedIn()){
+            swingPanel.zoomOut();
+        }else{
+            swingPanel.zoomIn(point,4.);
         }
     }
 }

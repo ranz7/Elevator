@@ -12,7 +12,6 @@ class SwingPanel extends JPanel {
     private final WindowModel VIEW_MODEL;
     GameDrawer gameDrawer = new GameDrawer();
 
-
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -56,5 +55,18 @@ class SwingPanel extends JPanel {
                     new Vector2D(0, i * floorHeight),
                     new Point(VIEW_MODEL.getSettings().BUILDING_SIZE.x, floorHeight));
         }
+    }
+
+    public boolean zoomedIn() {
+//        return gameDrawer.getAdditionalZoom() == 1.;
+        return true;
+    }
+
+    public void zoomOut() {
+       // gameDrawer.zoomOut();
+    }
+
+    public void zoomIn(Point point, double zoomScale) {
+      //  gameDrawer.zoomIn(point,zoomScale);
     }
 }
