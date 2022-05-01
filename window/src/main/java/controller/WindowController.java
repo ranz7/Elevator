@@ -5,7 +5,7 @@ import connector.clientServer.SocketCompactData;
 import connector.clientServer.SocketEventListener;
 import connector.protocol.ProtocolMessage;
 import model.WindowModel;
-import view.Window;
+import view.Window.Window;
 import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
@@ -42,11 +42,8 @@ public class WindowController implements SocketEventListener {
             long deltaTime = System.currentTimeMillis() - lastTime;
             lastTime += deltaTime;
             currentTime += deltaTime;
-            if (!GUI.resized()) {
-                GUI.updateButtons(WINDOW_MODEL);
-            }
             WINDOW_MODEL.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
-            GUI.repaint();
+            GUI.update();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
         }
     }
@@ -72,7 +69,7 @@ public class WindowController implements SocketEventListener {
         //send to main controller
     }
 
-    public void decreesSpeed() {
+    public void decreaseGameSpeed() {
         //send to main controller
     }
 }

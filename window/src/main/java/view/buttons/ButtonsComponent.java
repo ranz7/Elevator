@@ -1,99 +1,66 @@
+package view.buttons;
 
-package view;
-
-
-import controller.WindowController;
 import model.WindowModel;
+import view.Canvas.GameCanvas;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Window {
+import view.Window.Window;
+
+public class ButtonsComponent {
+    Dimension size;
+    WindowModel windowModel;
+    Window window;
     private ActionListener actionListener;
-    private MouseListener mouseListener;
-
-    private WindowController controller;
-
-    private SwingPanel swingPanel;
-    final Point WINDOW_SIZE = new Point(800, 800);
 
     private final LinkedList<JButton> ADD_CUSTOMER_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> CHANGE_SPEED_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> SELECT_FLOOR_BUTTONS = new LinkedList<>();
 
-    private JFrame frame;
-    private Dimension resize;
-
-    public void startWindow(WindowModel windowModel, WindowController controller) {
-        this.controller = controller;
-        initializeWindow(windowModel);
-        initializeButtons(windowModel);
-    }
-
-    private void initializeButtons(WindowModel windowModel) {
+    public ButtonsComponent(Window window, WindowModel windowModel, GameCanvas buttonCarier) {
+        this.size = window.getSize();
+        this.window = window;
+        this.windowModel = windowModel;
         actionListener = new GuiActionListener(this);
-        mouseListener = new GuiMouseListener(this);
         for (int i = 0; i < 16; i++) {
-            var addClientButton = createButton(
-                    "->", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR);
+            var addClientButton = createButton("->", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier);
             addClientButton.setVisible(false);
             ADD_CUSTOMER_BUTTONS.add(addClientButton);
 
-            var selectFloorButon = createButton(
-                    String.valueOf(1),
-                    windowModel.COLOR_SETTINGS.JBUTTONS_COLOR);
+            var selectFloorButon = createButton(String.valueOf(1), windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier);
             selectFloorButon.setVisible(false);
             SELECT_FLOOR_BUTTONS.add(selectFloorButon);
         }
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
-        CHANGE_SPEED_BUTTONS.add(createButton("<", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
-        CHANGE_SPEED_BUTTONS.add(createButton(">", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
+        CHANGE_SPEED_BUTTONS.add(createButton("<", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
+        CHANGE_SPEED_BUTTONS.add(createButton(">", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
     }
 
-    private JButton createButton(String text, Color buttonColor) {
+    private JButton createButton(String text, Color buttonColor, GameCanvas buttonCarier) {
         var startButton = new JButton(text);
         startButton.addActionListener(actionListener);
-        startButton.addMouseListener(mouseListener);
         startButton.setBackground(buttonColor);
         startButton.setForeground(Color.white);
         startButton.setFocusPainted(false);
-        swingPanel.add(startButton);
+        buttonCarier.add(startButton);
         return startButton;
     }
 
-
-    private void initializeWindow(WindowModel windowModel) {
-        swingPanel = new SwingPanel(windowModel);
-        swingPanel.setBackground(windowModel.COLOR_SETTINGS.BLACK_SPACE_COLOR);
-        swingPanel.setLayout(null);
-
-        frame = new JFrame("ELEVATOR SYS");
-        frame.setSize(WINDOW_SIZE.x, WINDOW_SIZE.y);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(swingPanel);
-    }
-
-
-    public void repaint() {
-        frame.repaint();
-    }
-
-    public void updateButtons(WindowModel windowMODEL) {
-        resize = swingPanel.getSize();
+    public void resize(Dimension size) {
+        this.size = size;
         Iterator<JButton> addCustomerButtonIt = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> selectFloorButtonIt = SELECT_FLOOR_BUTTONS.iterator();
-        double heightOfButton = (resize.height - 100.) / windowMODEL.getSettings().FLOORS_COUNT;
+        double heightOfButton = (size.height - 100.) / windowModel.getSettings().FLOORS_COUNT;
         for (int i = 0; i < 16; i++) {
             JButton addCustomerButton = addCustomerButtonIt.next();
             addCustomerButton.setText("->");
-            if (i >= windowMODEL.getSettings().FLOORS_COUNT) {
+            if (i >= windowModel.getSettings().FLOORS_COUNT) {
                 addCustomerButton.setVisible(false);
                 continue;
             }
@@ -107,7 +74,7 @@ public class Window {
             selectFloorButton.setVisible(true);
             selectFloorButton.setEnabled(true);
             selectFloorButton.setBounds(
-                    new Rectangle( resize.width - 50, (int) heightOfButton * i + 50,
+                    new Rectangle(size.width - 50, (int) heightOfButton * i + 50,
                             50, (int) heightOfButton));
         }
 
@@ -119,25 +86,19 @@ public class Window {
         }
     }
 
-    public boolean resized() {
-        if (resize == null) {
-            return false;
-        }
-        return resize == swingPanel.getSize();
-    }
-
     public void buttonClicked(JButton source) {
         if (ADD_REDUCE_ELEVATORS_BUTTONS.get(0) == source) {
-            controller.changeElevatorsCount(true);
+            window.addElevatorButtonClicked();
         }
         if (ADD_REDUCE_ELEVATORS_BUTTONS.get(1) == source) {
-            controller.changeElevatorsCount(false);
+            window.removeElevatorButtonClicked();
         }
+
         if (CHANGE_SPEED_BUTTONS.get(0) == source) {
-            controller.decreesSpeed();
+            window.decreaseGameSpeedButtonClicked();
         }
         if (CHANGE_SPEED_BUTTONS.get(1) == source) {
-            controller.increaseSpeed();
+            window.increaseGameSpeedButtonClicked();
         }
 
         Iterator<JButton> buttonIterator = ADD_CUSTOMER_BUTTONS.iterator();
@@ -152,19 +113,10 @@ public class Window {
                 return;
             }
             if (currentButton == source) {
-                controller.clickedAddCustomerButtonWithNumber(i, Integer.parseInt(newFloorButton.getText()));
+                window.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
                 return;
             }
         }
-
     }
 
-    public void rightMouseClicked(Point point) {
-        if(swingPanel.zoomedIn()){
-            swingPanel.zoomOut();
-        }else{
-            swingPanel.zoomIn(point,4.);
-        }
-    }
 }
-
