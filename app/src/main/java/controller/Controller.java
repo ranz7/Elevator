@@ -41,12 +41,13 @@ public class Controller implements SocketEventListener {
         while (true) {
             long deltaTime = System.currentTimeMillis() - currentTime;
             currentTime += deltaTime;
-            tickControllers((long) (deltaTime));
+            tickControllers((long) (deltaTime ));
             try {
                 TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
     }
 
@@ -55,6 +56,7 @@ public class Controller implements SocketEventListener {
         CUSTOMER_CONTROLLER.tick(deltaTime);
         ELEVATOR_SYSTEM_CONTROLLER.tick(deltaTime);
         MODEL.clearDead();
+
     }
 
     @Override

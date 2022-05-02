@@ -1,5 +1,6 @@
 package view.Canvas;
 
+import lombok.Getter;
 import model.WindowModel;
 import tools.Vector2D;
 import view.Window.Window;
@@ -12,6 +13,7 @@ import java.awt.*;
 public class GameCanvas extends JPanel {
     private JFrame frame;
     private WindowModel VIEW_MODEL;
+    @Getter
     GameScaler gameScaler;
     GameDrawer gameDrawer;
     public GameCanvas(Window window, WindowModel viewModel) {
@@ -45,6 +47,7 @@ public class GameCanvas extends JPanel {
         drawWall(gameDrawer);
         VIEW_MODEL.getDrawableOjects().forEach(drawable -> drawable.draw(gameDrawer));
         drawBuilding(gameDrawer);
+        VIEW_MODEL.getDrawableOjectsHightPriority().forEach(drawable -> drawable.draw(gameDrawer));
     }
 
     private void drawBuilding(GameDrawer gameDrawer) {

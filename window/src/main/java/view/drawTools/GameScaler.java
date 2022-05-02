@@ -37,28 +37,46 @@ public class GameScaler {
         return length / (scalingCoefficient * additionalZoomCurrentValue);
     }
 
-    public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+    public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, int heigthOfTheObject) {
         return new Vector2D(
                 drawOffset.x
-                        + realPosition.x / (scalingCoefficient * additionalZoomCurrentValue)
-                        + additionalMove.x / (additionalZoomCurrentValue),
-                screenSizeAfterShift.y - drawOffset.y
-                        - (realPosition.y + heigthOfTheObject) / (scalingCoefficient * additionalZoomCurrentValue)
-                        - (additionalMove.y) / (additionalZoomCurrentValue))
-                .getAdded(blackZone.getDivided(2));
+                        + gameCoordinate.x / (scalingCoefficient * additionalZoomCurrentValue)
+                        + additionalMove.x / (additionalZoomCurrentValue) + blackZone.x / 2,
+                -(drawOffset.y
+                        + (gameCoordinate.y + heigthOfTheObject) / (scalingCoefficient * additionalZoomCurrentValue)
+                        + (additionalMove.y) / (additionalZoomCurrentValue)) + screenSizeAfterShift.y + blackZone.y / 2);
+    }
+
+    public Vector2D getFromGameToRealCoordinate(Point gameCoordinate, int heigthOfTheObject) {
+        return getFromGameToRealCoordinate(new Vector2D(gameCoordinate), heigthOfTheObject);
 
     }
 
 
-    public void updateSizes(Dimension screenSize, Vector2D buildingSize) {
-        clickedPoint = clickedPoint.getSubbed(drawOffset); // NEED TO BE FIXED
+    public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+        return new Vector2D(
+                (realPosition.x - drawOffset.x - blackZone.x / 2
+                        - additionalMove.x / (additionalZoomCurrentValue)) * scalingCoefficient * additionalZoomCurrentValue,
+                (-realPosition.y + blackZone.y / 2 + screenSizeAfterShift.y - drawOffset.y
+                        - (additionalMove.y) / (additionalZoomCurrentValue)) * scalingCoefficient * additionalZoomCurrentValue
+                        - heigthOfTheObject);
 
+    }
+
+    public Vector2D getFromRealToGameCoordinate(Point realPosition, int heigthOfTheObject) {
+        return getFromRealToGameCoordinate(new Vector2D(realPosition), heigthOfTheObject);
+
+    }
+
+    public void updateSizes(Dimension screenSize, Vector2D buildingSize) {
+        clickedPoint = clickedPoint.getSubbed(drawOffset).getDivided(scalingCoefficient); // NEED TO BE FIXED
+        //      x = a * sc - drawOffset -
         screenSizeAfterShift = new Vector2D(screenSize.width - blackZone.x, screenSize.height - blackZone.y);
         scalingCoefficient = buildingSize.getDivided(screenSizeAfterShift).getMaxOfTwo();
         Vector2D sizeOfBuildingAfterRescale = buildingSize.getDivided(scalingCoefficient);
         drawOffset = screenSizeAfterShift.getSubbed(sizeOfBuildingAfterRescale).getDivided(2);
 
-        clickedPoint = clickedPoint.getAdded(drawOffset);
+        clickedPoint = clickedPoint.getMultiplied(scalingCoefficient).getAdded(drawOffset);
         if (zoomScale != 1) {
             updateZoomVector();
         }

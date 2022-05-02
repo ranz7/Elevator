@@ -5,6 +5,7 @@ import connector.clientServer.SocketCompactData;
 import connector.clientServer.SocketEventListener;
 import connector.protocol.ProtocolMessage;
 import model.WindowModel;
+import tools.Vector2D;
 import view.Window.Window;
 import lombok.Setter;
 
@@ -43,8 +44,10 @@ public class WindowController implements SocketEventListener {
             lastTime += deltaTime;
             currentTime += deltaTime;
             WINDOW_MODEL.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
+            WINDOW_MODEL.getDrawableOjectsHightPriority().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
             GUI.update();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
+            WINDOW_MODEL.clearDead();
         }
     }
 
@@ -71,5 +74,14 @@ public class WindowController implements SocketEventListener {
 
     public void decreaseGameSpeed() {
         //send to main controller
+    }
+
+    public void clickButton(Vector2D point) {
+        var pointInGame = GUI.getGameCanvas().getGameScaler().getFromRealToGameCoordinate(point, 0);
+        var button = WINDOW_MODEL.getNearestButton(pointInGame);
+        if (button.getPosition().distanceTo(pointInGame) <20) {
+            button.buttonClick();
+
+        }
     }
 }

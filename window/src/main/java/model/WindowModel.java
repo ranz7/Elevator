@@ -8,7 +8,6 @@ import drawable.Drawable;
 import drawable.drawableObjects.*;
 import drawable.drawableObjects.Button;
 import lombok.Getter;
-import lombok.Setter;
 import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
 import model.objects.movingObject.MovingObject;
@@ -17,7 +16,6 @@ import tools.Vector2D;
 import java.awt.*;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class WindowModel {
@@ -113,8 +111,39 @@ public class WindowModel {
         drawables.addAll(border);
         drawables.addAll(buttons);
         drawables.addAll(customers.stream().toList());
+        return drawables;
+    }
+    public LinkedList<Drawable> getDrawableOjectsHightPriority() {
+        LinkedList<Drawable> drawables = new LinkedList<>();
         drawables.addAll(flyingTexts);
         return drawables;
+    }
+
+
+    public void addMovingDrawable(FlyingText text) {
+        flyingTexts.add(text);
+    }
+
+    public void clearDead() {
+        flyingTexts.removeIf(MovingObject::isDead);
+    }
+
+
+    public Button getNearestButton(Vector2D data) {
+        return buttons.stream()
+                .reduce(null, (buttonA, buttonB) -> {
+                    if (buttonA == null) {
+                        return buttonB;
+                    }
+                    if (buttonB == null) {
+                        return buttonA;
+                    }
+                    if (data.getNearest(buttonA.getPosition(), buttonB.getPosition())
+                            .equals(buttonA.getPosition())) {
+                        return buttonA;
+                    }
+                    return buttonB;
+                });
     }
 
     private Collection<Drawable> getElevatorDoors() {

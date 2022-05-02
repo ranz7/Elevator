@@ -11,13 +11,17 @@ public record GuiMouseListener(Window WINDOW) implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            WINDOW.rightMouseClicked(new Vector2D(e.getPoint()));
-        }
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (SwingUtilities.isRightMouseButton(e)) {
+            WINDOW.rightMouseClicked(new Vector2D(e.getPoint()));
+        }
+        if(SwingUtilities.isLeftMouseButton(e)){
+            WINDOW.leftMouseClicked(new Vector2D(e.getPoint()));
+        }
     }
 
     @Override
