@@ -6,7 +6,7 @@ import connector.clientServer.SocketEventListener;
 import connector.protocol.ProtocolMessage;
 import model.WindowModel;
 import tools.Vector2D;
-import view.Window.Window;
+import view.window.Window;
 import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;

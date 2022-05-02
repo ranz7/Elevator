@@ -1,9 +1,9 @@
-package view.Canvas;
+package view.canvas;
 
 import lombok.Getter;
 import model.WindowModel;
 import tools.Vector2D;
-import view.Window.Window;
+import view.window.Window;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;
 

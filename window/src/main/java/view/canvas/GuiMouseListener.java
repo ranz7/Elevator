@@ -1,7 +1,7 @@
-package view.Canvas;
+package view.canvas;
 
 import tools.Vector2D;
-import view.Window.Window;
+import view.window.Window;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;

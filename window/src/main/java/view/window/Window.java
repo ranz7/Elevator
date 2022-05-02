@@ -1,5 +1,5 @@
 
-package view.Window;
+package view.window;
 
 
 import controller.WindowController;
@@ -7,8 +7,8 @@ import drawable.drawableObjects.FlyingText;
 import lombok.Getter;
 import model.WindowModel;
 import tools.Vector2D;
-import view.Canvas.GameCanvas;
-import view.Canvas.GuiMouseListener;
+import view.canvas.GameCanvas;
+import view.canvas.GuiMouseListener;
 import view.buttons.ButtonsComponent;
 
 import java.awt.*;

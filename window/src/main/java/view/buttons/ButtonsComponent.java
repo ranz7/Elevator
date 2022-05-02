@@ -1,7 +1,7 @@
 package view.buttons;
 
 import model.WindowModel;
-import view.Canvas.GameCanvas;
+import view.canvas.GameCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import view.Window.Window;
+import view.window.Window;
 
 public class ButtonsComponent {
     Dimension size;
