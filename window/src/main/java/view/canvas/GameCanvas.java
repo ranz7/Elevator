@@ -1,5 +1,6 @@
 package view.canvas;
 
+import drawable.Drawable;
 import lombok.Getter;
 import model.WindowModel;
 import tools.Vector2D;
@@ -9,6 +10,7 @@ import view.drawTools.GameScaler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Comparator;
 
 public class GameCanvas extends JPanel {
     private JFrame frame;
@@ -16,6 +18,7 @@ public class GameCanvas extends JPanel {
     @Getter
     GameScaler gameScaler;
     GameDrawer gameDrawer;
+
     public GameCanvas(Window window, WindowModel viewModel) {
         WINDOW_MODEL = viewModel;
         setBackground(WINDOW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
@@ -44,7 +47,9 @@ public class GameCanvas extends JPanel {
         super.paintComponent(g);
         gameDrawer.startDraw(g);
 
-        WINDOW_MODEL.getDrawableOjects().forEach(drawable -> drawable.draw(gameDrawer));
+        var drawableObjets = WINDOW_MODEL.getDrawableOjects();
+        drawableObjets.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
+        drawableObjets.forEach(drawable -> drawable.draw(gameDrawer));
     }
 
     public boolean zoomedIn() {

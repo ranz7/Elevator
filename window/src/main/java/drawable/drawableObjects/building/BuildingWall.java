@@ -13,6 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class BuildingWall implements Drawable {
+    final Integer i;
     final WindowModel VIEW_MODEL;
 
     @Override
@@ -22,13 +23,10 @@ public class BuildingWall implements Drawable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        var floorHeight = VIEW_MODEL.getSettings().BUILDING_SIZE.y / VIEW_MODEL.getSettings().FLOORS_COUNT;
-        for (int i = 0; i < VIEW_MODEL.getSettings().FLOORS_COUNT; i++) {
-            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.WALL_COLOR);
-            gameDrawer.fillRect(
-                    new Vector2D(0, i * floorHeight),
-                    new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) floorHeight));
-        }
+        gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.WALL_COLOR);
+        gameDrawer.fillRect(
+                new Vector2D(0, i * VIEW_MODEL.getWallHeight()),
+                new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) (double) VIEW_MODEL.getWallHeight()));
     }
 
     @Override

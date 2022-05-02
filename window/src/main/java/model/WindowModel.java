@@ -8,12 +8,9 @@ import drawable.DrawSettings;
 import drawable.Drawable;
 import drawable.drawableObjects.*;
 import drawable.drawableObjects.building.floor.Floor;
-import drawable.drawableObjects.building.BuildingWall;
-import drawable.drawableObjects.building.HidingWall;
 import drawable.drawableObjects.building.floor.Button;
 import drawable.drawableObjects.customer.DrawableCustomer;
 import drawable.drawableObjects.elevator.DrawableElevator;
-import drawable.drawableObjects.building.floor.ElevatorBorder;
 import lombok.Getter;
 import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
@@ -28,24 +25,17 @@ import java.util.LinkedList;
 public class WindowModel {
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
     public final DrawSettings DRAW_SETTINGS = new DrawSettings();
+    @Getter
+    private final SettingsData settings = new SettingsData();
 
     @Getter
-    private SettingsData settings = new SettingsData();
+    private final LinkedList<DrawableElevator> elevators = new LinkedList<>();
+    private final LinkedList<DrawableCustomer> customers = new LinkedList<>();
+    private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
+    private final LinkedList<Floor> floors = new LinkedList<>();
 
-    private LinkedList<DrawableElevator> elevators = new LinkedList<>();
-    private LinkedList<DrawableCustomer> customers = new LinkedList<>();
 
-    private BuildingWall buildingWall = new BuildingWall(this);
-    private Floor Floor = new Floor(this);
-
-    private LinkedList<ElevatorBorder> border = new LinkedList<>();
-    private LinkedList<HidingWall> hidingWall = new LinkedList<>();
-
-    private LinkedList<FlyingText> flyingTexts = new LinkedList<>();
-
-    private boolean needToInitialize = true;
-
-    { // tmp code
+    { // tmp code to create elevators, in normal world they are created by Server
         var elevator = new LinkedList<Elevator>();
         for (int i = 0; i < 16; i++) {
             elevator.add(new Elevator(new ElevatorSystemSettings()));
@@ -53,7 +43,6 @@ public class WindowModel {
         var wallSize = ((double) settings.BUILDING_SIZE.y) / settings.FLOORS_COUNT;
         double distanceBetweenElevators = ((double) settings.BUILDING_SIZE.x) / (settings.ELEVATORS_COUNT + 1);
         for (int i = 0; i < 16; i++) {
-
             if (i < settings.ELEVATORS_COUNT) {
                 elevator.get(i).setWallSize(wallSize);
                 if (elevator.get(i).isVisible()) {
@@ -67,6 +56,7 @@ public class WindowModel {
                 elevator.get(i).setVisible(false);
             }
         }
+
         for (int i = 0; i < settings.ELEVATORS_COUNT; i++) {
             var newElevator = new DrawableElevator(
                     elevator.get(i),
@@ -91,30 +81,18 @@ public class WindowModel {
         return ((double) settings.BUILDING_SIZE.x) / (settings.ELEVATORS_COUNT + 1);
     }
 
-    private void initialiseFirstData() { // to much code , need to be moved somewhere
+    private void initialiseFirstData() {
         for (int i = 0; i < settings.FLOORS_COUNT; i++) {
-            hidingWall.add(new HidingWall(
-                    new Vector2D(settings.BUILDING_SIZE.x / 2., getWallHeight() * i + settings.ELEVATOR_SIZE.y),
-                    new Point((int) settings.BUILDING_SIZE.x, (int) (getWallHeight() - settings.ELEVATOR_SIZE.y)),
-                    COLOR_SETTINGS.WALL_COLOR
-            ));
-            for (int j = 0; j < settings.ELEVATORS_COUNT; j++) {
-                var elevatorBorderPosition = new Vector2D(getDistanceBetweenElevators() * (j + 1), i * getWallHeight());
-                border.add(new ElevatorBorder(elevatorBorderPosition, elevators.get(j), this));
-            }
+            floors.add(new Floor(i, this));
         }
     }
 
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();
-        drawables.add(buildingWall);
         elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-        border.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-        drawables.addAll(hidingWall);
+        floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         drawables.addAll(customers.stream().toList());
-        drawables.add(Floor);
         drawables.addAll(flyingTexts);
-        drawables.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
         return drawables;
     }
 
@@ -129,7 +107,8 @@ public class WindowModel {
 
     public Button getNearestButton(Vector2D data) {
         LinkedList<Button> buttons = new LinkedList<>();
-        border.forEach(elevatorBorder -> buttons.add(elevatorBorder.getButton()));
+        floors.forEach(floor -> floor.getBorder().forEach(
+                border -> buttons.add(border.getButton())));
 
         return buttons.stream()
                 .reduce(null, (buttonA, buttonB) -> {

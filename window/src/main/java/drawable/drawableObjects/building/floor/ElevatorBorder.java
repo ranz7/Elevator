@@ -35,7 +35,8 @@ public class ElevatorBorder extends Creature implements Drawable {
 
 
         elevatorBlackSpace = new ElevatorBlackSpace(position, parentElevator, windowModel);
-        button = new Button(position.getAdded(new Vector2D(0, windowModel.getSettings().BUTTON_RELATIVE_POSITION)), windowModel);
+        button = new Button(position.getAdded(new Vector2D(size).getDivided(2)).getAdded(
+                new Vector2D(windowModel.getSettings().BUTTON_RELATIVE_POSITION, 0)), windowModel);
     }
 
     @Override
