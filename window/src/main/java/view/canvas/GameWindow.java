@@ -2,9 +2,9 @@ package view.canvas;
 
 import drawable.Drawable;
 import lombok.Getter;
-import model.WindowModel;
+import model.GuiModel;
 import tools.Vector2D;
-import view.window.Window;
+import view.Gui.WindowResizeListener;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;
 
@@ -12,22 +12,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Comparator;
 
-public class GameCanvas extends JPanel {
+public class GameWindow extends JPanel {
     private JFrame frame;
-    private WindowModel WINDOW_MODEL;
+    private GuiModel WINDOW_MODEL;
     @Getter
     GameScaler gameScaler;
     GameDrawer gameDrawer;
 
-    public GameCanvas(Window window, WindowModel viewModel) {
+    public GameWindow(GuiModel viewModel) {
         WINDOW_MODEL = viewModel;
         setBackground(WINDOW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
         setLayout(null);
+        setVisible(false);
 
-        setSize(window.getSize().width, window.getSize().height);
+        setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
 
         frame = new JFrame("ELEVATOR SYS");
-        frame.setSize(window.getSize().width, window.getSize().height);
+        frame.setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(this);
@@ -36,6 +37,9 @@ public class GameCanvas extends JPanel {
         gameDrawer = new GameDrawer(gameScaler);
     }
 
+    public void start(){
+        this.setVisible(true);
+    }
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
@@ -67,5 +71,9 @@ public class GameCanvas extends JPanel {
     public void update() {
         gameScaler.tick();
         frame.repaint();
+    }
+
+    public void addResizeListener(WindowResizeListener windowResizeListener) {
+        this.addComponentListener(windowResizeListener);
     }
 }

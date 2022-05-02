@@ -4,8 +4,7 @@ import drawable.Drawable;
 import drawable.drawableObjects.building.BuildingWall;
 import drawable.drawableObjects.building.HidingWall;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import model.WindowModel;
+import model.GuiModel;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
@@ -15,21 +14,21 @@ import java.util.List;
 
 
 public class Floor implements Drawable {
-    final WindowModel WINDOW_MODEL;
+    final GuiModel WINDOW_MODEL;
     private LinkedList<HidingWall> hidingWall = new LinkedList<>();
     @Getter
     private LinkedList<ElevatorBorder> border = new LinkedList<>();
     private BuildingWall buildingWall;
     int i;
 
-    public Floor(int i, WindowModel windowModel) {
+    public Floor(int i, GuiModel guiModel) {
         this.i = i;
-        buildingWall = new BuildingWall(i, windowModel);
-        WINDOW_MODEL = windowModel;
-        hidingWall.add(new HidingWall(i, windowModel));
-        for (int j = 0; j < windowModel.getSettings().ELEVATORS_COUNT; j++) {
-            var elevatorBorderPosition = new Vector2D(windowModel.getDistanceBetweenElevators() * (j + 1), i * windowModel.getWallHeight());
-            border.add(new ElevatorBorder(elevatorBorderPosition, windowModel.getElevators().get(j), windowModel));
+        buildingWall = new BuildingWall(i, guiModel);
+        WINDOW_MODEL = guiModel;
+        hidingWall.add(new HidingWall(i, guiModel));
+        for (int j = 0; j < guiModel.getSettings().ELEVATORS_COUNT; j++) {
+            var elevatorBorderPosition = new Vector2D(guiModel.getDistanceBetweenElevators() * (j + 1), i * guiModel.getWallHeight());
+            border.add(new ElevatorBorder(elevatorBorderPosition, guiModel.getElevators().get(j), guiModel));
         }
 
     }

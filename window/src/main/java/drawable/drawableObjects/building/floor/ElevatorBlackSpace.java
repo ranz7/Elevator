@@ -1,7 +1,6 @@
 package drawable.drawableObjects.building.floor;
 
-import drawable.ColorSettings;
-import model.WindowModel;
+import model.GuiModel;
 import model.objects.movingObject.Creature;
 import drawable.Drawable;
 import tools.Vector2D;
@@ -17,10 +16,10 @@ import java.util.List;
 public class ElevatorBlackSpace extends Creature implements Drawable {
     private final Color BLACK_SPACES_COLOR;
 
-    public ElevatorBlackSpace(Vector2D position, Creature parentElevator, WindowModel windowModel) {
+    public ElevatorBlackSpace(Vector2D position, Creature parentElevator, GuiModel guiModel) {
         super(position, parentElevator.getSize());
-        size = new Point(size.x + windowModel.DRAW_SETTINGS.BORDER_SIZE * 2, size.y + windowModel.DRAW_SETTINGS.BORDER_SIZE);
-        this.BLACK_SPACES_COLOR = windowModel.COLOR_SETTINGS.BLACK_SPACE_COLOR;
+        size = new Point(size.x + guiModel.DRAW_SETTINGS.BORDER_SIZE * 2, size.y + guiModel.DRAW_SETTINGS.BORDER_SIZE);
+        this.BLACK_SPACES_COLOR = guiModel.COLOR_SETTINGS.BLACK_SPACE_COLOR;
     }
 
     @Override

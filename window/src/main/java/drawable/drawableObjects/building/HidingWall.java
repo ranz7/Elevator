@@ -1,7 +1,7 @@
 package drawable.drawableObjects.building;
 
 import drawable.Drawable;
-import model.WindowModel;
+import model.GuiModel;
 import model.objects.movingObject.Creature;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
@@ -13,7 +13,7 @@ import java.util.List;
 public class HidingWall extends Creature implements Drawable {
     private final Color BACK_GROUND_COLOR;
 
-    public HidingWall(int i, WindowModel model) {
+    public HidingWall(int i, GuiModel model) {
         super(new Vector2D(model.getSettings().BUILDING_SIZE.x / 2., model.getSettings().ELEVATOR_SIZE.y + model.getWallHeight() * i),
                 new Point((int) model.getSettings().BUILDING_SIZE.x, (int) (model.getWallHeight() - model.getSettings().ELEVATOR_SIZE.y)));
         this.BACK_GROUND_COLOR = model.COLOR_SETTINGS.WALL_COLOR;

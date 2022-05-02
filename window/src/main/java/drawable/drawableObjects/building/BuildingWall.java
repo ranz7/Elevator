@@ -2,8 +2,7 @@ package drawable.drawableObjects.building;
 
 import drawable.Drawable;
 import lombok.RequiredArgsConstructor;
-import model.WindowModel;
-import model.objects.movingObject.Creature;
+import model.GuiModel;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
@@ -14,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BuildingWall implements Drawable {
     final Integer i;
-    final WindowModel VIEW_MODEL;
+    final GuiModel VIEW_MODEL;
 
     @Override
     public Integer GetDrawPrioritet() {

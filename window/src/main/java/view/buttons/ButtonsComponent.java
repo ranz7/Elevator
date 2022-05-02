@@ -1,7 +1,9 @@
 package view.buttons;
 
-import model.WindowModel;
-import view.canvas.GameCanvas;
+import lombok.Setter;
+import model.GuiModel;
+import view.Gui.ButtonsListener;
+import view.canvas.GameWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,42 +11,46 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import view.window.Window;
+import view.Gui.Gui;
 
 public class ButtonsComponent {
-    Dimension size;
-    WindowModel windowModel;
-    Window window;
-    private ActionListener actionListener;
+    private final Dimension size;
+    private final GuiModel guiModel;
+    private final GameWindow gameWindow;
+    @Setter
+    private ActionListener buttonListener;
 
     private final LinkedList<JButton> ADD_CUSTOMER_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> CHANGE_SPEED_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> SELECT_FLOOR_BUTTONS = new LinkedList<>();
+    private Gui gui;
 
-    public ButtonsComponent(Window window, WindowModel windowModel, GameCanvas buttonCarier) {
-        this.size = window.getSize();
-        this.window = window;
-        this.windowModel = windowModel;
-        actionListener = new GuiActionListener(this);
+    public ButtonsComponent(GuiModel guiModel, GameWindow gameWindow) {
+        this.gameWindow = gameWindow;
+        this.size = gameWindow.getSize();
+        this.guiModel = guiModel;
+    }
+
+    public void start() {
         for (int i = 0; i < 16; i++) {
-            var addClientButton = createButton("->", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier);
+            var addClientButton = createButton("->", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, gameWindow);
             addClientButton.setVisible(false);
             ADD_CUSTOMER_BUTTONS.add(addClientButton);
 
-            var selectFloorButon = createButton(String.valueOf(1), windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier);
+            var selectFloorButon = createButton(String.valueOf(1), guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, gameWindow);
             selectFloorButon.setVisible(false);
             SELECT_FLOOR_BUTTONS.add(selectFloorButon);
         }
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
-        CHANGE_SPEED_BUTTONS.add(createButton("<", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
-        CHANGE_SPEED_BUTTONS.add(createButton(">", windowModel.COLOR_SETTINGS.JBUTTONS_COLOR, buttonCarier));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, gameWindow));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, gameWindow));
+        CHANGE_SPEED_BUTTONS.add(createButton("<", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, gameWindow));
+        CHANGE_SPEED_BUTTONS.add(createButton(">", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, gameWindow));
     }
 
-    private JButton createButton(String text, Color buttonColor, GameCanvas buttonCarier) {
+    private JButton createButton(String text, Color buttonColor, GameWindow buttonCarier) {
         var startButton = new JButton(text);
-        startButton.addActionListener(actionListener);
+        startButton.addActionListener(buttonListener);
         startButton.setBackground(buttonColor);
         startButton.setForeground(Color.white);
         startButton.setFocusPainted(false);
@@ -53,14 +59,17 @@ public class ButtonsComponent {
     }
 
     public void resize(Dimension size) {
-        this.size = size;
+        if (ADD_REDUCE_ELEVATORS_BUTTONS.isEmpty()) {
+            return;
+        }
         Iterator<JButton> addCustomerButtonIt = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> selectFloorButtonIt = SELECT_FLOOR_BUTTONS.iterator();
-        double heightOfButton = (size.height - 100.) / windowModel.getSettings().FLOORS_COUNT;
+        double heightOfButton = (size.height - 100.) / guiModel.getSettings().FLOORS_COUNT;
         for (int i = 0; i < 16; i++) {
+
             JButton addCustomerButton = addCustomerButtonIt.next();
             addCustomerButton.setText("->");
-            if (i >= windowModel.getSettings().FLOORS_COUNT) {
+            if (i >= guiModel.getSettings().FLOORS_COUNT) {
                 addCustomerButton.setVisible(false);
                 continue;
             }
@@ -88,17 +97,17 @@ public class ButtonsComponent {
 
     public void buttonClicked(JButton source) {
         if (ADD_REDUCE_ELEVATORS_BUTTONS.get(0) == source) {
-            window.addElevatorButtonClicked();
+            gui.addElevatorButtonClicked();
         }
         if (ADD_REDUCE_ELEVATORS_BUTTONS.get(1) == source) {
-            window.removeElevatorButtonClicked();
+            gui.removeElevatorButtonClicked();
         }
 
         if (CHANGE_SPEED_BUTTONS.get(0) == source) {
-            window.decreaseGameSpeedButtonClicked();
+            gui.decreaseGameSpeedButtonClicked();
         }
         if (CHANGE_SPEED_BUTTONS.get(1) == source) {
-            window.increaseGameSpeedButtonClicked();
+            gui.increaseGameSpeedButtonClicked();
         }
 
         Iterator<JButton> buttonIterator = ADD_CUSTOMER_BUTTONS.iterator();
@@ -113,10 +122,14 @@ public class ButtonsComponent {
                 return;
             }
             if (currentButton == source) {
-                window.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
+                gui.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
                 return;
             }
         }
     }
 
+    public void addButtonsListener(Gui gui, ButtonsListener buttonsListener) {
+        this.buttonListener = buttonsListener;
+        this.gui = gui;
+    }
 }

@@ -18,11 +18,10 @@ import model.objects.movingObject.MovingObject;
 import tools.Vector2D;
 
 import java.awt.*;
-import java.util.Comparator;
 import java.util.LinkedList;
 
 
-public class WindowModel {
+public class GuiModel {
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
     public final DrawSettings DRAW_SETTINGS = new DrawSettings();
     @Getter

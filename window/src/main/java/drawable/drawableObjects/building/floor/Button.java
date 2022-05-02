@@ -1,6 +1,6 @@
 package drawable.drawableObjects.building.floor;
 
-import model.WindowModel;
+import model.GuiModel;
 import model.objects.movingObject.Creature;
 import drawable.Drawable;
 import tools.Vector2D;
@@ -20,10 +20,10 @@ public class Button extends Creature implements Drawable {
     private final Color COLOR_ON;
     private final Color COLOR_OFF;
 
-    public Button(Vector2D position, WindowModel windowModel) {
-        super(position, windowModel.DRAW_SETTINGS.ButtonSize);
-        this.COLOR_ON = windowModel.COLOR_SETTINGS.BUTTON_ON_COLOR;
-        this.COLOR_OFF = windowModel.COLOR_SETTINGS.BUTTON_OF_COLOR;
+    public Button(Vector2D position, GuiModel guiModel) {
+        super(position, guiModel.DRAW_SETTINGS.ButtonSize);
+        this.COLOR_ON = guiModel.COLOR_SETTINGS.BUTTON_ON_COLOR;
+        this.COLOR_OFF = guiModel.COLOR_SETTINGS.BUTTON_OF_COLOR;
     }
 
     @Override

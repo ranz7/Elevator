@@ -2,7 +2,7 @@ package drawable.drawableObjects.building.floor;
 
 import drawable.Drawable;
 import lombok.Getter;
-import model.WindowModel;
+import model.GuiModel;
 import model.objects.movingObject.Creature;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
@@ -22,21 +22,21 @@ public class ElevatorBorder extends Creature implements Drawable {
     @Getter
     Button button;
 
-    public ElevatorBorder(Vector2D position, Creature parentElevator, WindowModel windowModel) {
+    public ElevatorBorder(Vector2D position, Creature parentElevator, GuiModel guiModel) {
         super(position, parentElevator.getSize());
         PARENT_ELEVATOR = parentElevator;
-        BORDER_COLOR = windowModel.COLOR_SETTINGS.BORDER_COLOR;
-        NUMBER_COLOR = windowModel.COLOR_SETTINGS.NUMBER_COLOR;
-        BORDER_SIZE = windowModel.DRAW_SETTINGS.BORDER_SIZE;
-        WALL_HEIGHT = windowModel.getWallHeight();
+        BORDER_COLOR = guiModel.COLOR_SETTINGS.BORDER_COLOR;
+        NUMBER_COLOR = guiModel.COLOR_SETTINGS.NUMBER_COLOR;
+        BORDER_SIZE = guiModel.DRAW_SETTINGS.BORDER_SIZE;
+        WALL_HEIGHT = guiModel.getWallHeight();
 
-        size = new Point(size.x + windowModel.DRAW_SETTINGS.BORDER_SIZE * 2,
-                size.y + windowModel.DRAW_SETTINGS.BORDER_SIZE);
+        size = new Point(size.x + guiModel.DRAW_SETTINGS.BORDER_SIZE * 2,
+                size.y + guiModel.DRAW_SETTINGS.BORDER_SIZE);
 
 
-        elevatorBlackSpace = new ElevatorBlackSpace(position, parentElevator, windowModel);
+        elevatorBlackSpace = new ElevatorBlackSpace(position, parentElevator, guiModel);
         button = new Button(position.getAdded(new Vector2D(size).getDivided(2)).getAdded(
-                new Vector2D(windowModel.getSettings().BUTTON_RELATIVE_POSITION, 0)), windowModel);
+                new Vector2D(guiModel.getSettings().BUTTON_RELATIVE_POSITION, 0)), guiModel);
     }
 
     @Override

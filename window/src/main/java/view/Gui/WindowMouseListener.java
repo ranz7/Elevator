@@ -1,13 +1,12 @@
-package view.canvas;
+package view.Gui;
 
 import tools.Vector2D;
-import view.window.Window;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public record GuiMouseListener(Window WINDOW) implements MouseListener {
+public record WindowMouseListener(Gui WINDOW) implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
