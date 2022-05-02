@@ -1,5 +1,6 @@
-package drawable.drawableObjects.elevator;
+package drawable.drawableObjects.building.floor;
 
+import model.WindowModel;
 import model.objects.movingObject.Creature;
 import drawable.Drawable;
 import tools.Vector2D;
@@ -7,6 +8,8 @@ import view.drawTools.GameDrawer;
 import tools.Timer;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Small buttons near elevators.
@@ -17,10 +20,15 @@ public class Button extends Creature implements Drawable {
     private final Color COLOR_ON;
     private final Color COLOR_OFF;
 
-    public Button(Vector2D position, Point size, Color colorOn, Color colorOff) {
-        super(position, size);
-        this.COLOR_ON = colorOn;
-        this.COLOR_OFF = colorOff;
+    public Button(Vector2D position, WindowModel windowModel) {
+        super(position, windowModel.DRAW_SETTINGS.ButtonSize);
+        this.COLOR_ON = windowModel.COLOR_SETTINGS.BUTTON_ON_COLOR;
+        this.COLOR_OFF = windowModel.COLOR_SETTINGS.BUTTON_OF_COLOR;
+    }
+
+    @Override
+    public Integer GetDrawPrioritet() {
+        return 10;
     }
 
     @Override
@@ -31,6 +39,13 @@ public class Button extends Creature implements Drawable {
             gameDrawer.setColor(COLOR_OFF);
         }
         gameDrawer.fillRect(this);
+    }
+
+    @Override
+    public List<Drawable> getDrawables() {
+        var drawables = new LinkedList<Drawable>();
+        drawables.add(this);
+        return drawables;
     }
 
     @Override

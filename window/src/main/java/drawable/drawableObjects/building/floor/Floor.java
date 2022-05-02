@@ -1,4 +1,4 @@
-package drawable.drawableObjects.building;
+package drawable.drawableObjects.building.floor;
 
 import drawable.Drawable;
 import lombok.RequiredArgsConstructor;
@@ -7,10 +7,17 @@ import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @RequiredArgsConstructor
-public class BuildingInsides implements Drawable {
+public class Floor implements Drawable {
     final WindowModel WINDOW_MODEL;
+
+    @Override
+    public Integer GetDrawPrioritet() {
+        return 14;
+    }
 
     @Override
     public void draw(GameDrawer gameDrawer) {
@@ -37,5 +44,12 @@ public class BuildingInsides implements Drawable {
     @Override
     public void tick(long deltaTime) {
 
+    }
+
+    @Override
+    public List<Drawable> getDrawables() {
+        var drawables = new LinkedList<Drawable>();
+        drawables.add(this);
+        return drawables;
     }
 }

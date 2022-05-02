@@ -7,6 +7,8 @@ import view.drawTools.GameDrawer;
 import tools.Timer;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ElevatorDoors extends Creature implements Drawable {
     private final long OPEN_CLOSE_DOORS_TIME;
@@ -32,6 +34,11 @@ public class ElevatorDoors extends Creature implements Drawable {
         }
         DOORS_TIMER.restart(OPEN_CLOSE_DOORS_TIME / 2);
         isCLosed = !isCLosed;
+    }
+
+    @Override
+    public Integer GetDrawPrioritet() {
+        return 6;
     }
 
     @Override
@@ -63,5 +70,12 @@ public class ElevatorDoors extends Creature implements Drawable {
 
     public boolean isClosed() {
         return isCLosed && DOORS_TIMER.isReady();
+    }
+
+    @Override
+    public List<Drawable> getDrawables() {
+        var drawables = new LinkedList<Drawable>();
+        drawables.add(this);
+        return drawables;
     }
 }

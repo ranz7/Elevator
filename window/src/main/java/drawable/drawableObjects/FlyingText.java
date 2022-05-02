@@ -7,6 +7,8 @@ import view.drawTools.GameDrawer;
 import tools.Timer;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FlyingText extends MovingObject implements Drawable {
     private final int FONT_SIZE;
@@ -26,6 +28,11 @@ public class FlyingText extends MovingObject implements Drawable {
     }
 
     @Override
+    public Integer GetDrawPrioritet() {
+        return 16;
+    }
+
+    @Override
     public void draw(GameDrawer gameDrawer) {
         gameDrawer.setColor(TEXT_COLOR);
 
@@ -40,5 +47,12 @@ public class FlyingText extends MovingObject implements Drawable {
         if (TIMER.isReady()) {
             isDead = true;
         }
+    }
+
+    @Override
+    public List<Drawable> getDrawables() {
+        var drawables = new LinkedList<Drawable>();
+        drawables.add(this);
+        return drawables;
     }
 }

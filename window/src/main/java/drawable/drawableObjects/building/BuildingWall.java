@@ -8,10 +8,17 @@ import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class BuildingWall implements Drawable {
     final WindowModel VIEW_MODEL;
+
+    @Override
+    public Integer GetDrawPrioritet() {
+        return 0;
+    }
 
     @Override
     public void draw(GameDrawer gameDrawer) {
@@ -26,5 +33,12 @@ public class BuildingWall implements Drawable {
 
     @Override
     public void tick(long deltaTime) {
+    }
+
+    @Override
+    public List<Drawable> getDrawables() {
+        var drawables = new LinkedList<Drawable>();
+        drawables.add(this);
+        return drawables;
     }
 }

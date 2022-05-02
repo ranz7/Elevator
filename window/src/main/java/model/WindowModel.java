@@ -4,14 +4,16 @@ package model;
 import connector.protocol.SettingsData;
 import controller.elevatorSystemController.ElevatorSystemSettings;
 import drawable.ColorSettings;
+import drawable.DrawSettings;
 import drawable.Drawable;
 import drawable.drawableObjects.*;
-import drawable.drawableObjects.building.BuildingInsides;
+import drawable.drawableObjects.building.floor.Floor;
 import drawable.drawableObjects.building.BuildingWall;
-import drawable.drawableObjects.elevator.BlackSpace;
-import drawable.drawableObjects.elevator.Button;
+import drawable.drawableObjects.building.HidingWall;
+import drawable.drawableObjects.building.floor.Button;
+import drawable.drawableObjects.customer.DrawableCustomer;
 import drawable.drawableObjects.elevator.DrawableElevator;
-import drawable.drawableObjects.elevator.ElevatorBorder;
+import drawable.drawableObjects.building.floor.ElevatorBorder;
 import lombok.Getter;
 import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
@@ -19,12 +21,13 @@ import model.objects.movingObject.MovingObject;
 import tools.Vector2D;
 
 import java.awt.*;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 
 public class WindowModel {
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
+    public final DrawSettings DRAW_SETTINGS = new DrawSettings();
 
     @Getter
     private SettingsData settings = new SettingsData();
@@ -33,12 +36,13 @@ public class WindowModel {
     private LinkedList<DrawableCustomer> customers = new LinkedList<>();
 
     private BuildingWall buildingWall = new BuildingWall(this);
-    private BuildingInsides BuildingInsides = new BuildingInsides(this);
-    private LinkedList<Button> buttons = new LinkedList<>();
+    private Floor Floor = new Floor(this);
+
     private LinkedList<ElevatorBorder> border = new LinkedList<>();
-    private LinkedList<BlackSpace> blackSpaces = new LinkedList<>();
-    private LinkedList<FlyingText> flyingTexts = new LinkedList<>();
     private LinkedList<HidingWall> hidingWall = new LinkedList<>();
+
+    private LinkedList<FlyingText> flyingTexts = new LinkedList<>();
+
     private boolean needToInitialize = true;
 
     { // tmp code
@@ -79,31 +83,24 @@ public class WindowModel {
         initialiseFirstData();
     }
 
-    private void initialiseFirstData() {
-        var wallSize = settings.BUILDING_SIZE.y / settings.FLOORS_COUNT;
-        double distanceBetweenElevators = ((double) settings.BUILDING_SIZE.x)
-                / (settings.ELEVATORS_COUNT + 1);
+    public Double getWallHeight() {
+        return settings.BUILDING_SIZE.y / settings.FLOORS_COUNT;
+    }
+
+    public Double getDistanceBetweenElevators() {
+        return ((double) settings.BUILDING_SIZE.x) / (settings.ELEVATORS_COUNT + 1);
+    }
+
+    private void initialiseFirstData() { // to much code , need to be moved somewhere
         for (int i = 0; i < settings.FLOORS_COUNT; i++) {
             hidingWall.add(new HidingWall(
-                    new Vector2D(settings.BUILDING_SIZE.x / 2., wallSize * i + settings.ELEVATOR_SIZE.y),
-                    new Point((int) settings.BUILDING_SIZE.x, (int) (wallSize - settings.ELEVATOR_SIZE.y)),
+                    new Vector2D(settings.BUILDING_SIZE.x / 2., getWallHeight() * i + settings.ELEVATOR_SIZE.y),
+                    new Point((int) settings.BUILDING_SIZE.x, (int) (getWallHeight() - settings.ELEVATOR_SIZE.y)),
                     COLOR_SETTINGS.WALL_COLOR
             ));
             for (int j = 0; j < settings.ELEVATORS_COUNT; j++) {
-                buttons.add(new Button(new Vector2D(
-                        distanceBetweenElevators * (j + 1) + settings.BUTTON_RELATIVE_POSITION,
-                        i * wallSize + settings.CUSTOMER_SIZE.y + 4),
-                        new Point(5, 5),
-                        COLOR_SETTINGS.BUTTON_ON_COLOR, COLOR_SETTINGS.BUTTON_OF_COLOR));
-
-                border.add(new ElevatorBorder(
-                        new Vector2D(distanceBetweenElevators * (j + 1), i * wallSize),
-                        elevators.get(j),
-                        (int) wallSize, COLOR_SETTINGS.BORDER_COLOR, COLOR_SETTINGS.NUMBER_COLOR));
-
-                blackSpaces.add(new BlackSpace(
-                        new Vector2D(distanceBetweenElevators * (j + 1), i * wallSize),
-                        elevators.get(j), COLOR_SETTINGS.BLACK_SPACE_COLOR, border.get(0).BORDER_SIZE));
+                var elevatorBorderPosition = new Vector2D(getDistanceBetweenElevators() * (j + 1), i * getWallHeight());
+                border.add(new ElevatorBorder(elevatorBorderPosition, elevators.get(j), this));
             }
         }
     }
@@ -111,15 +108,13 @@ public class WindowModel {
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();
         drawables.add(buildingWall);
-        drawables.addAll(blackSpaces);
-        drawables.addAll(elevators);
-        drawables.addAll(getElevatorDoors());
+        elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
+        border.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         drawables.addAll(hidingWall);
-        drawables.addAll(border);
-        drawables.addAll(buttons);
         drawables.addAll(customers.stream().toList());
-        drawables.add(BuildingInsides);
+        drawables.add(Floor);
         drawables.addAll(flyingTexts);
+        drawables.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
         return drawables;
     }
 
@@ -133,6 +128,9 @@ public class WindowModel {
 
 
     public Button getNearestButton(Vector2D data) {
+        LinkedList<Button> buttons = new LinkedList<>();
+        border.forEach(elevatorBorder -> buttons.add(elevatorBorder.getButton()));
+
         return buttons.stream()
                 .reduce(null, (buttonA, buttonB) -> {
                     if (buttonA == null) {
@@ -149,9 +147,4 @@ public class WindowModel {
                 });
     }
 
-    private Collection<Drawable> getElevatorDoors() {
-        LinkedList<Drawable> elevatorDoors = new LinkedList<>();
-        elevators.forEach(elevator -> elevatorDoors.add(elevator.DOORS));
-        return elevatorDoors;
-    }
 }
