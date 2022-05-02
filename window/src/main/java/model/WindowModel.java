@@ -6,7 +6,12 @@ import controller.elevatorSystemController.ElevatorSystemSettings;
 import drawable.ColorSettings;
 import drawable.Drawable;
 import drawable.drawableObjects.*;
-import drawable.drawableObjects.Button;
+import drawable.drawableObjects.building.BuildingInsides;
+import drawable.drawableObjects.building.BuildingWall;
+import drawable.drawableObjects.elevator.BlackSpace;
+import drawable.drawableObjects.elevator.Button;
+import drawable.drawableObjects.elevator.DrawableElevator;
+import drawable.drawableObjects.elevator.ElevatorBorder;
 import lombok.Getter;
 import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
@@ -27,6 +32,8 @@ public class WindowModel {
     private LinkedList<DrawableElevator> elevators = new LinkedList<>();
     private LinkedList<DrawableCustomer> customers = new LinkedList<>();
 
+    private BuildingWall buildingWall = new BuildingWall(this);
+    private BuildingInsides BuildingInsides = new BuildingInsides(this);
     private LinkedList<Button> buttons = new LinkedList<>();
     private LinkedList<ElevatorBorder> border = new LinkedList<>();
     private LinkedList<BlackSpace> blackSpaces = new LinkedList<>();
@@ -103,22 +110,18 @@ public class WindowModel {
 
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();
+        drawables.add(buildingWall);
         drawables.addAll(blackSpaces);
         drawables.addAll(elevators);
-
         drawables.addAll(getElevatorDoors());
         drawables.addAll(hidingWall);
         drawables.addAll(border);
         drawables.addAll(buttons);
         drawables.addAll(customers.stream().toList());
-        return drawables;
-    }
-    public LinkedList<Drawable> getDrawableOjectsHightPriority() {
-        LinkedList<Drawable> drawables = new LinkedList<>();
+        drawables.add(BuildingInsides);
         drawables.addAll(flyingTexts);
         return drawables;
     }
-
 
     public void addMovingDrawable(FlyingText text) {
         flyingTexts.add(text);

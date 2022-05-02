@@ -1,4 +1,4 @@
-package drawable.drawableObjects;
+package drawable.drawableObjects.elevator;
 
 import model.objects.movingObject.Creature;
 import drawable.Drawable;

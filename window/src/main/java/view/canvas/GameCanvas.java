@@ -12,13 +12,13 @@ import java.awt.*;
 
 public class GameCanvas extends JPanel {
     private JFrame frame;
-    private WindowModel VIEW_MODEL;
+    private WindowModel WINDOW_MODEL;
     @Getter
     GameScaler gameScaler;
     GameDrawer gameDrawer;
     public GameCanvas(Window window, WindowModel viewModel) {
-        VIEW_MODEL = viewModel;
-        setBackground(VIEW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
+        WINDOW_MODEL = viewModel;
+        setBackground(WINDOW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
         setLayout(null);
 
         setSize(window.getSize().width, window.getSize().height);
@@ -36,7 +36,7 @@ public class GameCanvas extends JPanel {
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-        gameScaler.updateSizes(newSize, VIEW_MODEL.getSettings().BUILDING_SIZE);
+        gameScaler.updateSizes(newSize, WINDOW_MODEL.getSettings().BUILDING_SIZE);
     }
 
     @Override
@@ -44,42 +44,7 @@ public class GameCanvas extends JPanel {
         super.paintComponent(g);
         gameDrawer.startDraw(g);
 
-        drawWall(gameDrawer);
-        VIEW_MODEL.getDrawableOjects().forEach(drawable -> drawable.draw(gameDrawer));
-        drawBuilding(gameDrawer);
-        VIEW_MODEL.getDrawableOjectsHightPriority().forEach(drawable -> drawable.draw(gameDrawer));
-    }
-
-    private void drawBuilding(GameDrawer gameDrawer) {
-        var floorHeight = VIEW_MODEL.getSettings().BUILDING_SIZE.y / VIEW_MODEL.getSettings().FLOORS_COUNT;
-        for (int i = 0; i < VIEW_MODEL.getSettings().FLOORS_COUNT; i++) {
-            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BETON_COLOR);
-            gameDrawer.drawRect(
-                    new Vector2D(VIEW_MODEL.getSettings().BUILDING_SIZE.x / 2., i * floorHeight),
-                    new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) floorHeight), 7);
-
-            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
-            gameDrawer.fillRect(
-                    new Vector2D(0 - VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4., i * floorHeight - 2),
-                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, (int) floorHeight)
-            );
-            gameDrawer.fillRect(
-                    new Vector2D(
-                            VIEW_MODEL.getSettings().BUILDING_SIZE.x, i * floorHeight - 2),
-                    new Point(VIEW_MODEL.getSettings().CUSTOMER_SIZE.x * 4, (int) floorHeight)
-            );
-        }
-
-    }
-
-    private void drawWall(GameDrawer gameDrawer) {
-        var floorHeight = VIEW_MODEL.getSettings().BUILDING_SIZE.y / VIEW_MODEL.getSettings().FLOORS_COUNT;
-        for (int i = 0; i < VIEW_MODEL.getSettings().FLOORS_COUNT; i++) {
-            gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.WALL_COLOR);
-            gameDrawer.fillRect(
-                    new Vector2D(0, i * floorHeight),
-                    new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) floorHeight));
-        }
+        WINDOW_MODEL.getDrawableOjects().forEach(drawable -> drawable.draw(gameDrawer));
     }
 
     public boolean zoomedIn() {

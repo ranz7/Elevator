@@ -44,7 +44,6 @@ public class WindowController implements SocketEventListener {
             lastTime += deltaTime;
             currentTime += deltaTime;
             WINDOW_MODEL.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
-            WINDOW_MODEL.getDrawableOjectsHightPriority().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
             GUI.update();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
             WINDOW_MODEL.clearDead();
