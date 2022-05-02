@@ -11,6 +11,10 @@ import java.awt.geom.Point2D;
 @NoArgsConstructor
 public class Vector2D extends Point2D.Double {
     public static final double EPSILON = 0.0001;
+    public static final Vector2D North = new Vector2D(0,1);
+    public static final Vector2D West = new Vector2D(-1,0);
+    public static final Vector2D East = new Vector2D(1,0);
+    public static final Vector2D South = new Vector2D(0,-1);
 
     public Vector2D(double x, double y) {
         super(x, y);
