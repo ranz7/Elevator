@@ -6,7 +6,7 @@ import connector.clientServer.SocketEventListener;
 import connector.protocol.ProtocolMessage;
 import model.GuiModel;
 import tools.Vector2D;
-import view.Gui.Gui;
+import view.gui.Gui;
 import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
@@ -76,7 +76,7 @@ public class GuiController implements SocketEventListener {
     }
 
     public void clickButton(Vector2D point) {
-        var pointInGame = GUI.getGameWindow().getGameScaler().getFromRealToGameCoordinate(point, 0);
+        var pointInGame = GUI.getGameWindow().getGAME_SCALER().getFromRealToGameCoordinate(point, 0);
         var button = WINDOW_MODEL.getNearestButton(pointInGame);
         if (button.getPosition().distanceTo(pointInGame) <20) {
             button.buttonClick();

@@ -5,12 +5,12 @@ import connector.protocol.SettingsData;
 import controller.elevatorSystemController.ElevatorSystemSettings;
 import drawable.ColorSettings;
 import drawable.DrawSettings;
-import drawable.Drawable;
-import drawable.drawableObjects.*;
-import drawable.drawableObjects.building.floor.Floor;
-import drawable.drawableObjects.building.floor.Button;
-import drawable.drawableObjects.customer.DrawableCustomer;
-import drawable.drawableObjects.elevator.DrawableElevator;
+import drawable.drawableBase.creatureWithTexture.Drawable;
+import drawable.drawableObjectsConcrete.*;
+import drawable.drawableObjectsConcrete.building.floor.Floor;
+import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
+import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
+import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
 import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
@@ -22,16 +22,20 @@ import java.util.LinkedList;
 
 
 public class GuiModel {
+    // TODO REFACTOR - move to one SUPER SETINGS class
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
     public final DrawSettings DRAW_SETTINGS = new DrawSettings();
     @Getter
     private final SettingsData settings = new SettingsData();
+    //
 
+    //TODO move into DRAW CLIENT OBJECTS
     @Getter
     private final LinkedList<DrawableElevator> elevators = new LinkedList<>();
     private final LinkedList<DrawableCustomer> customers = new LinkedList<>();
-    private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
+
     private final LinkedList<Floor> floors = new LinkedList<>();
+    private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
 
 
     { // tmp code to create elevators, in normal world they are created by Server
@@ -60,8 +64,8 @@ public class GuiModel {
             var newElevator = new DrawableElevator(
                     elevator.get(i),
                     settings.ELEVATOR_OPEN_CLOSE_TIME,
-                    COLOR_SETTINGS.ELEVATOR_BACKGROUND_COLOR, COLOR_SETTINGS.DOORS_COLOR,
-                    COLOR_SETTINGS.BORDER_COLOR
+                    COLOR_SETTINGS.ELEVATOR_BACKGROUND_COLOR, COLOR_SETTINGS.ELEVATOR_DOOR_COLOR,
+                    COLOR_SETTINGS.ELEVATOR_BORDER_COLOR
             );
             newElevator.setVisible(true);
             elevators.add(newElevator);
@@ -77,7 +81,7 @@ public class GuiModel {
     }
 
     public Double getDistanceBetweenElevators() {
-        return ((double) settings.BUILDING_SIZE.x) / (settings.ELEVATORS_COUNT + 1);
+        return settings.BUILDING_SIZE.x / (settings.ELEVATORS_COUNT + 1);
     }
 
     private void initialiseFirstData() {
@@ -103,25 +107,24 @@ public class GuiModel {
         flyingTexts.removeIf(MovingObject::isDead);
     }
 
+    public ElevatorButton getNearestButton(Vector2D data) {
+        LinkedList<ElevatorButton> elevatorButtons = new LinkedList<>();
+        floors.forEach(floor -> floor.getBorders().forEach(
+                border -> elevatorButtons.add(border.getElevatorButton())));
 
-    public Button getNearestButton(Vector2D data) {
-        LinkedList<Button> buttons = new LinkedList<>();
-        floors.forEach(floor -> floor.getBorder().forEach(
-                border -> buttons.add(border.getButton())));
-
-        return buttons.stream()
-                .reduce(null, (buttonA, buttonB) -> {
-                    if (buttonA == null) {
-                        return buttonB;
+        return elevatorButtons.stream()
+                .reduce(null, (elevatorButtonA, elevatorButtonB) -> {
+                    if (elevatorButtonA == null) {
+                        return elevatorButtonB;
                     }
-                    if (buttonB == null) {
-                        return buttonA;
+                    if (elevatorButtonB == null) {
+                        return elevatorButtonA;
                     }
-                    if (data.getNearest(buttonA.getPosition(), buttonB.getPosition())
-                            .equals(buttonA.getPosition())) {
-                        return buttonA;
+                    if (data.getNearest(elevatorButtonA.getPosition(), elevatorButtonB.getPosition())
+                            .equals(elevatorButtonA.getPosition())) {
+                        return elevatorButtonA;
                     }
-                    return buttonB;
+                    return elevatorButtonB;
                 });
     }
 

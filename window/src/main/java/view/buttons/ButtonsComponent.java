@@ -2,19 +2,19 @@ package view.buttons;
 
 import lombok.Setter;
 import model.GuiModel;
-import view.Gui.ButtonsListener;
+import view.gui.ButtonsListener;
 import view.canvas.GameWindow;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.List;
 
-import view.Gui.Gui;
+import view.gui.Gui;
 
 public class ButtonsComponent {
-    private final Dimension size;
+    private Gui gui;
     private final GuiModel guiModel;
     private final GameWindow gameWindow;
     @Setter
@@ -24,11 +24,10 @@ public class ButtonsComponent {
     private final LinkedList<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> CHANGE_SPEED_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> SELECT_FLOOR_BUTTONS = new LinkedList<>();
-    private Gui gui;
 
-    public ButtonsComponent(GuiModel guiModel, GameWindow gameWindow) {
+    public ButtonsComponent(Gui gui, GuiModel guiModel, GameWindow gameWindow) {
+        this.gui = gui;
         this.gameWindow = gameWindow;
-        this.size = gameWindow.getSize();
         this.guiModel = guiModel;
     }
 
@@ -109,6 +108,11 @@ public class ButtonsComponent {
         if (CHANGE_SPEED_BUTTONS.get(1) == source) {
             gui.increaseGameSpeedButtonClicked();
         }
+
+        List<Integer> a = new ArrayList<>();
+        Set<String> b = new HashSet<>();
+        HashSet<String> c = new HashSet<>();
+        c.equals(b);
 
         Iterator<JButton> buttonIterator = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> newFloorButtonIterator = SELECT_FLOOR_BUTTONS.iterator();

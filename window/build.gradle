@@ -23,6 +23,8 @@ repositories {
 }
 
 jar {
+
+
     manifest.attributes("Main-Class": "mainClassName");
 }
 
