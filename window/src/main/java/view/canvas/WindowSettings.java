@@ -1,4 +1,4 @@
-package view.Window;
+package view.canvas;
 
 import java.awt.*;
 

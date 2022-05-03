@@ -20,7 +20,7 @@ public class SettingsData implements Serializable {
     public final long ELEVATOR_OPEN_CLOSE_TIME = 3500;
     public final int ELEVATORS_COUNT = 4;
     public final int FLOORS_COUNT = 6;
-    public final double BUTTON_RELATIVE_POSITION = ELEVATOR_SIZE.x / 2. + 7;
+    public final double BUTTON_RELATIVE_POSITION =  7;
     public final double GAME_SPEED = 0;
     public final double VERSION = 0;
 

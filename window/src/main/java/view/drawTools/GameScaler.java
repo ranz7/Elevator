@@ -2,16 +2,18 @@ package view.drawTools;
 
 import lombok.Getter;
 import tools.Vector2D;
+import view.drawTools.GameScalerSettings;
 
 import java.awt.*;
 
 public class GameScaler {
-    Vector2D blackZone = new Vector2D(100, 100);
-    private Vector2D screenSizeAfterShift = new Vector2D(0, 0);
-    private double scalingCoefficient;
-    private Vector2D drawOffset = new Vector2D(0, 0);
+    private final Vector2D blackZone = GameScalerSettings.blackZone;
 
-    // SCALE DATA
+    private Vector2D screenSizeAfterShift = new Vector2D(0, 0);
+    private Vector2D drawOffset = new Vector2D(0, 0);
+    private double scalingCoefficient;
+
+    // ZOOM DATA
     @Getter
     private double additionalZoomFinishValue = 1.;
     private double additionalZoomCurrentValue = 1.;
@@ -21,7 +23,6 @@ public class GameScaler {
 
     Vector2D clickedPoint = new Vector2D(0, 0);
     double zoomScale = 1;
-
 
     public void tick() {
         additionalZoomCurrentValue += (additionalZoomFinishValue - additionalZoomCurrentValue) / 10;
@@ -37,28 +38,43 @@ public class GameScaler {
         return length / (scalingCoefficient * additionalZoomCurrentValue);
     }
 
-    public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+    public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, int heigthOfTheObject) {
         return new Vector2D(
                 drawOffset.x
-                        + realPosition.x / (scalingCoefficient * additionalZoomCurrentValue)
-                        + additionalMove.x / (additionalZoomCurrentValue),
-                screenSizeAfterShift.y - drawOffset.y
-                        - (realPosition.y + heigthOfTheObject) / (scalingCoefficient * additionalZoomCurrentValue)
-                        - (additionalMove.y) / (additionalZoomCurrentValue))
-                .getAdded(blackZone.getDivided(2));
+                        + gameCoordinate.x / (scalingCoefficient * additionalZoomCurrentValue)
+                        + additionalMove.x / (additionalZoomCurrentValue) + blackZone.x / 2,
+                -(drawOffset.y
+                        + (gameCoordinate.y + heigthOfTheObject) / (scalingCoefficient * additionalZoomCurrentValue)
+                        + (additionalMove.y) / (additionalZoomCurrentValue)) + screenSizeAfterShift.y + blackZone.y / 2);
+    }
+
+    public Vector2D getFromGameToRealCoordinate(Point gameCoordinate, int heigthOfTheObject) {
+        return getFromGameToRealCoordinate(new Vector2D(gameCoordinate), heigthOfTheObject);
 
     }
 
+    public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+        return new Vector2D(
+                (realPosition.x - drawOffset.x - blackZone.x / 2
+                        - additionalMove.x / (additionalZoomCurrentValue)) * scalingCoefficient * additionalZoomCurrentValue,
+                (-realPosition.y + blackZone.y / 2 + screenSizeAfterShift.y - drawOffset.y
+                        - (additionalMove.y) / (additionalZoomCurrentValue)) * scalingCoefficient * additionalZoomCurrentValue
+                        - heigthOfTheObject);
+    }
+
+    public Vector2D getFromRealToGameCoordinate(Point realPosition, int heigthOfTheObject) {
+        return getFromRealToGameCoordinate(new Vector2D(realPosition), heigthOfTheObject);
+    }
 
     public void updateSizes(Dimension screenSize, Vector2D buildingSize) {
-        clickedPoint = clickedPoint.getSubbed(drawOffset); // NEED TO BE FIXED
+        clickedPoint = clickedPoint.getSubbed(drawOffset).getDivided(scalingCoefficient); // NEED TO BE FIXED
 
         screenSizeAfterShift = new Vector2D(screenSize.width - blackZone.x, screenSize.height - blackZone.y);
         scalingCoefficient = buildingSize.getDivided(screenSizeAfterShift).getMaxOfTwo();
         Vector2D sizeOfBuildingAfterRescale = buildingSize.getDivided(scalingCoefficient);
         drawOffset = screenSizeAfterShift.getSubbed(sizeOfBuildingAfterRescale).getDivided(2);
 
-        clickedPoint = clickedPoint.getAdded(drawOffset);
+        clickedPoint = clickedPoint.getMultiplied(scalingCoefficient).getAdded(drawOffset);
         if (zoomScale != 1) {
             updateZoomVector();
         }
@@ -72,16 +88,15 @@ public class GameScaler {
                 .getAdded(new Vector2D(-1, 1).getMultiplied(clickedPoint.getSubbed(blackZone.getDivided(2))));
     }
 
-
     public void zoomIn(Vector2D point, double zoomScale) {
-        clickedPoint = point;
         this.zoomScale = zoomScale;
+        clickedPoint = point;
         updateZoomVector();
     }
 
     public void zoomOut() {
+        additionalMoveFinishValue = new Vector2D(0, 0);
         additionalZoomFinishValue = 1;
         this.zoomScale = 1;
-        additionalMoveFinishValue = new Vector2D(0, 0);
     }
 }

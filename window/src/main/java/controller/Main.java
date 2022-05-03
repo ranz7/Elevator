@@ -1,12 +1,12 @@
 package controller;
 
 import connector.clientServer.Client;
-import model.WindowModel;
+import model.GuiModel;
 
 public class Main {
     public static void main(String[] args) {
-        var windowModel = new WindowModel();
-        var controller = new WindowController(windowModel);
+        var windowModel = new GuiModel();
+        var controller = new GuiController(windowModel);
         var client = new Client(controller);
         controller.setClient(client);
         if (args.length == 0) {

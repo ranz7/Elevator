@@ -1,4 +1,4 @@
-package drawable.drawableObjects;
+package drawable.drawableObjects.elevator;
 
 import model.objects.movingObject.Creature;
 import drawable.Drawable;
@@ -7,6 +7,8 @@ import view.drawTools.GameDrawer;
 import lombok.Getter;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 public class DrawableElevator extends Creature implements Drawable {
@@ -25,6 +27,11 @@ public class DrawableElevator extends Creature implements Drawable {
     }
 
     @Override
+    public Integer GetDrawPrioritet() {
+        return 4;
+    }
+
+    @Override
     public void draw(GameDrawer gameDrawer) {
         if (!isVisible()) {
             return;
@@ -37,7 +44,15 @@ public class DrawableElevator extends Creature implements Drawable {
     }
 
     @Override
+    public List<Drawable> getDrawables() {
+        List<Drawable> drawables = new LinkedList<>();
+        drawables.add(this);
+        drawables.add(DOORS);
+        return drawables;
+    }
+
+    @Override
     public void tick(long delta_time) {
- }
+    }
 
 }
