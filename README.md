@@ -14,6 +14,7 @@ Download source files.
 ```bat
   git clone https://github.com/ranz7/Elevator.git # install
   cd ./Elevator
+  ./prepare_env.sh
 ```
 
 if you don't have git, just download source
