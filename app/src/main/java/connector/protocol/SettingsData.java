@@ -1,6 +1,9 @@
 package connector.protocol;
 
 import common.Vector2D;
+import connector.clientServer.ConnectionSettings;
+import controller.customerController.CustomerSettings;
+import controller.elevatorSystemController.ElevatorSystemSettings;
 
 import java.awt.Point;
 import java.io.Serializable;
@@ -14,15 +17,25 @@ import java.io.Serializable;
  */
 
 public class SettingsData implements Serializable {
-    public final Vector2D BUILDING_SIZE = new Vector2D(1000, 1800);
-    public final Point ELEVATOR_SIZE = new Point(50, 80);
-    public final Point CUSTOMER_SIZE = new Point(30, 50);
-    public final long ELEVATOR_OPEN_CLOSE_TIME = 3500;
-    public final int ELEVATORS_COUNT = 4;
-    public final int FLOORS_COUNT = 15;
-    public final double BUTTON_RELATIVE_POSITION =  7;
-    public final double GAME_SPEED = 0;
-    public final double VERSION = 0;
+    public final Vector2D BUILDING_SIZE;
+    public final Point ELEVATOR_SIZE;
+    public final Point CUSTOMER_SIZE;
+    public final long ELEVATOR_OPEN_CLOSE_TIME;
+    public final int ELEVATORS_COUNT;
+    public final int FLOORS_COUNT;
+    public final double BUTTON_RELATIVE_POSITION;
+    public final double GAME_SPEED;
+    public final double VERSION;
 
-    // CONSTTRUCTOR
+    public SettingsData(ElevatorSystemSettings settingsElevator, CustomerSettings settingsCustomer, double gameSpeed) {
+        BUTTON_RELATIVE_POSITION = settingsElevator.BUTTON_RELATIVE_POSITION;
+        ELEVATOR_OPEN_CLOSE_TIME = settingsElevator.ELEVATOR_OPEN_CLOSE_TIME;
+        BUILDING_SIZE = new Vector2D(settingsElevator.BUILDING_SIZE);
+        ELEVATOR_SIZE = settingsElevator.ELEVATOR_SIZE;
+        CUSTOMER_SIZE = settingsCustomer.CUSTOMER_SIZE;
+        FLOORS_COUNT = settingsElevator.FLOORS_COUNT;
+        VERSION = ConnectionSettings.VERSION;
+        GAME_SPEED = gameSpeed;
+        ELEVATORS_COUNT = settingsElevator.getElevatorsCount();
+    }
 }

@@ -1,5 +1,6 @@
 package model;
 
+import connector.protocol.CreaturesData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,5 +27,9 @@ public class Model {
 
     public void clearDead() {
         CUSTOMERS.removeIf(MovingObject::isDead);
+    }
+
+    public CreaturesData getDataToSent() {
+        return new CreaturesData(CUSTOMERS, building.ELEVATORS);
     }
 }

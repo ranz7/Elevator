@@ -18,7 +18,7 @@ import java.util.LinkedList;
  * </p>
  */
 
-public class CreaturesData {
+public class CreaturesData implements Serializable {
     public final LinkedList<Creature> CUSTOMERS = new LinkedList<>();
     public final LinkedList<Creature> ELEVATORS = new LinkedList<>();
 

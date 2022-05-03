@@ -1,4 +1,4 @@
-package drawable.drawableBase.creatureWithTexture;
+package drawable.drawableBase;
 
 import view.drawTools.GameDrawer;
 

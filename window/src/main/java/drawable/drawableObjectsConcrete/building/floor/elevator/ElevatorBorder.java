@@ -1,7 +1,7 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import drawable.drawableBase.creatureWithTexture.Drawable;
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.Drawable;
+import drawable.drawableBase.DrawableCreature;
 import lombok.Getter;
 import model.GuiModel;
 import model.objects.movingObject.Creature;

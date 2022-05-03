@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.building.floor.decorations;
 
-import drawable.drawableBase.creatureWithTexture.DrawCenter;
+import drawable.drawableBase.DrawCenter;
 import drawable.drawableBase.creatureWithTexture.DrawableCreatureWithTexture;
 import common.Vector2D;
 

@@ -1,5 +1,7 @@
 package drawable.drawableBase.creatureWithTexture;
 
+import drawable.drawableBase.Drawable;
+import drawable.drawableBase.DrawableCreature;
 import lombok.Getter;
 import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;

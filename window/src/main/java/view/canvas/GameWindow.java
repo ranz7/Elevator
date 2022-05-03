@@ -1,6 +1,6 @@
 package view.canvas;
 
-import drawable.drawableBase.creatureWithTexture.Drawable;
+import drawable.drawableBase.Drawable;
 import lombok.Getter;
 import model.GuiModel;
 import common.Vector2D;

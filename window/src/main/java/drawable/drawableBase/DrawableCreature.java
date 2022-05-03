@@ -1,4 +1,4 @@
-package drawable.drawableBase.creatureWithTexture;
+package drawable.drawableBase;
 
 import model.objects.movingObject.Creature;
 import common.Vector2D;

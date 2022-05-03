@@ -1,15 +1,16 @@
 package controller.customerController;
 
+import common.Vector2D;
 import controller.elevatorSystemController.ElevatorSystemController;
 import model.objects.elevator.ElevatorRequest;
 import model.objects.customer.CustomerState;
 import model.objects.customer.Customer;
+import connector.protocol.Protocol;
 import controller.Controller;
 
 import java.util.Random;
 
 import common.Timer;
-import common.Vector2D;
 
 /**
  * Manipulate all customers in game.
@@ -96,6 +97,7 @@ public class CustomersController {
 
         if (customer.isReachedDestination()) {
             ELEVATOR_SYSTEM_CONTROLLER.getCustomerIntoElevator(closestOpenedElevator);
+            CONTROLLER.Send(Protocol.CUSTOMER_GET_IN_OUT, customer.getId());
             customer.setCurrentElevator(closestOpenedElevator);
 
             var makeSpaceInElevator = ELEVATOR_SYSTEM_CONTROLLER.SETTINGS.ELEVATOR_SIZE.x / 2;
@@ -131,6 +133,7 @@ public class CustomersController {
             return;
         }
         customer.setDestination(getStartPositionForCustomer(customer.getCurrentFlor()));
+        CONTROLLER.Send(Protocol.CUSTOMER_GET_IN_OUT, customer.getId());
     }
 
     public void CreateCustomer(int floorStart, int floorEnd) {

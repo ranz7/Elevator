@@ -47,6 +47,7 @@ public class ElevatorSystemController {
     }
 
     public void buttonClick(ElevatorRequest request) {
+        CONTROLLER.Send(Protocol.ELEVATOR_BUTTON_CLICK, request.button_position());
         if (!tryToCallElevator(request)) {
             PENDING_ELEVATOR_REQUESTS.add(request);
         }
@@ -78,6 +79,7 @@ public class ElevatorSystemController {
 
     private void processInMotion(Elevator elevator) {
         if (elevator.isReachedDestination()) {
+            CONTROLLER.Send(Protocol.ELEVATOR_OPEN, elevator.getId());
             elevator.TIMER.restart(SETTINGS.ELEVATOR_OPEN_CLOSE_TIME);
             elevator.setState(ElevatorState.OPENING);
         }
@@ -103,6 +105,7 @@ public class ElevatorSystemController {
             return;
         }
         elevator.TIMER.restart(SETTINGS.ELEVATOR_OPEN_CLOSE_TIME);
+        CONTROLLER.Send(Protocol.ELEVATOR_CLOSE, elevator.getId());
         elevator.setState(ElevatorState.CLOSING);
     }
 
@@ -146,5 +149,19 @@ public class ElevatorSystemController {
             return elevatorA;
         }
         return elevatorB;
+    }
+
+    public void changeElevatorsCount(boolean data) {
+        if (data) {
+            if (SETTINGS.getElevatorsCount() < SETTINGS.MAX_ELEVATORS_COUNT) {
+                SETTINGS.setElevatorsCount(SETTINGS.getElevatorsCount() + 1);
+                MODEL.getBuilding().updateElevatorsPosition();
+                return;
+            }
+        }
+        if (SETTINGS.getElevatorsCount() > 0) {
+            SETTINGS.setElevatorsCount(SETTINGS.getElevatorsCount() - 1);
+            MODEL.getBuilding().updateElevatorsPosition();
+        }
     }
 }

@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.building.floor;
 
-import drawable.drawableBase.creatureWithTexture.Drawable;
+import drawable.drawableBase.Drawable;
 import lombok.RequiredArgsConstructor;
 import model.GuiModel;
 import common.Vector2D;

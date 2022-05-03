@@ -26,7 +26,44 @@ public class Server extends Thread {
 
     @Override
     public void run() {
-        LOGGER.info("UNCOMPLETED CLASS");
+        try {
+            var serverSocket = new ServerSocket(ConnectionSettings.PORT);
+            while (true) {
+                LOGGER.info("wait until  new connection");
+                Socket clientSocket = serverSocket.accept();
+                var objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+                var socketCompactData = new SocketCompactData(objectOutputStream, clientSocket);
+                synchronized (CONNECTED_CLIENTS) {
+                    CONNECTED_CLIENTS.add(socketCompactData);
+                }
+                TimeUnit.MILLISECONDS.sleep(200);
+                var streamReader = new StreamReader(clientSocket, SOCKET_EVENT_LISTENER);
+                streamReader.start();
+
+                TimeUnit.MILLISECONDS.sleep(200);
+                SOCKET_EVENT_LISTENER.onNewSocketConnection(socketCompactData);
+            }
+        } catch (IOException exception) {
+            LOGGER.warning("Server exception: " + exception.getMessage());
+        } catch (InterruptedException ignored) {
+        }
     }
+
+    public void Send(ProtocolMessage message) {
+        synchronized (CONNECTED_CLIENTS) {
+            CONNECTED_CLIENTS.removeIf(SocketCompactData::isClosed);
+            for (SocketCompactData client : CONNECTED_CLIENTS) {
+                Send(client, message);
+            }
+        }
+    }
+
+    public void Send(SocketCompactData client, ProtocolMessage message) {
+        try {
+            client.stream().writeObject(message);
+        } catch (IOException ignore) {
+        }
+    }
+
 
 }
