@@ -94,4 +94,8 @@ public class ResourceLoader {
         return name.substring(name.lastIndexOf(".") + 1).equals("json");
     }
 
+    public static String changeExtension(String name, String newExtensionWithDot) {
+        return name.substring(0, name.lastIndexOf(".") + 1) + newExtensionWithDot;
+    }
+
 }

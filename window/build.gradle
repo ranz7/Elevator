@@ -12,9 +12,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    compileOnly group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation 'org.json:json:20171018'
+    compileOnly 'org.json:json:20171018'
     implementation project(':app')
 }
 

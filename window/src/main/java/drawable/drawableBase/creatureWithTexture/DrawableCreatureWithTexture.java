@@ -1,10 +1,9 @@
 package drawable.drawableBase.creatureWithTexture;
 
 import lombok.Getter;
-import model.objects.movingObject.Creature;
 import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;
-import tools.Vector2D;
+import common.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
@@ -28,15 +27,16 @@ public class DrawableCreatureWithTexture extends DrawableCreature {
     }
 
     public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource) {
-        super(position);
+        this(position, textureFolderNameToGetRandomGameSource, getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource));
+    }
+
+    private static String getRandomGameSourceFrom(String textureFolderNameToGetRandomGameSource) {
         int uperBound = ResourceLoader.getNumOfFilesIn(textureFolderNameToGetRandomGameSource);
         if (uperBound == 0) {
             throw new RuntimeException("There is no config(json) in:" + textureFolderNameToGetRandomGameSource);
         }
-        int randomResourceNum = random.nextInt();
-        var resourceName = ResourceLoader.getGameResourceNameIn(textureFolderNameToGetRandomGameSource, randomResourceNum);
-        gameResource = ResourceLoader.getGameResource(textureFolderNameToGetRandomGameSource, resourceName);
-        image = gameResource.getResourceImage();
+        int randomResourceNum = random.nextInt(uperBound);
+        return ResourceLoader.getGameResourceNameIn(textureFolderNameToGetRandomGameSource, randomResourceNum);
     }
 
     @Override

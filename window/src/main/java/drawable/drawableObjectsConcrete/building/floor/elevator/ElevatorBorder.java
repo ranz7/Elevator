@@ -5,7 +5,7 @@ import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import lombok.Getter;
 import model.GuiModel;
 import model.objects.movingObject.Creature;
-import tools.Vector2D;
+import common.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;

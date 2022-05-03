@@ -6,7 +6,7 @@ import controller.GuiController;
 import drawable.drawableObjectsConcrete.FlyingText;
 import lombok.Getter;
 import model.GuiModel;
-import tools.Vector2D;
+import common.Vector2D;
 import view.canvas.GameWindow;
 import view.buttons.ButtonsComponent;
 

@@ -1,9 +1,9 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
-import tools.Vector2D;
+import common.Vector2D;
 import view.drawTools.GameDrawer;
-import tools.Timer;
+import common.Timer;
 
 import java.awt.*;
 

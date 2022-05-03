@@ -1,6 +1,6 @@
 package connector.protocol;
 
-import tools.Vector2D;
+import common.Vector2D;
 
 import java.awt.Point;
 import java.io.Serializable;

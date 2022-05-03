@@ -1,8 +1,7 @@
 package view.drawTools;
 
 import lombok.Getter;
-import tools.Vector2D;
-import view.drawTools.GameScalerSettings;
+import common.Vector2D;
 
 import java.awt.*;
 

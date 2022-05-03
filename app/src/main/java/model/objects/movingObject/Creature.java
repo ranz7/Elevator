@@ -2,7 +2,7 @@ package model.objects.movingObject;
 
 import lombok.Getter;
 import lombok.Setter;
-import tools.Vector2D;
+import common.Vector2D;
 
 import java.awt.*;
 

@@ -5,7 +5,7 @@ import connector.clientServer.SocketCompactData;
 import connector.clientServer.SocketEventListener;
 import connector.protocol.ProtocolMessage;
 import model.GuiModel;
-import tools.Vector2D;
+import common.Vector2D;
 import view.gui.Gui;
 import lombok.Setter;
 

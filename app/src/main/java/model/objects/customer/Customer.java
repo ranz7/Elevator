@@ -4,8 +4,8 @@ import model.objects.movingObject.MovingObject;
 import model.objects.elevator.Elevator;
 import lombok.Setter;
 import lombok.Getter;
-import tools.Timer;
-import tools.Vector2D;
+import common.Timer;
+import common.Vector2D;
 
 import java.awt.Point;
 

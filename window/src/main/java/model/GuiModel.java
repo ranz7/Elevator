@@ -15,7 +15,7 @@ import lombok.Getter;
 import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
 import model.objects.movingObject.MovingObject;
-import tools.Vector2D;
+import common.Vector2D;
 
 import java.awt.*;
 import java.util.LinkedList;

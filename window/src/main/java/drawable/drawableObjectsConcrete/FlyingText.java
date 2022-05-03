@@ -2,9 +2,9 @@ package drawable.drawableObjectsConcrete;
 
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import model.objects.movingObject.MovingObject;
-import tools.Vector2D;
+import common.Vector2D;
 import view.drawTools.GameDrawer;
-import tools.Timer;
+import common.Timer;
 
 import java.awt.*;
 import java.util.LinkedList;

@@ -1,7 +1,8 @@
 package drawable.drawableObjectsConcrete.building.floor.decorations;
 
+import drawable.drawableBase.creatureWithTexture.DrawCenter;
 import drawable.drawableBase.creatureWithTexture.DrawableCreatureWithTexture;
-import tools.Vector2D;
+import common.Vector2D;
 
 public class FloorPainting extends DrawableCreatureWithTexture {
     public FloorPainting(Vector2D position) {
@@ -10,6 +11,11 @@ public class FloorPainting extends DrawableCreatureWithTexture {
 
     @Override
     public Integer GetDrawPrioritet() {
-        return 12;
+        return 2;
+    }
+
+    @Override
+    public DrawCenter getDrawCenter() {
+        return DrawCenter.CENTER_BY_XY;
     }
 }

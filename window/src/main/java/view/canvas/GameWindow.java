@@ -3,7 +3,7 @@ package view.canvas;
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import lombok.Getter;
 import model.GuiModel;
-import tools.Vector2D;
+import common.Vector2D;
 import view.gui.WindowResizeListener;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;

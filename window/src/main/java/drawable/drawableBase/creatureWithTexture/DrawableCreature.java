@@ -1,7 +1,7 @@
 package drawable.drawableBase.creatureWithTexture;
 
 import model.objects.movingObject.Creature;
-import tools.Vector2D;
+import common.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
@@ -39,5 +39,9 @@ public class DrawableCreature extends Creature implements Drawable {
     @Override
     public Integer GetDrawPrioritet() {
         return 10000;
+    }
+
+    public DrawCenter getDrawCenter(){
+        return DrawCenter.CENTER_BY_X;
     }
 }
