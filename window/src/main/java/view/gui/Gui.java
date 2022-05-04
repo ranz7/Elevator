@@ -34,7 +34,13 @@ public class Gui {
         gameWindow.addResizeListener(new WindowResizeListener(this));
     }
 
+    boolean started = false;
+
     public void start() {
+        if (started) {
+            return;
+        }
+        started = true;
         gameWindow.start();
         buttonsComponent.start();
         resize();

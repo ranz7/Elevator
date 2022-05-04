@@ -23,9 +23,9 @@ public class DrawableCustomer extends DrawableCreature {
     @Override
     public Integer GetDrawPrioritet() {
         if (behindElevator) {
-            return 4;
+            return 12;
         }
-        return 12;
+        return 5;
     }
 
     @Override

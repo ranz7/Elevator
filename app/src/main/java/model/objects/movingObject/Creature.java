@@ -5,12 +5,13 @@ import lombok.Setter;
 import common.Vector2D;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /*
  * Basic object of all objects in project
  */
 @Getter
-public class Creature {
+public class Creature implements Serializable {
     // used in sent data
     private static Integer next_id = 0;
 

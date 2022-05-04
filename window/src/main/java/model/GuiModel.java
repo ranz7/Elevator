@@ -103,7 +103,6 @@ public class GuiModel {
 
     public void setSettings(SettingsData settings) {
         this.settings = settings;
-        needToInitialize = true;
     }
 
     public boolean isNeedToInitialise() {

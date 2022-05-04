@@ -25,14 +25,14 @@ public class CustomersController {
     private final Controller CONTROLLER;
 
     public CustomersController(Controller controller) {
-        this.ELEVATOR_SYSTEM_CONTROLLER = controller.ELEVATOR_SYSTEM_CONTROLLER;
+        this.ELEVATOR_SYSTEM_CONTROLLER = controller.elevatorSystemController;
         this.CONTROLLER = controller;
     }
 
     public void tick(long deltaTime) {
         spawnTimer.tick(deltaTime);
 
-        if (spawnTimer.isReady() && CONTROLLER.MODEL.CUSTOMERS.size() < CUSTOMERS_SETTINGS.MAX_CUSTOMERS) {
+        if (spawnTimer.isReady() && CONTROLLER.model.CUSTOMERS.size() < CUSTOMERS_SETTINGS.MAX_CUSTOMERS) {
             var maxFloor = ELEVATOR_SYSTEM_CONTROLLER.SETTINGS.FLOORS_COUNT;
             var randomStartFloor = new Random().nextInt(0, maxFloor);
             var randomEndFloor = new Random().nextInt(0, maxFloor);
@@ -42,7 +42,7 @@ public class CustomersController {
             spawnTimer.restart(CUSTOMERS_SETTINGS.SPAWN_RATE);
         }
 
-        for (var customer : CONTROLLER.MODEL.CUSTOMERS) {
+        for (var customer : CONTROLLER.model.CUSTOMERS) {
             switch (customer.getState()) {
                 case GO_TO_BUTTON -> processGoToButton(customer);
                 case WAIT_UNTIL_ARRIVED -> processWaitUntilArrived(customer);
@@ -55,7 +55,7 @@ public class CustomersController {
     }
 
     private void processGoToButton(Customer customer) {
-        var buttonPosition = CONTROLLER.MODEL.getBuilding()
+        var buttonPosition = CONTROLLER.model.getBuilding()
                 .getClosestButtonOnFloor(customer.getPosition());
         customer.setDestination(buttonPosition);
         if (customer.isReachedDestination()) {
@@ -67,7 +67,7 @@ public class CustomersController {
     }
 
     private void processWaitUntilArrived(Customer customer) {
-        var nearestOpenedElevatorOnFloor = CONTROLLER.MODEL.getBuilding()
+        var nearestOpenedElevatorOnFloor = CONTROLLER.model.getBuilding()
                 .getClosestOpenedElevatorOnFloor(customer.getPosition(), customer.getCurrentFlor());
         if (nearestOpenedElevatorOnFloor != null) {
             customer.setDestination(nearestOpenedElevatorOnFloor.getPosition());
@@ -86,7 +86,7 @@ public class CustomersController {
     }
 
     private void processGetIn(Customer customer) {
-        var closestOpenedElevator = CONTROLLER.MODEL.getBuilding()
+        var closestOpenedElevator = CONTROLLER.model.getBuilding()
                 .getClosestOpenedElevatorOnFloor(customer.getPosition(), customer.getCurrentFlor());
         if (closestOpenedElevator == null) {
             customer.setState(CustomerState.GO_TO_BUTTON);
@@ -147,11 +147,11 @@ public class CustomersController {
                 CUSTOMERS_SETTINGS.CUSTOMER_SIZE);
 
         customer.setState(CustomerState.GO_TO_BUTTON);
-        CONTROLLER.MODEL.CUSTOMERS.add(customer);
+        CONTROLLER.model.CUSTOMERS.add(customer);
     }
 
     private Vector2D getStartPositionForCustomer(int floorStart) {
-        Vector2D startPosition = CONTROLLER.MODEL.getBuilding().getStartPositionAfterBuilding(floorStart);
+        Vector2D startPosition = CONTROLLER.model.getBuilding().getStartPositionAfterBuilding(floorStart);
         // So u can't see customer when he spawns
         if (startPosition.x == 0) {
             startPosition.x -= CUSTOMERS_SETTINGS.CUSTOMER_SIZE.x * 2;

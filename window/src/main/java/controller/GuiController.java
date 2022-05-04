@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @see SwingWindow
  */
 public class GuiController implements SocketEventListener {
-    static private final int TPS = 50;
+    static private final int TPS = 120;
 
     private final GuiModel WINDOW_MODEL;
     private final LinkedList<ProtocolMessage> MESSAGE = new LinkedList<>();
@@ -42,7 +42,6 @@ public class GuiController implements SocketEventListener {
     }
 
     public void start() throws InterruptedException {
-        GUI.start();
         long lastTime = System.currentTimeMillis();
 
         while (true) {
@@ -52,13 +51,13 @@ public class GuiController implements SocketEventListener {
             currentTime += deltaTime;
 
             if (!WINDOW_MODEL.isNeedToInitialise()) {
+                GUI.start();
                 WINDOW_MODEL.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
                 WINDOW_MODEL.clearDead();
+                GUI.update();
             }
 
-            GUI.update();
             TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
-            WINDOW_MODEL.clearDead();
         }
     }
 
@@ -111,7 +110,7 @@ public class GuiController implements SocketEventListener {
                 currentTime = message.timeStump();
             }
             case UPDATE_DATA -> {
-                WINDOW_MODEL.updateData((CreaturesData) message.data());
+               WINDOW_MODEL.updateData((CreaturesData) message.data());
             }
             case ELEVATOR_BUTTON_CLICK -> {
                 clickButton((Vector2D) message.data());
@@ -149,7 +148,6 @@ public class GuiController implements SocketEventListener {
         var button = WINDOW_MODEL.getNearestButton(pointInGame);
         if (button.getPosition().distanceTo(pointInGame) <20) {
             button.buttonClick();
-
         }
     }
 }

@@ -17,8 +17,8 @@ public class GameWindow extends JPanel {
     private final GuiModel WINDOW_MODEL;
 
     @Getter
-    private final GameScaler GAME_SCALER;
-    private final GameDrawer GAME_DRAWER;
+    private GameScaler GAME_SCALER;
+    private GameDrawer GAME_DRAWER;
 
     public GameWindow(GuiModel viewModel) {
         WINDOW_MODEL = viewModel;
@@ -33,14 +33,14 @@ public class GameWindow extends JPanel {
         FRAME.setVisible(true);
         FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME.add(this);
+    }
 
+    public void start() {
+        setVisible(true);
         GAME_SCALER = new GameScaler(getSize(), WINDOW_MODEL.getSettings().BUILDING_SIZE);
         GAME_DRAWER = new GameDrawer(GAME_SCALER);
     }
 
-    public void start(){
-        this.setVisible(true);
-    }
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {

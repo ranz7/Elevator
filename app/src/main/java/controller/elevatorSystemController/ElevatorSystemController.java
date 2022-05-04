@@ -26,7 +26,7 @@ public class ElevatorSystemController {
 
     public ElevatorSystemController(Controller controller) {
         this.CONTROLLER = controller;
-        this.MODEL = CONTROLLER.MODEL;
+        this.MODEL = CONTROLLER.model;
         MODEL.Initialize(new Building(SETTINGS));
     }
 

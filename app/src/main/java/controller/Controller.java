@@ -9,7 +9,6 @@ import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import controller.customerController.CustomersController;
 import controller.elevatorSystemController.ElevatorSystemController;
-import lombok.Getter;
 import lombok.Setter;
 import model.Model;
 import common.Timer;
@@ -18,7 +17,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 /**
  * Main controller .
@@ -27,12 +26,12 @@ import java.util.stream.Collectors;
  * @see ElevatorSystemController
  */
 public class Controller implements SocketEventListener {
-    public final ElevatorSystemController ELEVATOR_SYSTEM_CONTROLLER;
-    public final Model MODEL;
+    private final Logger LOGGER = Logger.getLogger(Controller.class.getName());
+    private final CustomersController CUSTOMER_CONTROLLER;
+    public final ElevatorSystemController elevatorSystemController;
+    public final Model model;
 
     private final LinkedList<ProtocolMessage> MESSAGES = new LinkedList<>();
-    private final AtomicBoolean EXIT = new AtomicBoolean(false);
-    private final CustomersController CUSTOMER_CONTROLLER;
     private final Timer TIMER_TO_CHECK_SERVER = new Timer();
     private final int TPS = 50;
 
@@ -53,20 +52,17 @@ public class Controller implements SocketEventListener {
     public void onNewSocketConnection(SocketCompactData client) {
         var message =
                 new ProtocolMessage(Protocol.APPLICATION_SETTINGS,
-                        new SettingsData(ELEVATOR_SYSTEM_CONTROLLER.SETTINGS, CUSTOMER_CONTROLLER.CUSTOMERS_SETTINGS,
+                        new SettingsData(elevatorSystemController.SETTINGS, CUSTOMER_CONTROLLER.CUSTOMERS_SETTINGS,
                                 gameSpeed),
                         currentTime);
         server.Send(client, message);
     }
 
-    public Controller() {
-        this(new Model());
-    }
-
     public Controller(Model model) {
-        this.MODEL = model;
-        this.ELEVATOR_SYSTEM_CONTROLLER = new ElevatorSystemController(this);
+        this.model = model;
+        this.elevatorSystemController = new ElevatorSystemController(this);
         this.CUSTOMER_CONTROLLER = new CustomersController(this);
+        server = new Server(this);
     }
 
     public void start() {
@@ -77,9 +73,6 @@ public class Controller implements SocketEventListener {
 
 
         while (true) {
-            if (EXIT.get()) {
-                return;
-            }
             long deltaTime = System.currentTimeMillis() - currentTime;
             currentTime += deltaTime;
 
@@ -99,7 +92,7 @@ public class Controller implements SocketEventListener {
         }
         TIMER_TO_CHECK_SERVER.tick(deltaTime);
         if (TIMER_TO_CHECK_SERVER.isReady()) {
-            server.Send(new ProtocolMessage(Protocol.UPDATE_DATA, MODEL.getDataToSent(), currentTime));
+            server.Send(new ProtocolMessage(Protocol.UPDATE_DATA, model.getDataToSent(), currentTime));
             TIMER_TO_CHECK_SERVER.restart(Math.round(1000. / ConnectionSettings.SSPS));
         }
 
@@ -111,8 +104,8 @@ public class Controller implements SocketEventListener {
 
     private void tickControllers(long deltaTime) {
         CUSTOMER_CONTROLLER.tick(deltaTime);
-        ELEVATOR_SYSTEM_CONTROLLER.tick(deltaTime);
-        MODEL.clearDead();
+        elevatorSystemController.tick(deltaTime);
+        model.clearDead();
     }
 
 
@@ -124,11 +117,12 @@ public class Controller implements SocketEventListener {
                 CUSTOMER_CONTROLLER.CreateCustomer(floors.get(1), floors.get(0));
             }
             case CHANGE_ELEVATORS_COUNT -> {
-                ELEVATOR_SYSTEM_CONTROLLER.changeElevatorsCount((boolean) protocolMessage.data());
+                elevatorSystemController.changeElevatorsCount((boolean) protocolMessage.data());
                 var message =
                         new ProtocolMessage(Protocol.APPLICATION_SETTINGS,
-                                new SettingsData(ELEVATOR_SYSTEM_CONTROLLER.SETTINGS,
+                                new SettingsData(elevatorSystemController.SETTINGS,
                                         CUSTOMER_CONTROLLER.CUSTOMERS_SETTINGS, gameSpeed),
+
                                 currentTime);
                 server.Send(message);
             }
@@ -148,7 +142,4 @@ public class Controller implements SocketEventListener {
         server.Send(new ProtocolMessage(protocol, data, currentTime));
     }
 
-    public void stop() {
-        EXIT.set(true);
-    }
 }

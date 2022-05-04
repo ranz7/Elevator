@@ -62,7 +62,6 @@ public class ElevatorDoors extends DrawableCreature {
     public void tick(long delta_time) {
         position = PARENT_ELEVATOR.getPosition();
         DOORS_TIMER.tick(delta_time);
-        if (DOORS_TIMER.isReady()) changeDoorsState(!isCLosed);
     }
 
     public boolean isClosed() {
