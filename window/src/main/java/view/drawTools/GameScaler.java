@@ -1,8 +1,7 @@
 package view.drawTools;
 
 import lombok.Getter;
-import tools.Vector2D;
-import view.drawTools.GameScalerSettings;
+import common.Vector2D;
 
 import java.awt.*;
 
@@ -16,7 +15,7 @@ public class GameScaler {
     // ZOOM DATA
     @Getter
     private double additionalZoomFinishValue = 1.;
-    private double additionalZoomCurrentValue = 1.;
+    private double additionalZoomCurrentValue = 30.;
 
     private Vector2D additionalMoveFinishValue = new Vector2D(0, 0);
     private Vector2D additionalMove = new Vector2D(0, 0);
@@ -25,7 +24,7 @@ public class GameScaler {
     double zoomScale = 1;
 
     public void tick() {
-        additionalZoomCurrentValue += (additionalZoomFinishValue - additionalZoomCurrentValue) / 10;
+        additionalZoomCurrentValue += (additionalZoomFinishValue - additionalZoomCurrentValue) / 20;
         additionalMove = additionalMove
                 .getAdded(additionalMoveFinishValue.getSubbed(additionalMove).getDivided(10));
     }

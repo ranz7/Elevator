@@ -1,9 +1,9 @@
 package view.drawTools;
 
+import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.creatureWithTexture.DrawableCreatureWithTexture;
 import lombok.RequiredArgsConstructor;
-import model.objects.movingObject.Creature;
-import tools.Vector2D;
-import view.drawTools.GameScaler;
+import common.Vector2D;
 
 import java.awt.*;
 
@@ -21,7 +21,7 @@ public class GameDrawer {
         graphics2D.setColor(red);
     }
 
-    public void fillRect(Vector2D position, Point size) {
+    public void drawFilledRect(Vector2D position, Point size) {
         graphics2D.fillRect(
                 (int) game.getFromGameToRealCoordinate(position, size.y).x,
                 (int) game.getFromGameToRealCoordinate(position, size.y).y,
@@ -30,8 +30,8 @@ public class GameDrawer {
         );
     }
 
-    public void fillRect(Vector2D position, Point size, Color borderColor, int thickness) {
-        fillRect(position, size);
+    public void drawFilledRect(Vector2D position, Point size, Color borderColor, int thickness) {
+        drawFilledRect(position, size);
         Stroke oldStroke = graphics2D.getStroke();
         graphics2D.setColor(borderColor);
         graphics2D.setStroke(new BasicStroke((float) game.getFromRealToGameLength(thickness)));
@@ -49,19 +49,19 @@ public class GameDrawer {
         graphics2D.setFont(new Font(fontName, type, (int) game.getFromRealToGameLength(size)));
     }
 
-    public void drawString(String text, Vector2D position) {
+    public void draw(String text, Vector2D position) {
         graphics2D.drawString(text,
                 (int) game.getFromGameToRealCoordinate(position, 0).x,
                 (int) game.getFromGameToRealCoordinate(position, 0).y);
     }
 
-    public void fillRect(Creature creature) {
-        Vector2D positionOfTheCreature = creature.getPosition().getSubbed(new Vector2D(creature.getSize().x / 2, 0));
+    public void drawFilledRect(DrawableCreature drawableCreature) {
+        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawableCreature);
         graphics2D.fillRect(
-                (int) game.getFromGameToRealCoordinate(positionOfTheCreature, creature.getSize().y).x,
-                (int) game.getFromGameToRealCoordinate(positionOfTheCreature, creature.getSize().y).y,
-                (int) game.getFromRealToGameLength(creature.getSize().x),
-                (int) game.getFromRealToGameLength(creature.getSize().y)
+                (int) game.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).x,
+                (int) game.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).y,
+                (int) game.getFromRealToGameLength(drawableCreature.getSize().x),
+                (int) game.getFromRealToGameLength(drawableCreature.getSize().y)
         );
     }
 
@@ -83,4 +83,25 @@ public class GameDrawer {
         graphics2D = (Graphics2D) g;
     }
 
+    public void draw(DrawableCreatureWithTexture drawableCreature) {
+        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawableCreature);
+
+        graphics2D.drawImage(drawableCreature.getImage(),
+                (int) game.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).x,
+                (int) game.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).y,
+                (int) game.getFromRealToGameLength(drawableCreature.getSize().x),
+                (int) game.getFromRealToGameLength(drawableCreature.getSize().y),
+                null);
+    }
+
+    private Vector2D getPositionCenteredBySettings(DrawableCreature drawableCreature) {
+        return switch (drawableCreature.getDrawCenter()) {
+            case CENTER_BY_X -> drawableCreature.getPosition().getSubbed(
+                    new Vector2D(drawableCreature.getSize().x / 2., 0));
+            case CENTER_BY_Y -> drawableCreature.getPosition().getSubbed(
+                    new Vector2D(0, drawableCreature.getSize().y / 2.));
+            case CENTER_BY_XY -> drawableCreature.getPosition().getSubbed(
+                    new Vector2D(drawableCreature.getSize().x / 2., drawableCreature.getSize().y / 2.));
+        };
+    }
 }

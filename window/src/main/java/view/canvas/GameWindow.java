@@ -1,10 +1,10 @@
 package view.canvas;
 
-import drawable.Drawable;
+import drawable.drawableBase.creatureWithTexture.Drawable;
 import lombok.Getter;
 import model.GuiModel;
-import tools.Vector2D;
-import view.Gui.WindowResizeListener;
+import common.Vector2D;
+import view.gui.WindowResizeListener;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;
 
@@ -13,28 +13,29 @@ import java.awt.*;
 import java.util.Comparator;
 
 public class GameWindow extends JPanel {
-    private JFrame frame;
-    private GuiModel WINDOW_MODEL;
+    private final JFrame FRAME;
+    private final GuiModel WINDOW_MODEL;
+
     @Getter
-    GameScaler gameScaler;
-    GameDrawer gameDrawer;
+    private final GameScaler GAME_SCALER;
+    private final GameDrawer GAME_DRAWER;
 
     public GameWindow(GuiModel viewModel) {
         WINDOW_MODEL = viewModel;
-        setBackground(WINDOW_MODEL.COLOR_SETTINGS.BLACK_SPACE_COLOR);
+        setBackground(WINDOW_MODEL.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR);
         setLayout(null);
         setVisible(false);
 
         setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
 
-        frame = new JFrame("ELEVATOR SYS");
-        frame.setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(this);
+        FRAME = new JFrame("ELEVATOR SYS");
+        FRAME.setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
+        FRAME.setVisible(true);
+        FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FRAME.add(this);
 
-        gameScaler = new GameScaler(getSize(), viewModel.getSettings().BUILDING_SIZE);
-        gameDrawer = new GameDrawer(gameScaler);
+        GAME_SCALER = new GameScaler(getSize(), WINDOW_MODEL.getSettings().BUILDING_SIZE);
+        GAME_DRAWER = new GameDrawer(GAME_SCALER);
     }
 
     public void start(){
@@ -43,34 +44,34 @@ public class GameWindow extends JPanel {
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-        gameScaler.updateSizes(newSize, WINDOW_MODEL.getSettings().BUILDING_SIZE);
+        GAME_SCALER.updateSizes(newSize, WINDOW_MODEL.getSettings().BUILDING_SIZE);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        gameDrawer.startDraw(g);
+        GAME_DRAWER.startDraw(g);
 
         var drawableObjets = WINDOW_MODEL.getDrawableOjects();
         drawableObjets.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
-        drawableObjets.forEach(drawable -> drawable.draw(gameDrawer));
+        drawableObjets.forEach(drawable -> drawable.draw(GAME_DRAWER));
     }
 
     public boolean zoomedIn() {
-        return gameScaler.getAdditionalZoomFinishValue() == 1.;
+        return GAME_SCALER.getAdditionalZoomFinishValue() == 1.;
     }
 
     public void zoomOut() {
-        gameScaler.zoomOut();
+        GAME_SCALER.zoomOut();
     }
 
     public void zoomIn(Vector2D point, double zoomScale) {
-        gameScaler.zoomIn(point, zoomScale);
+        GAME_SCALER.zoomIn(point, zoomScale);
     }
 
     public void update() {
-        gameScaler.tick();
-        frame.repaint();
+        GAME_SCALER.tick();
+        FRAME.repaint();
     }
 
     public void addResizeListener(WindowResizeListener windowResizeListener) {
