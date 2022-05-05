@@ -6,7 +6,7 @@ import controller.GuiController;
 import drawable.drawableObjectsConcrete.FlyingText;
 import lombok.Getter;
 import model.GuiModel;
-import common.Vector2D;
+import tools.tools.Vector2D;
 import view.canvas.GameWindow;
 import view.buttons.ButtonsComponent;
 
@@ -16,25 +16,28 @@ public class Gui {
     private final GuiController controller;
 
     @Getter
-    private final GuiModel guiModel;
+    private GuiModel guiModel;
     @Getter
     private final GameWindow gameWindow;
     @Getter
     private final ButtonsComponent buttonsComponent;
 
-    public Gui(GuiModel guiModel, GuiController controller) {
+    public Gui(GuiController controller) {
         this.controller = controller;
-        this.guiModel = guiModel;
-
-        gameWindow = new GameWindow(guiModel);
-        buttonsComponent = new ButtonsComponent(this, guiModel, gameWindow);
+        gameWindow = new GameWindow();
+        buttonsComponent = new ButtonsComponent(this,  gameWindow);
 
         buttonsComponent.addButtonsListener(this, new ButtonsListener(buttonsComponent));
         gameWindow.addMouseListener(new WindowMouseListener(this));
         gameWindow.addResizeListener(new WindowResizeListener(this));
     }
+    boolean started = false;
 
     public void start() {
+        if (started) {
+            return;
+        }
+        started = true;
         gameWindow.start();
         buttonsComponent.start();
         resize();
@@ -52,7 +55,7 @@ public class Gui {
     public void rightMouseClicked(Vector2D point) {
         if (gameWindow.zoomedIn()) {
             guiModel.addMovingDrawable(
-                    new FlyingText("ZoomIn", gameWindow.getGAME_SCALER().getFromRealToGameCoordinate(point, 4),
+                    new FlyingText("ZoomIn", gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4),
                             Vector2D.North, 6, 5, 1000, new Color(255, 100, 100)));
             gameWindow.zoomIn(point, 1 / 4.);
         } else {
@@ -63,7 +66,7 @@ public class Gui {
     public void leftMouseClicked(Vector2D point) {
         controller.clickButton(point);
         guiModel.addMovingDrawable(
-                new FlyingText("Click", gameWindow.getGAME_SCALER().getFromRealToGameCoordinate(point, 4),
+                new FlyingText("Click", gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4),
                         Vector2D.North, 6, 15, 300, new Color(255, 217, 13)));
     }
 
@@ -85,6 +88,12 @@ public class Gui {
 
     public void clickedStartEndFloorButtonRequest(int start, int end) {
         controller.clickedAddCustomerButtonWithNumber(start, end);
+    }
+
+    public void setModel(GuiModel model) {
+        guiModel = model;
+        gameWindow.setModel(model);
+        buttonsComponent.setModel(model);
     }
 }
 

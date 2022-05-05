@@ -1,3 +1,4 @@
 rootProject.name = 'Elevator'
 include ':app'
 include ':window'
+include ':common'

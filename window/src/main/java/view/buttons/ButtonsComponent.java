@@ -15,7 +15,7 @@ import view.gui.Gui;
 
 public class ButtonsComponent {
     private Gui gui;
-    private final GuiModel guiModel;
+    private GuiModel guiModel;
     private final GameWindow gameWindow;
     @Setter
     private ActionListener buttonListener;
@@ -25,10 +25,9 @@ public class ButtonsComponent {
     private final LinkedList<JButton> CHANGE_SPEED_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> SELECT_FLOOR_BUTTONS = new LinkedList<>();
 
-    public ButtonsComponent(Gui gui, GuiModel guiModel, GameWindow gameWindow) {
+    public ButtonsComponent(Gui gui, GameWindow gameWindow) {
         this.gui = gui;
         this.gameWindow = gameWindow;
-        this.guiModel = guiModel;
     }
 
     public void start() {
@@ -135,5 +134,9 @@ public class ButtonsComponent {
     public void addButtonsListener(Gui gui, ButtonsListener buttonsListener) {
         this.buttonListener = buttonsListener;
         this.gui = gui;
+    }
+
+    public void setModel(GuiModel model) {
+        this.guiModel = model;
     }
 }

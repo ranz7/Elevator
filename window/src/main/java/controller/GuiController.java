@@ -1,14 +1,20 @@
 package controller;
 
-import connector.clientServer.Client;
-import connector.clientServer.SocketCompactData;
-import connector.clientServer.SocketEventListener;
+import configs.ConnectionSettings;
+import configs.MainInitializationSettings;
+import connector.Client;
+import connector.Gates;
+import connector.filtersAndScenarios.FilterScenarios;
+import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
+import connector.protocol.ProtocolMessageListener;
 import model.GuiModel;
-import common.Vector2D;
+import model.objects.movingObject.CreaturesData;
+import tools.tools.Vector2D;
 import view.gui.Gui;
-import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -16,71 +22,109 @@ import java.util.logging.Logger;
  * control window, created with Swing
  * @see SwingWindow
  */
-public class GuiController implements SocketEventListener {
-    static private final int TPS = 50;
+public class GuiController implements ProtocolMessageListener {
+    static private final int TPS = 120;
 
-    private final GuiModel WINDOW_MODEL;
-    private final Gui GUI;
+    public final Gates gates = new Gates(new Client(), this);
 
-    @Setter
+    private final Gui gui = new Gui(this);
+    private GuiModel windowModel;
+
     private long currentTime;
     private double gameSpeed = 1;
-    @Setter
-    private Client client;
 
-    private final Logger LOGGER = Logger.getLogger(GuiController.class.getName());
-
-    public GuiController(GuiModel guiModel) {
-        WINDOW_MODEL = guiModel;
-        GUI = new Gui(WINDOW_MODEL,this);
+    public void setModel(GuiModel model) {
+        windowModel = model;
+        gui.setModel(model);
     }
 
-    public void start() throws InterruptedException {
-        GUI.start();
+    public void start() {
         long lastTime = System.currentTimeMillis();
+        gates.setOnDisconnectEvent(() -> {
+            gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
+            gates.start();
+            windowModel.clear();
+        });
+        gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
+        gates.start();
 
         while (true) {
             long deltaTime = System.currentTimeMillis() - lastTime;
             lastTime += deltaTime;
             currentTime += deltaTime;
-            WINDOW_MODEL.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
-            GUI.update();
-            TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
-            WINDOW_MODEL.clearDead();
+            gates.tick(deltaTime);
+            if (!windowModel.isNeedToInitialise()) {
+                gui.start();
+                windowModel.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
+                windowModel.clearDead();
+                gui.update();
+            }
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    @Override
-    public void onReceiveSocket(ProtocolMessage message) {
-        LOGGER.info("RECIEVED MESSAGE");
-    }
 
     @Override
-    public void onNewSocketConnection(SocketCompactData message) {
-        LOGGER.info("RECIEVED CONNECTION");
-    }
-
-    public void changeElevatorsCount(boolean isAdding) {
+    public boolean popMessage(ProtocolMessage message) {
+        Protocol protocol = message.getProtocolInMessage();
+        Serializable data = message.getDataInMessage();
+        switch (protocol) {
+            case APPLICATION_SETTINGS -> {
+                MainInitializationSettings settings = (MainInitializationSettings) data;
+                if (ConnectionSettings.VERSION != settings.VERSION) {
+                    Logger.getLogger(GuiController.class.getName())
+                            .warning("You have different versions with sever. Your version: %s, server version %s%n"
+                                    .formatted(ConnectionSettings.VERSION, settings.VERSION));
+                    return true;
+                }
+                windowModel.setSettings(settings);
+                gameSpeed = settings.GAME_SPEED;
+                currentTime = message.getTimeStumpInMessage();
+            }
+            case UPDATE_DATA -> {
+                windowModel.updateData((CreaturesData) data);
+            }
+            case ELEVATOR_BUTTON_CLICK -> {
+                clickButton((Vector2D) data);
+            }
+            case ELEVATOR_OPEN -> windowModel.getElevator((long) data).DOORS.changeDoorsState(false);
+            case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).DOORS.changeDoorsState(true);
+            case CUSTOMER_GET_IN_OUT -> windowModel.changeBehindElevatorForCustomer((long) data);
+            case CHANGE_GAME_SPEED -> gameSpeed = (double) data;
+        }
+        return true;
     }
 
     public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
-        //send to main controller
+        startFloorButtonNumber = windowModel.getSettings().FLOORS_COUNT - startFloorButtonNumber - 1;
+        LinkedList<Integer> data = new LinkedList<>();
+        data.push(startFloorButtonNumber);
+        data.push(endFloorNumber - 1);
+        gates.send(new ProtocolMessage(Protocol.CREATE_CUSTOMER, data));
+    }
+
+    public void changeElevatorsCount(boolean isAdding) {
+        gates.send(new ProtocolMessage(Protocol.CHANGE_ELEVATORS_COUNT, isAdding));
     }
 
     public void increaseSpeed() {
-        //send to main controller
+        gates.send(new ProtocolMessage(Protocol.CHANGE_GAME_SPEED, 1.5));
     }
 
     public void decreaseGameSpeed() {
-        //send to main controller
+        gates.send(new ProtocolMessage(Protocol.CHANGE_GAME_SPEED, 1 / 1.5));
     }
 
     public void clickButton(Vector2D point) {
-        var pointInGame = GUI.getGameWindow().getGAME_SCALER().getFromRealToGameCoordinate(point, 0);
-        var button = WINDOW_MODEL.getNearestButton(pointInGame);
-        if (button.getPosition().distanceTo(pointInGame) <20) {
+        var pointInGame = gui.getGameWindow().getGameScaler().getFromRealToGameCoordinate(point, 0);
+        var button = windowModel.getNearestButton(pointInGame);
+        if (button.getPosition().distanceTo(pointInGame) < 20) {
             button.buttonClick();
-
         }
     }
 }

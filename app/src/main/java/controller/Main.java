@@ -1,13 +1,11 @@
 package controller;
 
-import connector.clientServer.Server;
-import model.Model;
+import model.AppModel;
 
 public class Main {
     public static void main(String[] args) {
-        Controller controller = new Controller(new Model());
-        Server server = new Server(controller);
-        controller.setServer(server);
-        controller.start();
+        AppController appController = new AppController();
+        appController.setAppModel(new AppModel());
+        appController.start();
     }
 }

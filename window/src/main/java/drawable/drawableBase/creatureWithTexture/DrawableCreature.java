@@ -1,7 +1,7 @@
 package drawable.drawableBase.creatureWithTexture;
 
 import model.objects.movingObject.Creature;
-import common.Vector2D;
+import tools.tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;

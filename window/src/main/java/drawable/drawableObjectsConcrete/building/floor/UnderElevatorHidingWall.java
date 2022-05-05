@@ -2,7 +2,7 @@ package drawable.drawableObjectsConcrete.building.floor;
 
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import model.GuiModel;
-import common.Vector2D;
+import tools.tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;

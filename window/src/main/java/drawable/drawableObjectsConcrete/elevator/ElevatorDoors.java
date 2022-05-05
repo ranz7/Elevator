@@ -1,9 +1,9 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
-import common.Vector2D;
+import tools.tools.Vector2D;
 import view.drawTools.GameDrawer;
-import common.Timer;
+import tools.tools.Timer;
 
 import java.awt.*;
 
@@ -62,7 +62,6 @@ public class ElevatorDoors extends DrawableCreature {
     public void tick(long delta_time) {
         position = PARENT_ELEVATOR.getPosition();
         DOORS_TIMER.tick(delta_time);
-        if (DOORS_TIMER.isReady()) changeDoorsState(!isCLosed);
     }
 
     public boolean isClosed() {
