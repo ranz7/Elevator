@@ -1,11 +1,11 @@
 package model.objects.elevator;
 
-import config.ElevatorSystemSettings;
+import configs.ElevatorSystemSettings;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.movingObject.MovingObject;
-import common.tools.Timer;
-import common.tools.Vector2D;
+import tools.tools.Timer;
+import tools.tools.Vector2D;
 
 import java.util.*;
 

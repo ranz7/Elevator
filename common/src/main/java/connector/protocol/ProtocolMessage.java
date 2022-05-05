@@ -1,5 +1,6 @@
 package connector.protocol;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -9,8 +10,13 @@ import java.io.Serializable;
  * All data, that is sent via socket object stream, is stored by this class.
  */
 
+@AllArgsConstructor
 public class ProtocolMessage {
     private final PureData pureData;
+
+    public ProtocolMessage(Protocol protocol, Serializable data) {
+        pureData = new PureData(protocol, data);
+    }
 
     public Protocol getProtocolInMessage() {
         return pureData.protocol;
@@ -20,21 +26,18 @@ public class ProtocolMessage {
         return pureData.data;
     }
 
-    public Serializable getTimeStumpInMessage() {
+    public long getTimeStumpInMessage() {
         return pureData.timeStump;
     }
 
     public Serializable toSerializable() {
         pureData.setTimeStump(System.currentTimeMillis());
-        return pureData;
+        return new PureData(pureData.protocol, pureData.data, pureData.timeStump);
     }
 
-    public ProtocolMessage(Protocol protocol, Serializable data) {
-        pureData = new PureData(protocol, data);
-    }
-
+    @AllArgsConstructor
     @RequiredArgsConstructor
-    private class PureData implements Serializable {
+    public static class PureData implements Serializable {
         private final Protocol protocol;
         private final Serializable data;
 

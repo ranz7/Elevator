@@ -16,6 +16,5 @@ public class WindowResizeListener extends ComponentAdapter {
 
     @Override
     public void componentMoved(ComponentEvent e) {
-        System.out.println("Moved");
     }
 }

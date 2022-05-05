@@ -1,10 +1,9 @@
 package model;
 
 
-import connector.protocol.CreaturesData;
-import config.InitializationSettingsForClient;
-import drawable.ColorSettings;
-import drawable.DrawSettings;
+import configs.MainInitializationSettings;
+import configs.ColorSettings;
+import configs.DrawSettings;
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import drawable.drawableObjectsConcrete.*;
 import drawable.drawableObjectsConcrete.building.floor.Floor;
@@ -13,10 +12,12 @@ import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
 import model.objects.movingObject.Creature;
+import model.objects.movingObject.CreaturesData;
 import model.objects.movingObject.MovingObject;
-import common.tools.Vector2D;
+import tools.tools.Vector2D;
 
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class GuiModel {
@@ -24,7 +25,7 @@ public class GuiModel {
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
     public final DrawSettings DRAW_SETTINGS = new DrawSettings();
     @Getter
-    private InitializationSettingsForClient settings;
+    private MainInitializationSettings settings;
     //
 
     //TODO move into DRAW CLIENT OBJECTS
@@ -102,7 +103,7 @@ public class GuiModel {
         return ref.foundDrawableElevator;
     }
 
-    public void setSettings(InitializationSettingsForClient settings) {
+    public void setSettings(MainInitializationSettings settings) {
         this.settings = settings;
     }
 
@@ -120,7 +121,7 @@ public class GuiModel {
     }
 
 
-    private void applyArrivedData(LinkedList<Creature> creatures_came,
+    private void applyArrivedData(List<Creature> creatures_came,
                                   LinkedList<? extends Creature> creatures_to_apply) {
         // erease
         creatures_to_apply.removeIf(

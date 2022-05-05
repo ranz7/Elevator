@@ -1,13 +1,13 @@
 package connector.protocol;
 
-import java.io.Serializable;
+import connector.Gates;
 
 /**
- * @see connector.Bridge
+ * @see Gates
  * @see controller.AppController
  *  Listener of messages. If popMessage returns true, then message would be deleted.
  */
 
 public interface ProtocolMessageListener {
-    boolean popMessage(Protocol protocol, Serializable data);
+    boolean popMessage(ProtocolMessage message);
 }

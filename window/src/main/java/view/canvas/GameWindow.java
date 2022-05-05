@@ -1,9 +1,10 @@
 package view.canvas;
 
+import configs.WindowSettings;
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import lombok.Getter;
 import model.GuiModel;
-import common.tools.Vector2D;
+import tools.tools.Vector2D;
 import view.gui.WindowResizeListener;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;

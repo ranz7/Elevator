@@ -5,7 +5,7 @@ import drawable.drawableObjectsConcrete.building.floor.decorations.FloorPainting
 import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorBorder;
 import lombok.Getter;
 import model.GuiModel;
-import common.tools.Vector2D;
+import tools.tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;

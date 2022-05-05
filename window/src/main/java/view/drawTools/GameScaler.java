@@ -1,7 +1,7 @@
 package view.drawTools;
 
 import lombok.Getter;
-import common.tools.Vector2D;
+import tools.tools.Vector2D;
 
 import java.awt.*;
 

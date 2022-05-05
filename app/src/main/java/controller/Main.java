@@ -1,11 +1,11 @@
 package controller;
 
-import model.Model;
+import model.AppModel;
 
 public class Main {
     public static void main(String[] args) {
         AppController appController = new AppController();
-        appController.setModel(new Model());
+        appController.setAppModel(new AppModel());
         appController.start();
     }
 }

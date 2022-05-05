@@ -1,16 +1,16 @@
 package controller;
 
-import connector.Gates;
+import configs.ConnectionSettings;
+import configs.MainInitializationSettings;
 import connector.Client;
-import config.ConnectionSettings;
+import connector.Gates;
 import connector.filtersAndScenarios.FilterScenarios;
-import connector.protocol.CreaturesData;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
-import config.InitializationSettingsForClient;
 import connector.protocol.ProtocolMessageListener;
 import model.GuiModel;
-import common.tools.Vector2D;
+import model.objects.movingObject.CreaturesData;
+import tools.tools.Vector2D;
 import view.gui.Gui;
 
 import java.io.Serializable;
@@ -73,10 +73,9 @@ public class GuiController implements ProtocolMessageListener {
     public boolean popMessage(ProtocolMessage message) {
         Protocol protocol = message.getProtocolInMessage();
         Serializable data = message.getDataInMessage();
-        System.out.println(protocol);
         switch (protocol) {
             case APPLICATION_SETTINGS -> {
-                InitializationSettingsForClient settings = (InitializationSettingsForClient) data;
+                MainInitializationSettings settings = (MainInitializationSettings) data;
                 if (ConnectionSettings.VERSION != settings.VERSION) {
                     Logger.getLogger(GuiController.class.getName())
                             .warning("You have different versions with sever. Your version: %s, server version %s%n"

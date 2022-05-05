@@ -1,9 +1,9 @@
 package model.objects.building;
 
-import config.ElevatorSystemSettings;
+import configs.ElevatorSystemSettings;
 import lombok.Getter;
 import model.objects.elevator.Elevator;
-import common.tools.Vector2D;
+import tools.tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.Random;

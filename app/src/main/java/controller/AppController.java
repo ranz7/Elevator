@@ -1,14 +1,13 @@
 package controller;
 
-import config.ConnectionSettings;
+import configs.ConnectionSettings;
 import connector.Gates;
 import connector.Server;
-import config.InitializationSettingsForClient;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessageListener;
 import lombok.RequiredArgsConstructor;
-import model.Model;
+import model.AppModel;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -24,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class AppController implements ProtocolMessageListener {
     public final ElevatorsConductor elevatorsConductor = new ElevatorsConductor(this);
-    private final CustomersConductor customerController = new CustomersConductor(this);
-    public Model model;
+    private final CustomersConductor customerConductor = new CustomersConductor(this);
+    public AppModel appModel;
     public final Gates gates = new Gates(new Server(), this);
 
     private final int TPS = 50;
@@ -38,13 +37,13 @@ public class AppController implements ProtocolMessageListener {
         gates.setOnConnectEvent(
                 () -> gates.send(
                         Protocol.APPLICATION_SETTINGS,
-                        new InitializationSettingsForClient(
-                                elevatorsConductor.SETTINGS,
-                                customerController.CUSTOMERS_SETTINGS,
+                        appModel.createMainInitializationSettingsToSend(
+                                elevatorsConductor.getSettings(),
+                                customerConductor.getSettings(),
                                 gameSpeed)));
         gates.setSpamEvent(
                 () -> gates.send(
-                        Protocol.UPDATE_DATA, model.getDataToSent()),
+                        Protocol.UPDATE_DATA, appModel.getDataToSent()),
                 (long) (1000. / ConnectionSettings.SSPS));
 
         gates.start();
@@ -65,9 +64,9 @@ public class AppController implements ProtocolMessageListener {
     }
 
     private void tickControllers(long deltaTime) {
-        customerController.tick(deltaTime);
+        customerConductor.tick(deltaTime);
         elevatorsConductor.tick(deltaTime);
-        model.clearDead();
+        appModel.clearDead();
     }
 
     @Override
@@ -78,12 +77,12 @@ public class AppController implements ProtocolMessageListener {
         switch (protocol) {
             case CREATE_CUSTOMER -> {
                 LinkedList<Integer> floors = (LinkedList<Integer>) data;
-                customerController.CreateCustomer(floors.get(1), floors.get(0));
+                customerConductor.CreateCustomer(floors.get(1), floors.get(0));
             }
             case CHANGE_ELEVATORS_COUNT -> {
                 elevatorsConductor.changeElevatorsCount((boolean) data);
-                gates.send(Protocol.APPLICATION_SETTINGS, new InitializationSettingsForClient(
-                        elevatorsConductor.SETTINGS, customerController.CUSTOMERS_SETTINGS, gameSpeed));
+                gates.send(Protocol.APPLICATION_SETTINGS, appModel.createMainInitializationSettingsToSend(
+                        elevatorsConductor.getSettings(), customerConductor.getSettings(), gameSpeed));
             }
             case CHANGE_GAME_SPEED -> {
                 gameSpeed *= (double) data;
@@ -97,9 +96,9 @@ public class AppController implements ProtocolMessageListener {
         gates.send(protocol, data);
     }
 
-    public void setModel(Model model) {
-        this.model = model;
-        customerController.setModel(model);
-        elevatorsConductor.setModel(model);
+    public void setAppModel(AppModel appModel) {
+        this.appModel = appModel;
+        customerConductor.setModel(appModel);
+        elevatorsConductor.setModel(appModel);
     }
 }

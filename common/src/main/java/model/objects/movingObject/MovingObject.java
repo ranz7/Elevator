@@ -4,7 +4,7 @@ package model.objects.movingObject;
 import lombok.Getter;
 import lombok.Setter;
 
-import common.tools.Vector2D;
+import tools.tools.Vector2D;
 import java.awt.*;
 
 public class MovingObject extends Creature {

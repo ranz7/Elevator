@@ -1,19 +1,12 @@
 plugins {
     id 'java'
-    id 'application'
 }
 
 group 'app'
 version '1.0'
 
-mainClassName = "controller.Main"
-
 repositories {
     mavenCentral()
-}
-
-jar {
-    manifest.attributes("Main-Class": "mainClassName");
 }
 
 dependencies {
@@ -23,6 +16,3 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
-
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
