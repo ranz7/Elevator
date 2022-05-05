@@ -1,5 +1,6 @@
 package drawable.drawableBase;
 
+import drawable.drawableBase.creatureWithTexture.Drawable;
 import model.objects.movingObject.Creature;
 import common.Vector2D;
 import view.drawTools.GameDrawer;
@@ -31,7 +32,7 @@ public class DrawableCreature extends Creature implements Drawable {
 
     @Override
     public List<Drawable> getDrawables() {
-        var drawables = new LinkedList<Drawable>();
+        List<Drawable> drawables = new LinkedList<>();
         drawables.add(this);
         return drawables;
     }
