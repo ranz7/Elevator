@@ -2,7 +2,7 @@ package drawable.drawableObjectsConcrete.building.floor.decorations;
 
 import drawable.drawableBase.creatureWithTexture.DrawCenter;
 import drawable.drawableBase.creatureWithTexture.DrawableCreatureWithTexture;
-import common.Vector2D;
+import common.tools.Vector2D;
 
 public class FloorPainting extends DrawableCreatureWithTexture {
     public FloorPainting(Vector2D position) {

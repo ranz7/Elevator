@@ -3,7 +3,7 @@ package view.canvas;
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import lombok.Getter;
 import model.GuiModel;
-import common.Vector2D;
+import common.tools.Vector2D;
 import view.gui.WindowResizeListener;
 import view.drawTools.GameDrawer;
 import view.drawTools.GameScaler;
@@ -14,15 +14,18 @@ import java.util.Comparator;
 
 public class GameWindow extends JPanel {
     private final JFrame FRAME;
-    private final GuiModel WINDOW_MODEL;
+    private GuiModel windowModel;
 
     @Getter
-    private GameScaler GAME_SCALER;
-    private GameDrawer GAME_DRAWER;
+    private GameScaler gameScaler;
+    private GameDrawer gameDrawer;
 
-    public GameWindow(GuiModel viewModel) {
-        WINDOW_MODEL = viewModel;
-        setBackground(WINDOW_MODEL.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR);
+    public void setModel(GuiModel model) {
+        windowModel = model;
+        setBackground(windowModel.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR);
+    }
+
+    public GameWindow() {
         setLayout(null);
         setVisible(false);
 
@@ -37,44 +40,48 @@ public class GameWindow extends JPanel {
 
     public void start() {
         setVisible(true);
-        GAME_SCALER = new GameScaler(getSize(), WINDOW_MODEL.getSettings().BUILDING_SIZE);
-        GAME_DRAWER = new GameDrawer(GAME_SCALER);
+        gameScaler = new GameScaler(getSize(), windowModel.getSettings().BUILDING_SIZE);
+        gameDrawer = new GameDrawer(gameScaler);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-        GAME_SCALER.updateSizes(newSize, WINDOW_MODEL.getSettings().BUILDING_SIZE);
+        gameScaler.updateSizes(newSize, windowModel.getSettings().BUILDING_SIZE);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        GAME_DRAWER.startDraw(g);
+        if(gameDrawer==null){
+            return;
+        }
+        gameDrawer.startDraw(g);
 
-        var drawableObjets = WINDOW_MODEL.getDrawableOjects();
+        var drawableObjets = windowModel.getDrawableOjects();
         drawableObjets.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
-        drawableObjets.forEach(drawable -> drawable.draw(GAME_DRAWER));
+        drawableObjets.forEach(drawable -> drawable.draw(gameDrawer));
     }
 
     public boolean zoomedIn() {
-        return GAME_SCALER.getAdditionalZoomFinishValue() == 1.;
+        return gameScaler.getAdditionalZoomFinishValue() == 1.;
     }
 
     public void zoomOut() {
-        GAME_SCALER.zoomOut();
+        gameScaler.zoomOut();
     }
 
     public void zoomIn(Vector2D point, double zoomScale) {
-        GAME_SCALER.zoomIn(point, zoomScale);
+        gameScaler.zoomIn(point, zoomScale);
     }
 
     public void update() {
-        GAME_SCALER.tick();
+        gameScaler.tick();
         FRAME.repaint();
     }
 
     public void addResizeListener(WindowResizeListener windowResizeListener) {
         this.addComponentListener(windowResizeListener);
     }
+
 }

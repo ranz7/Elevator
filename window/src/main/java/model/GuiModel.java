@@ -2,7 +2,7 @@ package model;
 
 
 import connector.protocol.CreaturesData;
-import connector.protocol.SettingsData;
+import config.InitializationSettingsForClient;
 import drawable.ColorSettings;
 import drawable.DrawSettings;
 import drawable.drawableBase.creatureWithTexture.Drawable;
@@ -14,7 +14,7 @@ import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
 import model.objects.movingObject.Creature;
 import model.objects.movingObject.MovingObject;
-import common.Vector2D;
+import common.tools.Vector2D;
 
 import java.util.LinkedList;
 
@@ -24,7 +24,7 @@ public class GuiModel {
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
     public final DrawSettings DRAW_SETTINGS = new DrawSettings();
     @Getter
-    private SettingsData settings;
+    private InitializationSettingsForClient settings;
     //
 
     //TODO move into DRAW CLIENT OBJECTS
@@ -102,7 +102,7 @@ public class GuiModel {
         return ref.foundDrawableElevator;
     }
 
-    public void setSettings(SettingsData settings) {
+    public void setSettings(InitializationSettingsForClient settings) {
         this.settings = settings;
     }
 

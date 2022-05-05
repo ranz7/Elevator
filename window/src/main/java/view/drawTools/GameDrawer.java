@@ -3,7 +3,7 @@ package view.drawTools;
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import drawable.drawableBase.creatureWithTexture.DrawableCreatureWithTexture;
 import lombok.RequiredArgsConstructor;
-import common.Vector2D;
+import common.tools.Vector2D;
 
 import java.awt.*;
 
