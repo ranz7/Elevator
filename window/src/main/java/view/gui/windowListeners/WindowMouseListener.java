@@ -1,6 +1,7 @@
-package view.gui;
+package view.gui.windowListeners;
 
-import tools.tools.Vector2D;
+import tools.Vector2D;
+import view.gui.Gui;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;

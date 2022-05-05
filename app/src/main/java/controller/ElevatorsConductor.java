@@ -8,6 +8,7 @@ import configs.ElevatorSystemSettings;
 import connector.protocol.Protocol;
 import model.AppModel;
 import lombok.Getter;
+import architecture.tickable.Tickable;
 
 import java.util.stream.Collectors;
 import java.util.LinkedList;
@@ -15,9 +16,10 @@ import java.util.LinkedList;
 
 /**
  * Manipulate all elevators in game.
+ *
  * @see ElevatorSystemSettings
  */
-public class ElevatorsConductor {
+public class ElevatorsConductor implements Tickable {
     @Getter
     private final ElevatorSystemSettings settings = new ElevatorSystemSettings();
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
@@ -28,13 +30,15 @@ public class ElevatorsConductor {
     public ElevatorsConductor(AppController appController) {
         this.appController = appController;
     }
-    public void setModel(AppModel appModel){
+
+    public void setModel(AppModel appModel) {
         this.appModel = appModel;
         appModel.Initialize(new Building(settings));
     }
+
     public void tick(long deltaTime) {
         pendingElevatorRequests.removeIf(this::tryToCallElevator);
-        for (var elevator : appModel.getBuilding().ELEVATORS) {
+        for (var elevator : appModel.getBuilding().elevators) {
             if (!elevator.isVisible()) {
                 break;
             }
@@ -44,7 +48,6 @@ public class ElevatorsConductor {
                 case OPENING, CLOSING -> processOpeningClosing(elevator);
                 case OPENED -> processOpened(elevator);
             }
-            elevator.tick(deltaTime);
         }
     }
 
@@ -113,7 +116,7 @@ public class ElevatorsConductor {
 
     private boolean tryToCallElevator(ElevatorRequest request) {
         // closest, free, and go the same way / or wait
-        LinkedList<Elevator> elevatorsAvailable = appModel.getBuilding().ELEVATORS.stream()
+        LinkedList<Elevator> elevatorsAvailable = appModel.getBuilding().elevators.stream()
                 .filter(Elevator::isAvailable)
                 .collect(Collectors.toCollection(LinkedList::new));
         if (elevatorsAvailable.size() == 0) {

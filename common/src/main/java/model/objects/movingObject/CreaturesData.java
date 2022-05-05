@@ -4,7 +4,6 @@ import configs.ConnectionSettings;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 
 

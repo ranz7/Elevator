@@ -9,5 +9,5 @@ import connector.Gates;
  */
 
 public interface ProtocolMessageListener {
-    boolean popMessage(ProtocolMessage message);
+    boolean applyMessage(ProtocolMessage message);
 }

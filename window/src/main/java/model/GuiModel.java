@@ -1,6 +1,7 @@
 package model;
 
 
+import architecture.tickable.Tickable;
 import configs.MainInitializationSettings;
 import configs.ColorSettings;
 import configs.DrawSettings;
@@ -14,13 +15,13 @@ import lombok.Getter;
 import model.objects.movingObject.Creature;
 import model.objects.movingObject.CreaturesData;
 import model.objects.movingObject.MovingObject;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.List;
 
 
-public class GuiModel {
+public class GuiModel implements Model {
     // TODO REFACTOR - move to one SUPER SETINGS class
     public final ColorSettings COLOR_SETTINGS = new ColorSettings();
     public final DrawSettings DRAW_SETTINGS = new DrawSettings();
@@ -65,10 +66,17 @@ public class GuiModel {
         return drawables;
     }
 
+    public LinkedList<Tickable> getTickableOjects() {
+        LinkedList<Tickable> tickables = new LinkedList<>();
+        getDrawableOjects().forEach(drawable -> tickables.add((Tickable) drawable));
+        return tickables;
+    }
+
     public void addMovingDrawable(FlyingText text) {
         flyingTexts.add(text);
     }
 
+    @Override
     public void clearDead() {
         flyingTexts.removeIf(MovingObject::isDead);
     }

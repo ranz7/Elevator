@@ -3,9 +3,9 @@ package drawable.drawableObjectsConcrete.building.floor.elevator;
 import configs.DrawSettings;
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import model.GuiModel;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.drawTools.GameDrawer;
-import tools.tools.Timer;
+import tools.Timer;
 
 import java.awt.*;
 

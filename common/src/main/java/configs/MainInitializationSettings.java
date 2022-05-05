@@ -1,9 +1,8 @@
 package configs;
 
 import lombok.AllArgsConstructor;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 
-import java.awt.Point;
 import java.io.Serializable;
 
 /**
@@ -17,8 +16,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class MainInitializationSettings implements Serializable {
     public final Vector2D BUILDING_SIZE;
-    public final Point ELEVATOR_SIZE;
-    public final Point CUSTOMER_SIZE;
+    public final Vector2D ELEVATOR_SIZE;
+    public final Vector2D CUSTOMER_SIZE;
     public final long ELEVATOR_OPEN_CLOSE_TIME;
     public final int ELEVATORS_COUNT;
     public final int FLOORS_COUNT;

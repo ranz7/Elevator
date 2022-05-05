@@ -1,18 +1,20 @@
-
 package view.gui;
-
 
 import controller.GuiController;
 import drawable.drawableObjectsConcrete.FlyingText;
 import lombok.Getter;
 import model.GuiModel;
-import tools.tools.Vector2D;
+import architecture.tickable.Tickable;
+import tools.Vector2D;
 import view.canvas.GameWindow;
 import view.buttons.ButtonsComponent;
+import view.gui.windowListeners.WindowMouseListener;
+import view.gui.windowListeners.WindowResizeListener;
+import view.gui.windowReacts.ButtonsReact;
 
 import java.awt.*;
 
-public class Gui {
+public class Gui implements Tickable, ButtonsReact {
     private final GuiController controller;
 
     @Getter
@@ -25,31 +27,31 @@ public class Gui {
     public Gui(GuiController controller) {
         this.controller = controller;
         gameWindow = new GameWindow();
-        buttonsComponent = new ButtonsComponent(this,  gameWindow);
+        buttonsComponent = new ButtonsComponent(gameWindow);
 
-        buttonsComponent.addButtonsListener(this, new ButtonsListener(buttonsComponent));
+        buttonsComponent.addReactAndListener(this);
+
         gameWindow.addMouseListener(new WindowMouseListener(this));
         gameWindow.addResizeListener(new WindowResizeListener(this));
     }
-    boolean started = false;
 
     public void start() {
-        if (started) {
-            return;
-        }
-        started = true;
         gameWindow.start();
         buttonsComponent.start();
-        resize();
     }
 
-    public void update() {
-        gameWindow.update();
+    @Override
+    public void tick(long deltaTime) {
+        gameWindow.tick(deltaTime); 
+
     }
 
     public void resize() {
-        buttonsComponent.resize(gameWindow.getSize());
+        if (guiModel.getSettings() == null) {
+            return;
+        }
         gameWindow.resize(gameWindow.getSize());
+        buttonsComponent.resize(gameWindow.getSize());
     }
 
     public void rightMouseClicked(Vector2D point) {
@@ -70,22 +72,27 @@ public class Gui {
                         Vector2D.North, 6, 15, 300, new Color(255, 217, 13)));
     }
 
+    @Override
     public void addElevatorButtonClicked() {
         controller.changeElevatorsCount(true);
     }
 
+    @Override
     public void removeElevatorButtonClicked() {
         controller.changeElevatorsCount(false);
     }
 
+    @Override
     public void decreaseGameSpeedButtonClicked() {
         controller.decreaseGameSpeed();
     }
 
+    @Override
     public void increaseGameSpeedButtonClicked() {
         controller.increaseSpeed();
     }
 
+    @Override
     public void clickedStartEndFloorButtonRequest(int start, int end) {
         controller.clickedAddCustomerButtonWithNumber(start, end);
     }

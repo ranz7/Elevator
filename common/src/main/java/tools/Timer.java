@@ -1,10 +1,10 @@
-package tools.tools;
+package tools;
 
-import lombok.Getter;
+import architecture.tickable.Tickable;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class Timer {
+public class Timer implements Tickable {
     private long currentTimeInMillisec;
     private long startTimeInMillisec;
 
@@ -12,6 +12,7 @@ public class Timer {
         restart(startTimerTime);
     }
 
+    @Override
     public void tick(long deltaTime) {
         currentTimeInMillisec -= deltaTime;
     }

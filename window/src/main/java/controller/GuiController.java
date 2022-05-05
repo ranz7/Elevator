@@ -10,28 +10,22 @@ import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessageListener;
 import model.GuiModel;
 import model.objects.movingObject.CreaturesData;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.gui.Gui;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /*
  * control window, created with Swing
  * @see SwingWindow
  */
-public class GuiController implements ProtocolMessageListener {
-    static private final int TPS = 120;
-
+public class GuiController extends ControllerEndlessLoop implements ProtocolMessageListener {
     public final Gates gates = new Gates(new Client(), this);
-
     private final Gui gui = new Gui(this);
-    private GuiModel windowModel;
 
-    private long currentTime;
-    private double gameSpeed = 1;
+    private GuiModel windowModel;
 
     public void setModel(GuiModel model) {
         windowModel = model;
@@ -39,7 +33,6 @@ public class GuiController implements ProtocolMessageListener {
     }
 
     public void start() {
-        long lastTime = System.currentTimeMillis();
         gates.setOnDisconnectEvent(() -> {
             gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
             gates.start();
@@ -48,29 +41,15 @@ public class GuiController implements ProtocolMessageListener {
         gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
         gates.start();
 
-        while (true) {
-            long deltaTime = System.currentTimeMillis() - lastTime;
-            lastTime += deltaTime;
-            currentTime += deltaTime;
-            gates.tick(deltaTime);
-            if (!windowModel.isNeedToInitialise()) {
-                gui.start();
-                windowModel.getDrawableOjects().forEach(object -> object.tick((long) (deltaTime * gameSpeed)));
-                windowModel.clearDead();
-                gui.update();
-            }
-
-            try {
-                TimeUnit.MILLISECONDS.sleep(Math.round(1000. / TPS));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        gui.start();
+        addTickable(gates);
+        addTickable(gui);
+        addModel(windowModel);
+        super.start();
     }
 
-
     @Override
-    public boolean popMessage(ProtocolMessage message) {
+    public boolean applyMessage(ProtocolMessage message) {
         Protocol protocol = message.getProtocolInMessage();
         Serializable data = message.getDataInMessage();
         switch (protocol) {
@@ -83,8 +62,9 @@ public class GuiController implements ProtocolMessageListener {
                     return true;
                 }
                 windowModel.setSettings(settings);
-                gameSpeed = settings.GAME_SPEED;
-                currentTime = message.getTimeStumpInMessage();
+                setControllerSpeed(settings.GAME_SPEED);
+                setCurrentTime(message.getTimeStumpInMessage());
+                gui.resize();
             }
             case UPDATE_DATA -> {
                 windowModel.updateData((CreaturesData) data);
@@ -95,7 +75,7 @@ public class GuiController implements ProtocolMessageListener {
             case ELEVATOR_OPEN -> windowModel.getElevator((long) data).DOORS.changeDoorsState(false);
             case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).DOORS.changeDoorsState(true);
             case CUSTOMER_GET_IN_OUT -> windowModel.changeBehindElevatorForCustomer((long) data);
-            case CHANGE_GAME_SPEED -> gameSpeed = (double) data;
+            case CHANGE_GAME_SPEED -> setControllerSpeed((double) data);
         }
         return true;
     }
@@ -126,5 +106,10 @@ public class GuiController implements ProtocolMessageListener {
         if (button.getPosition().distanceTo(pointInGame) < 20) {
             button.buttonClick();
         }
+    }
+
+    @Override
+    int getTickPerSecond() {
+        return 120;
     }
 }

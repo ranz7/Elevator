@@ -5,7 +5,7 @@ import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import lombok.Getter;
 import model.GuiModel;
 import model.objects.movingObject.Creature;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
@@ -30,7 +30,7 @@ public class ElevatorBorder extends DrawableCreature {
         BORDER_SIZE = guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS;
         WALL_HEIGHT = guiModel.getWallHeight();
 
-        size = new Point(size.x + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS * 2,
+        size = new Vector2D(size.x + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS * 2,
                 size.y + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS);
 
 

@@ -1,9 +1,9 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.drawTools.GameDrawer;
-import tools.tools.Timer;
+import tools.Timer;
 
 import java.awt.*;
 
@@ -51,11 +51,11 @@ public class ElevatorDoors extends DrawableCreature {
 
         gameDrawer.setColor(DOORS_COLOR);
         gameDrawer.drawFilledRect(position.getAdded(new Vector2D(-size.x / 2., 0)),
-                new Point((int) (size.x / 2 - openedGap), size.y), DOORS_BORDER, 2);
+                new Vector2D((int) (size.x / 2 - openedGap), size.y), DOORS_BORDER, 2);
 
         gameDrawer.setColor(DOORS_COLOR);
         gameDrawer.drawFilledRect(position.getAdded(new Vector2D(openedGap, 0)),
-                new Point((int) (size.x / 2 - openedGap), size.y), DOORS_BORDER, 2);
+                new Vector2D((int) (size.x / 2 - openedGap), size.y), DOORS_BORDER, 2);
 
     }
 

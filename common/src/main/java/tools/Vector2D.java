@@ -1,4 +1,4 @@
-package tools.tools;
+package tools;
 
 import lombok.NoArgsConstructor;
 
@@ -102,11 +102,11 @@ public class Vector2D extends Point2D.Double {
         return Math.max(x, y);
     }
 
-    public Vector2D getAddedX(int x) {
+    public Vector2D getAddedX(double x) {
         return new Vector2D(this.x + x, y);
     }
 
-    public Vector2D getAddedY(int y) {
+    public Vector2D getAddedY(double y) {
         return new Vector2D(x, this.y + y);
     }
 }
