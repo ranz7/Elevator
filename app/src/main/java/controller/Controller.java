@@ -16,7 +16,6 @@ import common.Timer;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
