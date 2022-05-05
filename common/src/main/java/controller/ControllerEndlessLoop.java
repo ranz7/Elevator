@@ -29,7 +29,7 @@ public class ControllerEndlessLoop {
             additionalMetodToRun.run();
 
             if (model != null) {
-                new TickableList(model.getTickableOjects()).tick(deltaTime * controllerSpeed);
+                new TickableList().add(model.getTickableList()).tick(deltaTime * controllerSpeed);
                 model.clearDead();
             }
             try {

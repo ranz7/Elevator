@@ -24,7 +24,7 @@ public class GameWindow extends JPanel implements Tickable {
 
     public void setModel(GuiModel model) {
         windowModel = model;
-        setBackground(windowModel.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR);
+        setBackground(windowModel.colorSettings.windowBackGround);
     }
 
     public GameWindow() {
@@ -47,7 +47,7 @@ public class GameWindow extends JPanel implements Tickable {
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-            gameScaler.updateSizes(newSize, windowModel.getSettings().BUILDING_SIZE);
+            gameScaler.updateSizes(newSize, windowModel.getMainInitializationSettings().BUILDING_SIZE);
     }
 
     @Override

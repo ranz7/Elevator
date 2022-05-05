@@ -11,10 +11,12 @@ import view.buttons.ButtonsComponent;
 import view.gui.windowListeners.WindowMouseListener;
 import view.gui.windowListeners.WindowResizeListener;
 import view.gui.windowReacts.ButtonsReact;
+import view.gui.windowReacts.MouseReact;
+import view.gui.windowReacts.ResizeReact;
 
 import java.awt.*;
 
-public class Gui implements Tickable, ButtonsReact {
+public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     private final GuiController controller;
 
     @Getter
@@ -27,12 +29,12 @@ public class Gui implements Tickable, ButtonsReact {
     public Gui(GuiController controller) {
         this.controller = controller;
         gameWindow = new GameWindow();
-        buttonsComponent = new ButtonsComponent(gameWindow);
-
-        buttonsComponent.addReactAndListener(this);
-
         gameWindow.addMouseListener(new WindowMouseListener(this));
         gameWindow.addResizeListener(new WindowResizeListener(this));
+
+
+        buttonsComponent = new ButtonsComponent(gameWindow);
+        buttonsComponent.addButtonListener(this);
     }
 
     public void start() {
@@ -42,18 +44,20 @@ public class Gui implements Tickable, ButtonsReact {
 
     @Override
     public void tick(long deltaTime) {
-        gameWindow.tick(deltaTime); 
+        gameWindow.tick(deltaTime);
 
     }
 
+    @Override
     public void resize() {
-        if (guiModel.getSettings() == null) {
+        if (guiModel.getMainInitializationSettings() == null) {
             return;
         }
         gameWindow.resize(gameWindow.getSize());
         buttonsComponent.resize(gameWindow.getSize());
     }
 
+    @Override
     public void rightMouseClicked(Vector2D point) {
         if (gameWindow.zoomedIn()) {
             guiModel.addMovingDrawable(
@@ -65,6 +69,7 @@ public class Gui implements Tickable, ButtonsReact {
         }
     }
 
+    @Override
     public void leftMouseClicked(Vector2D point) {
         controller.clickButton(point);
         guiModel.addMovingDrawable(

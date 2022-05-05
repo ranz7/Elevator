@@ -1,11 +1,9 @@
 package model;
 
-import architecture.tickable.Tickable;
-
-import java.util.List;
+import architecture.tickable.TickableList;
 
 public interface Model {
     void clearDead();
 
-    List<Tickable> getTickableOjects();
+    TickableList getTickableList();
 }

@@ -1,15 +1,13 @@
 package controller;
 
-import configs.ConnectionSettings;
-import configs.MainInitializationSettings;
-import connector.Client;
-import connector.Gates;
+import configs.*;
+import connector.*;
 import connector.filtersAndScenarios.FilterScenarios;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessageListener;
-import model.GuiModel;
-import model.objects.movingObject.CreaturesData;
+import model.*;
+import model.objects.movingObject.*;
 import tools.Vector2D;
 import view.gui.Gui;
 
@@ -17,9 +15,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-/*
+/**
  * control window, created with Swing
- * @see SwingWindow
  */
 public class GuiController extends ControllerEndlessLoop implements ProtocolMessageListener {
     public final Gates gates = new Gates(new Client(), this);
@@ -61,7 +58,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
                                     .formatted(ConnectionSettings.VERSION, settings.VERSION));
                     return true;
                 }
-                windowModel.setSettings(settings);
+                windowModel.setMainInitializationSettings(settings);
                 setControllerSpeed(settings.GAME_SPEED);
                 setCurrentTime(message.getTimeStumpInMessage());
                 gui.resize();
@@ -81,7 +78,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
-        startFloorButtonNumber = windowModel.getSettings().FLOORS_COUNT - startFloorButtonNumber - 1;
+        startFloorButtonNumber = windowModel.getMainInitializationSettings().FLOORS_COUNT - startFloorButtonNumber - 1;
         LinkedList<Integer> data = new LinkedList<>();
         data.push(startFloorButtonNumber);
         data.push(endFloorNumber - 1);

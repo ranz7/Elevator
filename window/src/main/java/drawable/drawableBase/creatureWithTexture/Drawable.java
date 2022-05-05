@@ -5,10 +5,10 @@ import view.drawTools.GameDrawer;
 
 import java.util.List;
 
-public abstract interface Drawable extends Tickable {
-    abstract void draw(GameDrawer gameDrawer);
+public interface Drawable extends Tickable {
+    void draw(GameDrawer gameDrawer);
 
-    abstract List<Drawable> getDrawables();
+    List<Drawable> getDrawables();
 
-    abstract Integer GetDrawPrioritet();
+    Integer GetDrawPrioritet();
 }

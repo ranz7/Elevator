@@ -23,10 +23,10 @@ import java.util.List;
 
 public class GuiModel implements Model {
     // TODO REFACTOR - move to one SUPER SETINGS class
-    public final ColorSettings COLOR_SETTINGS = new ColorSettings();
-    public final DrawSettings DRAW_SETTINGS = new DrawSettings();
+    public final ColorSettings colorSettings = new ColorSettings();
+    public final DrawSettings drawSettings = new DrawSettings();
     @Getter
-    private MainInitializationSettings settings;
+    private MainInitializationSettings mainInitializationSettings;
     //
 
     //TODO move into DRAW CLIENT OBJECTS
@@ -38,23 +38,19 @@ public class GuiModel implements Model {
     private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
 
 
-    private boolean needToInitialize = true;
-
-
     public Double getWallHeight() {
-        return settings.BUILDING_SIZE.y / settings.FLOORS_COUNT;
+        return mainInitializationSettings.BUILDING_SIZE.y / mainInitializationSettings.FLOORS_COUNT;
     }
 
     public Double getDistanceBetweenElevators() {
-        return settings.BUILDING_SIZE.x / (settings.ELEVATORS_COUNT + 1);
+        return mainInitializationSettings.BUILDING_SIZE.x / (mainInitializationSettings.ELEVATORS_COUNT + 1);
     }
 
     private void initialiseFirstData() {
-        for (int i = 0; i < settings.FLOORS_COUNT; i++) {
+        for (int i = 0; i < mainInitializationSettings.FLOORS_COUNT; i++) {
             floors.add(new Floor(i, this));
         }
 
-        needToInitialize = false;
     }
 
     public LinkedList<Drawable> getDrawableOjects() {
@@ -66,7 +62,7 @@ public class GuiModel implements Model {
         return drawables;
     }
 
-    public LinkedList<Tickable> getTickableOjects() {
+    public LinkedList<Tickable> getTickableList() {
         LinkedList<Tickable> tickables = new LinkedList<>();
         getDrawableOjects().forEach(drawable -> tickables.add((Tickable) drawable));
         return tickables;
@@ -111,18 +107,9 @@ public class GuiModel implements Model {
         return ref.foundDrawableElevator;
     }
 
-    public void setSettings(MainInitializationSettings settings) {
-        this.settings = settings;
+    public void setMainInitializationSettings(MainInitializationSettings mainInitializationSettings) {
+        this.mainInitializationSettings = mainInitializationSettings;
     }
-
-    public boolean isNeedToInitialise() {
-        return needToInitialize;
-    }
-
-    public void clear() {
-        needToInitialize = true;
-    }
-
     public void changeBehindElevatorForCustomer(long id) {
         customers.stream().filter(drawableCustomer -> drawableCustomer.getId() == id).findFirst().ifPresent(
                 DrawableCustomer::changeBehindElevator);
@@ -155,9 +142,9 @@ public class GuiModel implements Model {
                     if (elevators.stream()
                             .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
                         elevators.add(
-                                new DrawableElevator(creatureA, settings.ELEVATOR_OPEN_CLOSE_TIME,
-                                        COLOR_SETTINGS.ELEVATOR_BACKGROUND_COLOR, COLOR_SETTINGS.ELEVATOR_DOOR_COLOR,
-                                        COLOR_SETTINGS.ELEVATOR_BORDER_COLOR));
+                                new DrawableElevator(creatureA, mainInitializationSettings.ELEVATOR_OPEN_CLOSE_TIME,
+                                        colorSettings.elevatorBackGround, colorSettings.elevatorDoor,
+                                        colorSettings.elevatorBorder));
                     }
                 }
         );
@@ -167,13 +154,11 @@ public class GuiModel implements Model {
                     if (customers.stream()
                             .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
                         customers.add(new DrawableCustomer(creatureA,
-                                COLOR_SETTINGS.CUSTOMER_SKIN_COLOR));
+                                colorSettings.customersSkin));
                     }
                 }
         );
-        if (isNeedToInitialise()) {
-            initialiseFirstData();
-        }
+
     }
 
 }

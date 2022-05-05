@@ -6,7 +6,6 @@ import model.GuiModel;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,10 +22,10 @@ public class FloorWall implements Drawable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.FLOOR_WALL_COLOR);
+        gameDrawer.setColor(VIEW_MODEL.colorSettings.FLOOR_WALL);
         gameDrawer.drawFilledRect(
                 new Vector2D(0, floorNumber * VIEW_MODEL.getWallHeight()),
-                new Vector2D((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) (double) VIEW_MODEL.getWallHeight()));
+                new Vector2D((int) VIEW_MODEL.getMainInitializationSettings().BUILDING_SIZE.x, (int) (double) VIEW_MODEL.getWallHeight()));
     }
 
     @Override

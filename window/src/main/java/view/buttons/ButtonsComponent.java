@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.GuiModel;
 import view.gui.windowListeners.ButtonsListener;
-import view.canvas.GameWindow;
 import view.gui.windowReacts.ButtonsReact;
 
 import javax.swing.*;
@@ -18,7 +17,7 @@ public class ButtonsComponent {
     private GuiModel guiModel;
     @Setter
     private ActionListener listenWindow;
-    private ButtonsReact buttonsReact;
+    private ButtonsReact react;
 
     private final LinkedList<JButton> ADD_CUSTOMER_BUTTONS = new LinkedList<>();
     private final LinkedList<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new LinkedList<>();
@@ -27,18 +26,18 @@ public class ButtonsComponent {
 
     public void start() {
         for (int i = 0; i < 16; i++) {
-            var addClientButton = createButton("->", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, window);
+            var addClientButton = createButton("->", guiModel.colorSettings.jButtonsColor, window);
             addClientButton.setVisible(false);
             ADD_CUSTOMER_BUTTONS.add(addClientButton);
 
-            var selectFloorButon = createButton(String.valueOf(1), guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, window);
+            var selectFloorButon = createButton(String.valueOf(1), guiModel.colorSettings.jButtonsColor, window);
             selectFloorButon.setVisible(false);
             SELECT_FLOOR_BUTTONS.add(selectFloorButon);
         }
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, window));
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, window));
-        CHANGE_SPEED_BUTTONS.add(createButton("<", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, window));
-        CHANGE_SPEED_BUTTONS.add(createButton(">", guiModel.COLOR_SETTINGS.JBUTTONS_COLOR, window));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", guiModel.colorSettings.jButtonsColor, window));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", guiModel.colorSettings.jButtonsColor, window));
+        CHANGE_SPEED_BUTTONS.add(createButton("<", guiModel.colorSettings.jButtonsColor, window));
+        CHANGE_SPEED_BUTTONS.add(createButton(">", guiModel.colorSettings.jButtonsColor, window));
     }
 
     private JButton createButton(String text, Color buttonColor, JComponent buttonCarier) {
@@ -54,11 +53,11 @@ public class ButtonsComponent {
     public void resize(Dimension size) {
         Iterator<JButton> addCustomerButtonIt = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> selectFloorButtonIt = SELECT_FLOOR_BUTTONS.iterator();
-        double heightOfButton = (size.height - 100.) / guiModel.getSettings().FLOORS_COUNT;
+        double heightOfButton = (size.height - 100.) / guiModel.getMainInitializationSettings().FLOORS_COUNT;
         for (int i = 0; i < 16; i++) {
             JButton addCustomerButton = addCustomerButtonIt.next();
             addCustomerButton.setText("->");
-            if (i >= guiModel.getSettings().FLOORS_COUNT) {
+            if (i >= guiModel.getMainInitializationSettings().FLOORS_COUNT) {
                 addCustomerButton.setVisible(false);
                 continue;
             }
@@ -86,17 +85,17 @@ public class ButtonsComponent {
 
     public void buttonClicked(JButton source) {
         if (ADD_REDUCE_ELEVATORS_BUTTONS.get(0) == source) {
-            buttonsReact.addElevatorButtonClicked();
+            react.addElevatorButtonClicked();
         }
         if (ADD_REDUCE_ELEVATORS_BUTTONS.get(1) == source) {
-            buttonsReact.removeElevatorButtonClicked();
+            react.removeElevatorButtonClicked();
         }
 
         if (CHANGE_SPEED_BUTTONS.get(0) == source) {
-            buttonsReact.decreaseGameSpeedButtonClicked();
+            react.decreaseGameSpeedButtonClicked();
         }
         if (CHANGE_SPEED_BUTTONS.get(1) == source) {
-            buttonsReact.increaseGameSpeedButtonClicked();
+            react.increaseGameSpeedButtonClicked();
         }
 
         Iterator<JButton> buttonIterator = ADD_CUSTOMER_BUTTONS.iterator();
@@ -111,15 +110,15 @@ public class ButtonsComponent {
                 return;
             }
             if (currentButton == source) {
-                buttonsReact.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
+                react.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
                 return;
             }
         }
     }
 
-    public void addReactAndListener(ButtonsReact buttonsReact) {
+    public void addButtonListener(ButtonsReact react) {
         this.listenWindow = new ButtonsListener(this);
-        this.buttonsReact = buttonsReact;
+        this.react = react;
     }
 
     public void setModel(GuiModel model) {

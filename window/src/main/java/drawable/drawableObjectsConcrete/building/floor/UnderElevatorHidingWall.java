@@ -11,9 +11,9 @@ public class UnderElevatorHidingWall extends DrawableCreature {
     private final Color BACK_GROUND_COLOR;
 
     public UnderElevatorHidingWall(int i, GuiModel model) {
-        super(new Vector2D(model.getSettings().BUILDING_SIZE.x / 2., model.getSettings().ELEVATOR_SIZE.y + model.getWallHeight() * i),
-                new Vector2D((int) model.getSettings().BUILDING_SIZE.x, (int) (model.getWallHeight() - model.getSettings().ELEVATOR_SIZE.y)));
-        this.BACK_GROUND_COLOR = model.COLOR_SETTINGS.FLOOR_WALL_COLOR;
+        super(new Vector2D(model.getMainInitializationSettings().BUILDING_SIZE.x / 2., model.getMainInitializationSettings().ELEVATOR_SIZE.y + model.getWallHeight() * i),
+                new Vector2D((int) model.getMainInitializationSettings().BUILDING_SIZE.x, (int) (model.getWallHeight() - model.getMainInitializationSettings().ELEVATOR_SIZE.y)));
+        this.BACK_GROUND_COLOR = model.colorSettings.FLOOR_WALL;
     }
 
     @Override

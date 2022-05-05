@@ -19,9 +19,9 @@ public class ElevatorButton extends DrawableCreature {
     private final Color COLOR_OFF;
 
     public ElevatorButton(Vector2D position, GuiModel guiModel) {
-        super(position, guiModel.DRAW_SETTINGS.ELEVATOR_BUTTON_SIZE);
-        this.COLOR_ON = guiModel.COLOR_SETTINGS.ELEVATOR_BUTTON_ON_COLOR;
-        this.COLOR_OFF = guiModel.COLOR_SETTINGS.ELEVATOR_BUTTON_OF_COLOR;
+        super(position, guiModel.drawSettings.ELEVATOR_BUTTON_SIZE);
+        this.COLOR_ON = guiModel.colorSettings.elevatorButtonOn;
+        this.COLOR_OFF = guiModel.colorSettings.elevatorButtonOff;
         this.BUTTON_ON_TIME = DrawSettings.ELEVATOR_BUTTON_ON_TIME;
     }
 

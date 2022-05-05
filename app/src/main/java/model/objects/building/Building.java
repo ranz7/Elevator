@@ -6,12 +6,13 @@ import model.objects.elevator.Elevator;
 import tools.Vector2D;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class Building {
     public final ElevatorSystemSettings settings;
     @Getter
-    public final LinkedList<Elevator> elevators = new LinkedList<>();
+    public final List<Elevator> elevators = new LinkedList<>();
     @Getter
     public double wallSize;
 

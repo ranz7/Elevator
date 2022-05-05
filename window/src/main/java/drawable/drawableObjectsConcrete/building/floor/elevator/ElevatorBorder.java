@@ -25,18 +25,18 @@ public class ElevatorBorder extends DrawableCreature {
     public ElevatorBorder(Vector2D position, Creature parentElevator, GuiModel guiModel) {
         super(position, parentElevator.getSize());
         PARENT_ELEVATOR = parentElevator;
-        BORDER_COLOR = guiModel.COLOR_SETTINGS.ELEVATOR_BORDER_COLOR;
-        NUMBER_COLOR = guiModel.COLOR_SETTINGS.ELEVATOR_CURRENT_FLOOR_COLOR;
-        BORDER_SIZE = guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS;
+        BORDER_COLOR = guiModel.colorSettings.elevatorBorder;
+        NUMBER_COLOR = guiModel.colorSettings.elevatorCurrentFloor;
+        BORDER_SIZE = guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS;
         WALL_HEIGHT = guiModel.getWallHeight();
 
-        size = new Vector2D(size.x + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS * 2,
-                size.y + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS);
+        size = new Vector2D(size.x + guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS * 2,
+                size.y + guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS);
 
 
         elevatorBlackSpace = new ElevatorBlackSpace(position, parentElevator, guiModel);
         elevatorButton = new ElevatorButton(position.getAdded(new Vector2D(size).getDivided(2)).getAdded(
-                new Vector2D(guiModel.getSettings().BUTTON_RELATIVE_POSITION, 0)), guiModel);
+                new Vector2D(guiModel.getMainInitializationSettings().BUTTON_RELATIVE_POSITION, 0)), guiModel);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package view.gui.windowListeners;
 
 import tools.Vector2D;
-import view.gui.Gui;
+import view.gui.windowReacts.MouseReact;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public record WindowMouseListener(Gui WINDOW) implements MouseListener {
+public record WindowMouseListener(MouseReact react) implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -17,10 +17,10 @@ public record WindowMouseListener(Gui WINDOW) implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-            WINDOW.rightMouseClicked(new Vector2D(e.getPoint()));
+            react.rightMouseClicked(new Vector2D(e.getPoint()));
         }
         if(SwingUtilities.isLeftMouseButton(e)){
-            WINDOW.leftMouseClicked(new Vector2D(e.getPoint()));
+            react.leftMouseClicked(new Vector2D(e.getPoint()));
         }
     }
 

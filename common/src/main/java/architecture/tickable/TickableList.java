@@ -9,18 +9,27 @@ import java.util.function.Supplier;
 @NoArgsConstructor
 public class TickableList implements Tickable {
     private List<Tickable> tickables = new LinkedList<>();
-    private final List<Supplier<List<Tickable>>> tickablesDynamic = new LinkedList<>();
+    private final List<Supplier<List<? extends Tickable>>> tickablesDynamic = new LinkedList<>();
 
-    public TickableList(List<Tickable> tickableOjects) {
-        tickables = tickableOjects;
-    }
-
-    public void add(Tickable tickable) {
+    public TickableList add(Tickable tickable) {
         tickables.add(tickable);
+        return this;
     }
 
-    public void add(Supplier<List<Tickable>> dynamicCreatedTickables) {
+    public TickableList add(TickableList tickableList) {
+        tickables.addAll(tickableList.tickables);
+        return this;
+    }
+
+
+    public TickableList add(List<? extends Tickable> tickableList) {
+        tickables.addAll(tickableList);
+        return this;
+    }
+
+    public TickableList add(Supplier<List<? extends Tickable>> dynamicCreatedTickables) {
         tickablesDynamic.add(dynamicCreatedTickables);
+        return this;
     }
 
 

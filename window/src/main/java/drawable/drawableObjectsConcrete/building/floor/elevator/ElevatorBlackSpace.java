@@ -16,8 +16,8 @@ public class ElevatorBlackSpace extends DrawableCreature {
 
     public ElevatorBlackSpace(Vector2D position, Creature parentElevator, GuiModel guiModel) {
         super(position, parentElevator.getSize());
-        size = new Vector2D(size.x + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS * 2, size.y + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS);
-        this.BLACK_SPACES_COLOR = guiModel.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR;
+        size = new Vector2D(size.x + guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS * 2, size.y + guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS);
+        this.BLACK_SPACES_COLOR = guiModel.colorSettings.windowBackGround;
     }
 
     @Override

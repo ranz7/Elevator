@@ -1,6 +1,7 @@
 package model;
 
 import architecture.tickable.Tickable;
+import architecture.tickable.TickableList;
 import configs.ConnectionSettings;
 import configs.CustomerSettings;
 import configs.ElevatorSystemSettings;
@@ -38,11 +39,8 @@ public class AppModel implements Model {
     }
 
     @Override
-    public List<Tickable> getTickableOjects() {
-        List<Tickable> tickableObjects = new LinkedList<>();
-        customers.forEach(customer -> tickableObjects.add((Tickable) customer));
-        building.getElevators().forEach(elevator -> tickableObjects.add((Tickable) elevator));
-        return tickableObjects;
+    public TickableList getTickableList() {
+        return new TickableList().add(customers).add(building.getElevators());
     }
 
     public CreaturesData getDataToSent() {

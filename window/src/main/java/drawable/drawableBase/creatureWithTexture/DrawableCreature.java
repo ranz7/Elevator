@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DrawableCreature extends Creature implements Drawable {
+public abstract class DrawableCreature extends Creature implements Drawable {
     public DrawableCreature(Vector2D position) {
         super(position);
     }
@@ -22,12 +22,10 @@ public class DrawableCreature extends Creature implements Drawable {
     }
 
     @Override
-    public void draw(GameDrawer gameDrawer) {
-    }
+    public abstract void draw(GameDrawer gameDrawer);
 
     @Override
-    public void tick(long delta_time) {
-    }
+    public abstract void tick(long delta_time);
 
     @Override
     public List<Drawable> getDrawables() {
@@ -41,7 +39,7 @@ public class DrawableCreature extends Creature implements Drawable {
         return 10000;
     }
 
-    public DrawCenter getDrawCenter(){
+    public DrawCenter getDrawCenter() {
         return DrawCenter.CENTER_BY_X;
     }
 }
