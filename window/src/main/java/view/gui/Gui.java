@@ -33,7 +33,6 @@ public class Gui {
         gameWindow.addMouseListener(new WindowMouseListener(this));
         gameWindow.addResizeListener(new WindowResizeListener(this));
     }
-
     boolean started = false;
 
     public void start() {

@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.building.floor;
 
-import drawable.drawableBase.Drawable;
+import drawable.drawableBase.creatureWithTexture.Drawable;
 import drawable.drawableObjectsConcrete.building.floor.decorations.FloorPainting;
 import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorBorder;
 import lombok.Getter;

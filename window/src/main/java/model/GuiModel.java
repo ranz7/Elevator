@@ -5,7 +5,7 @@ import connector.protocol.CreaturesData;
 import connector.protocol.SettingsData;
 import drawable.ColorSettings;
 import drawable.DrawSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableBase.creatureWithTexture.Drawable;
 import drawable.drawableObjectsConcrete.*;
 import drawable.drawableObjectsConcrete.building.floor.Floor;
 import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
@@ -34,6 +34,7 @@ public class GuiModel {
 
     private final LinkedList<Floor> floors = new LinkedList<>();
     private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
+
 
     private boolean needToInitialize = true;
 

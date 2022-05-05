@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.elevator;
 
-import drawable.drawableBase.DrawableCreature;
+import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import common.Vector2D;
 import view.drawTools.GameDrawer;
 import common.Timer;

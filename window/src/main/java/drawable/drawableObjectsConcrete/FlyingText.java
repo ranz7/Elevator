@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete;
 
-import drawable.drawableBase.Drawable;
+import drawable.drawableBase.creatureWithTexture.Drawable;
 import model.objects.movingObject.MovingObject;
 import common.Vector2D;
 import view.drawTools.GameDrawer;

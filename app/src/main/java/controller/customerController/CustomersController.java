@@ -11,6 +11,7 @@ import controller.Controller;
 import java.util.Random;
 
 import common.Timer;
+import common.Vector2D;
 
 /**
  * Manipulate all customers in game.

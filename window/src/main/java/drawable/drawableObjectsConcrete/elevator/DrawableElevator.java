@@ -1,8 +1,8 @@
 package drawable.drawableObjectsConcrete.elevator;
 
-import drawable.drawableBase.DrawableCreature;
+import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import model.objects.movingObject.Creature;
-import drawable.drawableBase.Drawable;
+import drawable.drawableBase.creatureWithTexture.Drawable;
 import common.Vector2D;
 import view.drawTools.GameDrawer;
 import lombok.Getter;
