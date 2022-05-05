@@ -3,7 +3,7 @@ package drawable.drawableObjectsConcrete.building.floor.elevator;
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import model.GuiModel;
 import model.objects.movingObject.Creature;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
@@ -16,7 +16,7 @@ public class ElevatorBlackSpace extends DrawableCreature {
 
     public ElevatorBlackSpace(Vector2D position, Creature parentElevator, GuiModel guiModel) {
         super(position, parentElevator.getSize());
-        size = new Point(size.x + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS * 2, size.y + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS);
+        size = new Vector2D(size.x + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS * 2, size.y + guiModel.DRAW_SETTINGS.ELEVATOR_BORDER_THICKNESS);
         this.BLACK_SPACES_COLOR = guiModel.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR;
     }
 

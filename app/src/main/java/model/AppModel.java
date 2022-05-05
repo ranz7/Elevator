@@ -1,5 +1,6 @@
 package model;
 
+import architecture.tickable.Tickable;
 import configs.ConnectionSettings;
 import configs.CustomerSettings;
 import configs.ElevatorSystemSettings;
@@ -12,7 +13,7 @@ import model.objects.movingObject.CreaturesData;
 import model.objects.movingObject.MovingObject;
 import model.objects.building.Building;
 import model.objects.customer.Customer;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -22,7 +23,7 @@ import java.util.List;
  * Class to store all objects.
  */
 @NoArgsConstructor
-public class AppModel {
+public class AppModel implements Model {
     @Getter
     @Setter
     private Building building;
@@ -36,11 +37,19 @@ public class AppModel {
         customers.removeIf(MovingObject::isDead);
     }
 
+    @Override
+    public List<Tickable> getTickableOjects() {
+        List<Tickable> tickableObjects = new LinkedList<>();
+        customers.forEach(customer -> tickableObjects.add((Tickable) customer));
+        building.getElevators().forEach(elevator -> tickableObjects.add((Tickable) elevator));
+        return tickableObjects;
+    }
+
     public CreaturesData getDataToSent() {
         List<Creature> customersTmp = new LinkedList<>();
         List<Creature> elevatorsTmp = new LinkedList<>();
         customers.forEach(customer -> customersTmp.add(new Creature(customer)));
-        building.ELEVATORS.forEach(elevator -> elevatorsTmp.add(new Creature(elevator)));
+        building.elevators.forEach(elevator -> elevatorsTmp.add(new Creature(elevator)));
         return new CreaturesData(customersTmp, elevatorsTmp);
     }
 

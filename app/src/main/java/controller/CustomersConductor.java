@@ -2,7 +2,8 @@ package controller;
 
 import configs.CustomerSettings;
 import lombok.Getter;
-import tools.tools.Vector2D;
+import architecture.tickable.Tickable;
+import tools.Vector2D;
 import model.AppModel;
 import model.objects.elevator.ElevatorRequest;
 import model.objects.customer.CustomerState;
@@ -11,14 +12,14 @@ import connector.protocol.Protocol;
 
 import java.util.Random;
 
-import tools.tools.Timer;
+import tools.Timer;
 
 /**
  * Manipulate all customers in game.
  *
  * @see CustomerSettings
  */
-public class CustomersConductor {
+public class CustomersConductor implements Tickable {
     @Getter
     private final CustomerSettings settings = new CustomerSettings();
     private final ElevatorsConductor ELEVATOR_SYSTEM_CONTROLLER;
@@ -31,6 +32,7 @@ public class CustomersConductor {
         this.AppCONTROLLER = appController;
     }
 
+    @Override
     public void tick(long deltaTime) {
         spawnTimer.tick(deltaTime);
 
@@ -52,7 +54,6 @@ public class CustomersConductor {
                 case STAY_IN -> processStayIn(customer);
                 case GET_OUT -> processGetOut(customer);
             }
-            customer.tick(deltaTime);
         }
     }
 
@@ -79,7 +80,7 @@ public class CustomersConductor {
         }
         if (customer.getMAIN_TIMER().isReady()) {
             var getPositionToWalk = new Vector2D(
-                    new Random().nextInt(0, ELEVATOR_SYSTEM_CONTROLLER.getSettings().BUILDING_SIZE.x),
+                    new Random().nextInt(0, (int) ELEVATOR_SYSTEM_CONTROLLER.getSettings().BUILDING_SIZE.x),
                     customer.getPosition().y);
             customer.setSpeedMultiPly(settings.SLOW_SPEED_MULTIPLY);
             customer.getMAIN_TIMER().restart(settings.TIME_TO_WALK);

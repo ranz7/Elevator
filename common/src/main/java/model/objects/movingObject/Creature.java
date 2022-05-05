@@ -2,7 +2,7 @@ package model.objects.movingObject;
 
 import lombok.Getter;
 import lombok.Setter;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -17,13 +17,13 @@ public class Creature implements Serializable {
 
     @Setter
     protected boolean isVisible = true;
-    protected Point size = new Point();
+    protected Vector2D size = new Vector2D();
     protected Vector2D position;
     protected long id;
 
     public Creature(Creature creatureA) {
         this.position = new Vector2D(creatureA.position);
-        this.size = new Point(creatureA.size);
+        this.size = new Vector2D(creatureA.size);
         this.isVisible = creatureA.isVisible;
         this.id = creatureA.id;
     }
@@ -33,7 +33,7 @@ public class Creature implements Serializable {
         id = next_id++;
     }
 
-    public Creature(Vector2D position, Point size) {
+    public Creature(Vector2D position, Vector2D size) {
         this.position = position;
         this.size = size;
         id = next_id++;

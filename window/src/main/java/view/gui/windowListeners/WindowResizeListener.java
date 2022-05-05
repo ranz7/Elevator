@@ -1,6 +1,7 @@
-package view.gui;
+package view.gui.windowListeners;
 
 import lombok.RequiredArgsConstructor;
+import view.gui.Gui;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;

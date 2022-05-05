@@ -1,6 +1,7 @@
 package connector;
 
-import tools.tools.Timer;
+import architecture.tickable.Tickable;
+import tools.Timer;
 import connector.baseStation.BaseStation;
 import connector.baseStation.download.SocketCompactData;
 import connector.baseStation.download.Uplink;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
  * @see Downlink
  * @see Uplink
  */
-public class Gates implements Uplink {
+public class Gates implements Tickable, Uplink {
 
 
     private final BaseStation upload;
@@ -46,20 +47,41 @@ public class Gates implements Uplink {
     List<Function<Protocol, Boolean>> scenario = FilterScenarios.noFilter;
     Function<Protocol, Boolean> filter;
 
-    public void start() {
-        Logger.getAnonymousLogger().info("Start Gates");
-        upload.start();
-    }
-
     public Gates(BaseStation upload, ProtocolMessageListener listener) {
         this.upload = upload;
         this.listener = listener;
         this.upload.setDownlink(this);
     }
 
+    public void start() {
+        Logger.getAnonymousLogger().info("Start Gates");
+        upload.start();
+    }
+
+    @Override
+    public void tick(long deltaTime) {
+        if (upload.isStopped()) {
+            if (onDisconnectEvent != null) {
+                onDisconnectEvent.run();
+            }
+            return;
+        }
+
+        if (spamTimer != null) {
+            spamTimer.tick(deltaTime);
+            if (spamTimer.isReady()) {
+                spamEvent.run();
+                spamTimer.restart();
+            }
+        }
+
+        synchronized (mesages) {
+            mesages.removeIf(listener::applyMessage);
+        }
+    }
+
     @Override
     public void onReceiveSocket(ProtocolMessage message) {
-
         if (isFiltered(message.getProtocolInMessage())) {
             return;
         }
@@ -80,27 +102,6 @@ public class Gates implements Uplink {
     public void onNewSocketConnection(SocketCompactData client) {
         if (onConnectEvent != null) {
             onConnectEvent.run();
-        }
-    }
-
-    public void tick(long deltaTime) {
-        if (upload.isStopped()) {
-            if (onDisconnectEvent != null) {
-                onDisconnectEvent.run();
-            }
-            return;
-        }
-
-        if (spamTimer != null) {
-            spamTimer.tick(deltaTime);
-            if (spamTimer.isReady()) {
-                spamEvent.run();
-                spamTimer.restart();
-            }
-        }
-
-        synchronized (mesages) {
-            mesages.removeIf(listener::popMessage);
         }
     }
 

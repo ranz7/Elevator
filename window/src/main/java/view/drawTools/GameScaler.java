@@ -1,11 +1,12 @@
 package view.drawTools;
 
 import lombok.Getter;
-import tools.tools.Vector2D;
+import architecture.tickable.Tickable;
+import tools.Vector2D;
 
 import java.awt.*;
 
-public class GameScaler {
+public class GameScaler implements Tickable {
     private final Vector2D blackZone = GameScalerSettings.blackZone;
 
     private Vector2D screenSizeAfterShift = new Vector2D(0, 0);
@@ -23,21 +24,18 @@ public class GameScaler {
     Vector2D clickedPoint = new Vector2D(0, 0);
     double zoomScale = 1;
 
-    public void tick() {
+    @Override
+    public void tick(long deltaTime) {
         additionalZoomCurrentValue += (additionalZoomFinishValue - additionalZoomCurrentValue) / 20;
         additionalMove = additionalMove
                 .getAdded(additionalMoveFinishValue.getSubbed(additionalMove).getDivided(10));
-    }
-
-    public GameScaler(Dimension screenSize, Vector2D buildingSize) {
-        updateSizes(screenSize, buildingSize);
     }
 
     public double getFromRealToGameLength(double length) {
         return length / (scalingCoefficient * additionalZoomCurrentValue);
     }
 
-    public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, int heigthOfTheObject) {
+    public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, double heigthOfTheObject) {
         return new Vector2D(
                 drawOffset.x
                         + gameCoordinate.x / (scalingCoefficient * additionalZoomCurrentValue)
@@ -47,11 +45,6 @@ public class GameScaler {
                         + (additionalMove.y) / (additionalZoomCurrentValue)) + screenSizeAfterShift.y + blackZone.y / 2);
     }
 
-    public Vector2D getFromGameToRealCoordinate(Point gameCoordinate, int heigthOfTheObject) {
-        return getFromGameToRealCoordinate(new Vector2D(gameCoordinate), heigthOfTheObject);
-
-    }
-
     public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
         return new Vector2D(
                 (realPosition.x - drawOffset.x - blackZone.x / 2
@@ -59,10 +52,6 @@ public class GameScaler {
                 (-realPosition.y + blackZone.y / 2 + screenSizeAfterShift.y - drawOffset.y
                         - (additionalMove.y) / (additionalZoomCurrentValue)) * scalingCoefficient * additionalZoomCurrentValue
                         - heigthOfTheObject);
-    }
-
-    public Vector2D getFromRealToGameCoordinate(Point realPosition, int heigthOfTheObject) {
-        return getFromRealToGameCoordinate(new Vector2D(realPosition), heigthOfTheObject);
     }
 
     public void updateSizes(Dimension screenSize, Vector2D buildingSize) {
@@ -98,4 +87,5 @@ public class GameScaler {
         additionalZoomFinishValue = 1;
         this.zoomScale = 1;
     }
+
 }

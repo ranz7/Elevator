@@ -3,35 +3,36 @@ package model.objects.building;
 import configs.ElevatorSystemSettings;
 import lombok.Getter;
 import model.objects.elevator.Elevator;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.Random;
 
 public class Building {
-    public final LinkedList<Elevator> ELEVATORS = new LinkedList<>();
-    public final ElevatorSystemSettings SETTINGS;
+    public final ElevatorSystemSettings settings;
+    @Getter
+    public final LinkedList<Elevator> elevators = new LinkedList<>();
     @Getter
     public double wallSize;
 
     public Building(ElevatorSystemSettings settings) {
-        this.SETTINGS = settings;
-        for (int i = 0; i < SETTINGS.MAX_ELEVATORS_COUNT; i++) {
+        this.settings = settings;
+        for (int i = 0; i < this.settings.MAX_ELEVATORS_COUNT; i++) {
             var newElevator = new Elevator(settings);
             newElevator.setVisible(false);
-            ELEVATORS.add(newElevator);
+            elevators.add(newElevator);
         }
         updateElevatorsPosition();
     }
 
     public void updateElevatorsPosition() {
-        this.wallSize = ((double) SETTINGS.BUILDING_SIZE.y) / SETTINGS.FLOORS_COUNT;
-        double distanceBetweenElevators = ((double) SETTINGS.BUILDING_SIZE.x) / (SETTINGS.getElevatorsCount() + 1);
-        var elevatorIterator = ELEVATORS.iterator();
-        for (int i = 0; i < SETTINGS.MAX_ELEVATORS_COUNT; i++) {
+        this.wallSize = ((double) settings.BUILDING_SIZE.y) / settings.FLOORS_COUNT;
+        double distanceBetweenElevators = ((double) settings.BUILDING_SIZE.x) / (settings.getElevatorsCount() + 1);
+        var elevatorIterator = elevators.iterator();
+        for (int i = 0; i < settings.MAX_ELEVATORS_COUNT; i++) {
             var elevator = elevatorIterator.next();
 
-            if (i < SETTINGS.getElevatorsCount()) {
+            if (i < settings.getElevatorsCount()) {
                 elevator.setWallSize(wallSize);
                 if (elevator.isVisible()) {
                     elevator.setPosition(new Vector2D(distanceBetweenElevators * (i + 1), elevator.getPosition().y));
@@ -52,19 +53,19 @@ public class Building {
         if (spawnInLeftCorner) {
             return new Vector2D(0, (int) (floorStart * wallSize));
         }
-        return new Vector2D(SETTINGS.BUILDING_SIZE.x, (int) (floorStart * wallSize));
+        return new Vector2D(settings.BUILDING_SIZE.x, (int) (floorStart * wallSize));
     }
 
     public Vector2D getClosestButtonOnFloor(Vector2D position) {
-        if (SETTINGS.getElevatorsCount() == 0) {
+        if (settings.getElevatorsCount() == 0) {
             return null;
         }
-        var nearestButton = new Vector2D(SETTINGS.BUILDING_SIZE.x * 2, position.y);
-        for (var elevator : ELEVATORS) {
+        var nearestButton = new Vector2D(settings.BUILDING_SIZE.x * 2, position.y);
+        for (var elevator : elevators) {
             if (!elevator.isVisible()) {
                 break;
             }
-            var buttonPosition = new Vector2D(elevator.getPosition().x + SETTINGS.BUTTON_RELATIVE_POSITION,
+            var buttonPosition = new Vector2D(elevator.getPosition().x + settings.BUTTON_RELATIVE_POSITION,
                     position.y);
             nearestButton = position.getNearest(buttonPosition, nearestButton);
         }
@@ -75,11 +76,11 @@ public class Building {
         if (!isOpenedElevatorOnFloorExist(floor)) {
             return null;
         }
-        if (SETTINGS.getElevatorsCount() == 0) {
+        if (settings.getElevatorsCount() == 0) {
             return null;
         }
         Elevator closestElevator = null;
-        for (var elevator : ELEVATORS) {
+        for (var elevator : elevators) {
             if (!elevator.isVisible()) {
                 break;
             }
@@ -99,7 +100,7 @@ public class Building {
     }
 
     private boolean isOpenedElevatorOnFloorExist(int floor) {
-        return ELEVATORS.stream().anyMatch(elevator -> elevator.getCurrentFloor() == floor
+        return elevators.stream().anyMatch(elevator -> elevator.getCurrentFloor() == floor
                 && elevator.isOpened()
                 && elevator.isFree()
                 && elevator.isVisible());

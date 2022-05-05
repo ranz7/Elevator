@@ -3,7 +3,7 @@ package drawable.drawableObjectsConcrete.building.floor;
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import lombok.RequiredArgsConstructor;
 import model.GuiModel;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
@@ -26,7 +26,7 @@ public class FloorWall implements Drawable {
         gameDrawer.setColor(VIEW_MODEL.COLOR_SETTINGS.FLOOR_WALL_COLOR);
         gameDrawer.drawFilledRect(
                 new Vector2D(0, floorNumber * VIEW_MODEL.getWallHeight()),
-                new Point((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) (double) VIEW_MODEL.getWallHeight()));
+                new Vector2D((int) VIEW_MODEL.getSettings().BUILDING_SIZE.x, (int) (double) VIEW_MODEL.getWallHeight()));
     }
 
     @Override

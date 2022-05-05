@@ -4,11 +4,8 @@ import model.objects.movingObject.MovingObject;
 import model.objects.elevator.Elevator;
 import lombok.Setter;
 import lombok.Getter;
-import tools.tools.Timer;
-import tools.tools.Vector2D;
-
-import java.awt.Point;
-
+import tools.Timer;
+import tools.Vector2D;
 
 @Getter
 public class Customer extends MovingObject {
@@ -21,7 +18,7 @@ public class Customer extends MovingObject {
     @Setter
     private CustomerState state = CustomerState.GO_TO_BUTTON;
 
-    public Customer(int currentFlor, int floorEnd, Vector2D position, double speed, Point size) {
+    public Customer(int currentFlor, int floorEnd, Vector2D position, double speed, Vector2D size) {
         super(position, speed, size);
         this.FLOOR_TO_END = floorEnd;
         this.currentFlor = currentFlor;

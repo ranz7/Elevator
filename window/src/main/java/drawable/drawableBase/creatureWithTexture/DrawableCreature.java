@@ -1,7 +1,7 @@
 package drawable.drawableBase.creatureWithTexture;
 
 import model.objects.movingObject.Creature;
-import tools.tools.Vector2D;
+import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
@@ -13,7 +13,7 @@ public class DrawableCreature extends Creature implements Drawable {
         super(position);
     }
 
-    public DrawableCreature(Vector2D position, Point size) {
+    public DrawableCreature(Vector2D position, Vector2D size) {
         super(position, size);
     }
 

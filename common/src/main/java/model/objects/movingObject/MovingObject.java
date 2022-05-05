@@ -1,13 +1,15 @@
 package model.objects.movingObject;
 
 
+import architecture.tickable.Tickable;
 import lombok.Getter;
 import lombok.Setter;
 
-import tools.tools.Vector2D;
+import tools.Vector2D;
+
 import java.awt.*;
 
-public class MovingObject extends Creature {
+public class MovingObject extends Creature implements Tickable {
     protected static final int SPEED_COEFFICIENT = 1000;
     private final double SPEED;
 
@@ -19,7 +21,7 @@ public class MovingObject extends Creature {
     protected boolean isDead = false;
     protected Vector2D destination;
 
-    public MovingObject(Vector2D position, double speed, Point size) {
+    public MovingObject(Vector2D position, double speed, Vector2D size) {
         super(position, size);
         this.destination = position;
         this.SPEED = speed;
@@ -36,6 +38,7 @@ public class MovingObject extends Creature {
             position = position.getShiftedByDistance(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
         }
     }
+
     public void setPosition(Vector2D newPosition) {
         destination = destination.getAdded(newPosition.getSubbed(position));
         position = newPosition;

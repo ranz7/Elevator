@@ -1,4 +1,4 @@
-package view.gui;
+package view.gui.windowListeners;
 
 import view.buttons.ButtonsComponent;
 

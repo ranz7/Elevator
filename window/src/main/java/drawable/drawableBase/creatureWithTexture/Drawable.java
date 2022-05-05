@@ -1,13 +1,14 @@
 package drawable.drawableBase.creatureWithTexture;
 
+import architecture.tickable.Tickable;
 import view.drawTools.GameDrawer;
 
 import java.util.List;
 
-public interface Drawable {
-    void draw(GameDrawer gameDrawer);
-    void tick(long deltaTime);
+public abstract interface Drawable extends Tickable {
+    abstract void draw(GameDrawer gameDrawer);
 
-    List<Drawable> getDrawables();
-    Integer GetDrawPrioritet();
+    abstract List<Drawable> getDrawables();
+
+    abstract Integer GetDrawPrioritet();
 }

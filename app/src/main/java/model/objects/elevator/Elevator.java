@@ -4,8 +4,8 @@ import configs.ElevatorSystemSettings;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.movingObject.MovingObject;
-import tools.tools.Timer;
-import tools.tools.Vector2D;
+import tools.Timer;
+import tools.Vector2D;
 
 import java.util.*;
 
