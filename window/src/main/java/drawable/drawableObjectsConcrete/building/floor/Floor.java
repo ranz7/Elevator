@@ -60,7 +60,7 @@ public class Floor implements Drawable {
                 new Vector2D(buildingSize.x / 2., currentFloor * floorHeight),
                 new Vector2D((int) buildingSize.x, floorHeight), 7);
 
-        gameDrawer.setColor(WINDOW_MODEL.getMainSettings().windowBackGround());
+        gameDrawer.setColor(WINDOW_MODEL.getMainSettings().windowBait ckGround());
         gameDrawer.drawFilledRect(
                 new Vector2D(0 - customerSize.x * 4., currentFloor * floorHeight - 2),
                 new Vector2D(customerSize.x * 4, floorHeight)
