@@ -25,7 +25,7 @@ public abstract class DrawableCreature extends Creature implements Drawable {
     public abstract void draw(GameDrawer gameDrawer);
 
     @Override
-    public abstract void tick(long delta_time);
+    public void tick(long delta_time){};
 
     @Override
     public List<Drawable> getDrawables() {

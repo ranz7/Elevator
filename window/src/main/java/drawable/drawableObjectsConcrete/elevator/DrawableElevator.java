@@ -1,5 +1,6 @@
 package drawable.drawableObjectsConcrete.elevator;
 
+import configs.CanvasSettings.MainSettings;
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import model.objects.movingObject.Creature;
 import drawable.drawableBase.creatureWithTexture.Drawable;
@@ -15,14 +16,10 @@ public class DrawableElevator extends DrawableCreature {
     public final Color BACK_GROUND_COLOR;
     public final ElevatorDoors DOORS;
 
-    public DrawableElevator(Creature creature, long elevatorOpenCloseTime,
-                            Color elevatorBackGround,
-                            Color elevatorDoors,
-                            Color elevatorBorderDoors) {
+    public DrawableElevator(Creature creature, MainSettings settings) {
         super(creature);
-        BACK_GROUND_COLOR = elevatorBackGround;
-        DOORS = new ElevatorDoors(this, elevatorOpenCloseTime,
-                elevatorDoors, elevatorBorderDoors);
+        BACK_GROUND_COLOR = settings.elevatorBackGroundColor();
+        DOORS = new ElevatorDoors(this, settings);
     }
 
     @Override

@@ -4,10 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import tools.Vector2D;
 
-import java.awt.*;
 import java.io.Serializable;
 
-/*
+/**
  * Basic object of all objects in project
  */
 @Getter
@@ -22,10 +21,10 @@ public class Creature implements Serializable {
     protected long id;
 
     public Creature(Creature creatureA) {
-        this.position = new Vector2D(creatureA.position);
-        this.size = new Vector2D(creatureA.size);
-        this.isVisible = creatureA.isVisible;
-        this.id = creatureA.id;
+        position = new Vector2D(creatureA.position);
+        size = new Vector2D(creatureA.size);
+        isVisible = creatureA.isVisible;
+        id = creatureA.id;
     }
 
     public Creature(Vector2D position) {

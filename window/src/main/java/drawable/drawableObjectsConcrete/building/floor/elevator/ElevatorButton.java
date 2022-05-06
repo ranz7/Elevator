@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import configs.DrawSettings;
+import configs.CanvasSettings.DrawSettings;
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import model.GuiModel;
 import tools.Vector2D;

@@ -11,6 +11,10 @@ public class TickableList implements Tickable {
     private List<Tickable> tickables = new LinkedList<>();
     private final List<Supplier<List<? extends Tickable>>> tickablesDynamic = new LinkedList<>();
 
+    public TickableList(List<? extends Tickable> tickableList) {
+        tickables.addAll(tickableList);
+    }
+
     public TickableList add(Tickable tickable) {
         tickables.add(tickable);
         return this;

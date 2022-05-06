@@ -1,10 +1,12 @@
 package model;
 
 
-import architecture.tickable.Tickable;
+import architecture.tickable.TickableList;
+import configs.CanvasSettings.ColorSettings;
+import configs.CanvasSettings.DrawSettings;
+import configs.CanvasSettings.MainSettings;
 import configs.MainInitializationSettings;
-import configs.ColorSettings;
-import configs.DrawSettings;
+import model.packageLoader.PackageLoader;
 import drawable.drawableBase.creatureWithTexture.Drawable;
 import drawable.drawableObjectsConcrete.*;
 import drawable.drawableObjectsConcrete.building.floor.Floor;
@@ -12,22 +14,16 @@ import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
 import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
-import model.objects.movingObject.Creature;
 import model.objects.movingObject.CreaturesData;
 import model.objects.movingObject.MovingObject;
 import tools.Vector2D;
 
 import java.util.LinkedList;
-import java.util.List;
 
 
 public class GuiModel implements Model {
-    // TODO REFACTOR - move to one SUPER SETINGS class
-    public final ColorSettings colorSettings = new ColorSettings();
-    public final DrawSettings drawSettings = new DrawSettings();
     @Getter
-    private MainInitializationSettings mainInitializationSettings;
-    //
+    private final MainSettings mainSettings = new MainSettings(new ColorSettings(), new DrawSettings());
 
     //TODO move into DRAW CLIENT OBJECTS
     @Getter
@@ -37,20 +33,21 @@ public class GuiModel implements Model {
     private final LinkedList<Floor> floors = new LinkedList<>();
     private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
 
-
-    public Double getWallHeight() {
-        return mainInitializationSettings.BUILDING_SIZE.y / mainInitializationSettings.FLOORS_COUNT;
+    public void start() {
     }
 
-    public Double getDistanceBetweenElevators() {
-        return mainInitializationSettings.BUILDING_SIZE.x / (mainInitializationSettings.ELEVATORS_COUNT + 1);
+    public void update() {
+        updateFloors(mainSettings.floorsCount());
     }
 
-    private void initialiseFirstData() {
-        for (int i = 0; i < mainInitializationSettings.FLOORS_COUNT; i++) {
-            floors.add(new Floor(i, this));
+    private void updateFloors(int floors_count) {
+        int oldFloorsCount = floors.size();
+        while (oldFloorsCount < floors_count) {
+            floors.add(new Floor(oldFloorsCount++, this));
         }
-
+        while (oldFloorsCount > floors_count) {
+            floors.remove(oldFloorsCount--);
+        }
     }
 
     public LinkedList<Drawable> getDrawableOjects() {
@@ -62,10 +59,8 @@ public class GuiModel implements Model {
         return drawables;
     }
 
-    public LinkedList<Tickable> getTickableList() {
-        LinkedList<Tickable> tickables = new LinkedList<>();
-        getDrawableOjects().forEach(drawable -> tickables.add((Tickable) drawable));
-        return tickables;
+    public TickableList getTickableList() {
+        return new TickableList(getDrawableOjects());
     }
 
     public void addMovingDrawable(FlyingText text) {
@@ -108,57 +103,16 @@ public class GuiModel implements Model {
     }
 
     public void setMainInitializationSettings(MainInitializationSettings mainInitializationSettings) {
-        this.mainInitializationSettings = mainInitializationSettings;
+        mainSettings.set(mainInitializationSettings);
     }
+
     public void changeBehindElevatorForCustomer(long id) {
         customers.stream().filter(drawableCustomer -> drawableCustomer.getId() == id).findFirst().ifPresent(
                 DrawableCustomer::changeBehindElevator);
     }
 
-
-    private void applyArrivedData(List<Creature> creatures_came,
-                                  LinkedList<? extends Creature> creatures_to_apply) {
-        // erease
-        creatures_to_apply.removeIf(
-                creatureA -> creatures_came.stream().noneMatch(
-                        creatureB -> creatureA.getId() == creatureB.getId()));
-        // update
-        creatures_to_apply.forEach(
-                creatureA -> {
-                    creatureA.set(creatures_came.stream().filter(
-                            creatureB -> creatureA.getId() == creatureB.getId()
-                    ).findFirst().get());
-                }
-        );
-    }
-
     public void updateData(CreaturesData data) {
-        this.applyArrivedData(data.ELEVATORS, elevators);
-        this.applyArrivedData(data.CUSTOMERS, customers);
-
-        // Add
-        data.ELEVATORS.forEach(
-                creatureA -> {
-                    if (elevators.stream()
-                            .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
-                        elevators.add(
-                                new DrawableElevator(creatureA, mainInitializationSettings.ELEVATOR_OPEN_CLOSE_TIME,
-                                        colorSettings.elevatorBackGround, colorSettings.elevatorDoor,
-                                        colorSettings.elevatorBorder));
-                    }
-                }
-        );
-
-        data.CUSTOMERS.forEach(
-                creatureA -> {
-                    if (customers.stream()
-                            .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
-                        customers.add(new DrawableCustomer(creatureA,
-                                colorSettings.customersSkin));
-                    }
-                }
-        );
-
+        PackageLoader.ApplyCustomers(data.CUSTOMERS, customers, mainSettings);
+        PackageLoader.ApplyElevators(data.ELEVATORS, elevators, mainSettings);
     }
-
 }

@@ -32,7 +32,6 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
         gameWindow.addMouseListener(new WindowMouseListener(this));
         gameWindow.addResizeListener(new WindowResizeListener(this));
 
-
         buttonsComponent = new ButtonsComponent(gameWindow);
         buttonsComponent.addButtonListener(this);
     }
@@ -50,7 +49,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
 
     @Override
     public void resize() {
-        if (guiModel.getMainInitializationSettings() == null) {
+        if (!guiModel.getMainSettings().initialized()) {
             return;
         }
         gameWindow.resize(gameWindow.getSize());

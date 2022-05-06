@@ -1,7 +1,9 @@
 package model.objects.building;
 
+import architecture.tickable.Startable;
 import configs.ElevatorSystemSettings;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import model.objects.elevator.Elevator;
 import tools.Vector2D;
 
@@ -9,26 +11,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Building {
+@RequiredArgsConstructor
+public class Building implements Startable {
     public final ElevatorSystemSettings settings;
     @Getter
     public final List<Elevator> elevators = new LinkedList<>();
     @Getter
     public double wallSize;
 
-    public Building(ElevatorSystemSettings settings) {
-        this.settings = settings;
-        for (int i = 0; i < this.settings.MAX_ELEVATORS_COUNT; i++) {
-            var newElevator = new Elevator(settings);
-            newElevator.setVisible(false);
-            elevators.add(newElevator);
-        }
+    @Override
+    public void start() {
         updateElevatorsPosition();
     }
 
     public void updateElevatorsPosition() {
-        this.wallSize = ((double) settings.BUILDING_SIZE.y) / settings.FLOORS_COUNT;
-        double distanceBetweenElevators = ((double) settings.BUILDING_SIZE.x) / (settings.getElevatorsCount() + 1);
+        this.wallSize = ( settings.BUILDING_SIZE.y) / settings.FLOORS_COUNT;
+        double distanceBetweenElevators = ( settings.BUILDING_SIZE.x) / (settings.getElevatorsCount() + 1);
         var elevatorIterator = elevators.iterator();
         for (int i = 0; i < settings.MAX_ELEVATORS_COUNT; i++) {
             var elevator = elevatorIterator.next();
@@ -106,6 +104,8 @@ public class Building {
                 && elevator.isFree()
                 && elevator.isVisible());
     }
+
+
 }
 
 

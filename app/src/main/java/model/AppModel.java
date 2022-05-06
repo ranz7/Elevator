@@ -39,6 +39,17 @@ public class AppModel implements Model {
     }
 
     @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+
+    @Override
     public TickableList getTickableList() {
         return new TickableList().add(customers).add(building.getElevators());
     }

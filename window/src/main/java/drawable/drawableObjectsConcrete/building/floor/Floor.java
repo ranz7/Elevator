@@ -29,10 +29,10 @@ public class Floor implements Drawable {
         floorWall = new FloorWall(currentFloor, guiModel);
         underElevatorHidingWall.add(new UnderElevatorHidingWall(currentFloor, guiModel));
 
-        for (int j = 0; j < guiModel.getMainInitializationSettings().ELEVATORS_COUNT; j++) {
-            var elevatorBorderPosition = new Vector2D(
-                    guiModel.getDistanceBetweenElevators() * (j + 1),
-                    currentFloor * guiModel.getWallHeight());
+        for (int j = 0; j < guiModel.getMainSettings().elevatorsCount(); j++) {
+            var distanceBetweenElevators = guiModel.getMainSettings().distanceBetweenElevators() * (j + 1));
+            var distanceBetweenFloors = guiModel.getMainSettings().floorHeight() * currentFloor;
+            var elevatorBorderPosition = new Vector2D();
             borders.add(new ElevatorBorder(elevatorBorderPosition, guiModel.getElevators().get(j), guiModel));
 
             if (j > 0) {
@@ -52,21 +52,21 @@ public class Floor implements Drawable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        var floorHeight = WINDOW_MODEL.getMainInitializationSettings().BUILDING_SIZE.y / WINDOW_MODEL.getMainInitializationSettings().FLOORS_COUNT;
-        gameDrawer.setColor(WINDOW_MODEL.colorSettings.FLOOR_BETON);
+        var buildingSize = WINDOW_MODEL.getMainSettings().buildingSize();
+        int floorHeight = (int) WINDOW_MODEL.getMainSettings().floorHeight();
+        var customerSize = WINDOW_MODEL.getMainSettings().customerSize();
+        gameDrawer.setColor(WINDOW_MODEL.getMainSettings().betonCollor());
         gameDrawer.drawRect(
-                new Vector2D(WINDOW_MODEL.getMainInitializationSettings().BUILDING_SIZE.x / 2., currentFloor * floorHeight),
-                new Vector2D((int) WINDOW_MODEL.getMainInitializationSettings().BUILDING_SIZE.x, (int) floorHeight), 7);
+                new Vector2D(buildingSize.x / 2., currentFloor * floorHeight),
+                new Vector2D((int) buildingSize.x, floorHeight), 7);
 
-        gameDrawer.setColor(WINDOW_MODEL.colorSettings.windowBackGround);
+        gameDrawer.setColor(WINDOW_MODEL.getMainSettings().windowBackGround());
         gameDrawer.drawFilledRect(
-                new Vector2D(0 - WINDOW_MODEL.getMainInitializationSettings().CUSTOMER_SIZE.x * 4., currentFloor * floorHeight - 2),
-                new Vector2D(WINDOW_MODEL.getMainInitializationSettings().CUSTOMER_SIZE.x * 4, (int) floorHeight)
+                new Vector2D(0 - customerSize.x * 4., currentFloor * floorHeight - 2),
+                new Vector2D(customerSize.x * 4, floorHeight)
         );
         gameDrawer.drawFilledRect(
-                new Vector2D(
-                        WINDOW_MODEL.getMainInitializationSettings().BUILDING_SIZE.x, currentFloor * floorHeight - 2),
-                new Vector2D(WINDOW_MODEL.getMainInitializationSettings().CUSTOMER_SIZE.x * 4, (int) floorHeight)
+                new Vector2D(buildingSize.x, currentFloor * floorHeight - 2), new Vector2D(customerSize.x * 4, floorHeight)
         );
 
     }

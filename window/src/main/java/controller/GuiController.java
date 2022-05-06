@@ -33,7 +33,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         gates.setOnDisconnectEvent(() -> {
             gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
             gates.start();
-            windowModel.clear();
+            windowModel.clearDead();
         });
         gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
         gates.start();
@@ -65,6 +65,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
             }
             case UPDATE_DATA -> {
                 windowModel.updateData((CreaturesData) data);
+                windowModel.update();
             }
             case ELEVATOR_BUTTON_CLICK -> {
                 clickButton((Vector2D) data);
@@ -78,7 +79,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
-        startFloorButtonNumber = windowModel.getMainInitializationSettings().FLOORS_COUNT - startFloorButtonNumber - 1;
+        startFloorButtonNumber = windowModel.getMainSettings().floorsCount() - startFloorButtonNumber - 1;
         LinkedList<Integer> data = new LinkedList<>();
         data.push(startFloorButtonNumber);
         data.push(endFloorNumber - 1);
@@ -100,6 +101,9 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     public void clickButton(Vector2D point) {
         var pointInGame = gui.getGameWindow().getGameScaler().getFromRealToGameCoordinate(point, 0);
         var button = windowModel.getNearestButton(pointInGame);
+        if (button == null) {
+            return;
+        }
         if (button.getPosition().distanceTo(pointInGame) < 20) {
             button.buttonClick();
         }

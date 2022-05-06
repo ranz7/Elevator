@@ -20,6 +20,10 @@ public class ControllerEndlessLoop {
 
     void start(Runnable additionalMetodToRun) {
         currentTime = System.currentTimeMillis();
+        if(model!=null) {
+            model.start();
+        }
+
         while (true) {
             long deltaTime = System.currentTimeMillis() - currentTime;
             currentTime += deltaTime;

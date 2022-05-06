@@ -1,5 +1,6 @@
 package drawable.drawableObjectsConcrete.customer;
 
+import configs.CanvasSettings.MainSettings;
 import drawable.drawableBase.creatureWithTexture.DrawableCreature;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,10 @@ public class DrawableCustomer extends DrawableCreature {
     @Setter
     private boolean behindElevator = true;
 
-    public DrawableCustomer(Creature creature, Color[] color) {
+    public DrawableCustomer(Creature creature, MainSettings settings) {
         super(creature);
-        this.COLOR_OF_CUSTOMER = color[(int) (getId() % color.length)];
+        var colors = settings.customerSkins();
+        this.COLOR_OF_CUSTOMER = colors[(int) (getId() % colors.length)];
     }
 
     @Override
