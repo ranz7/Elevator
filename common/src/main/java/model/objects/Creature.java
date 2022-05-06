@@ -1,4 +1,4 @@
-package model.objects.movingObject;
+package model.objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ public class Creature implements Serializable {
 
     @Setter
     protected boolean isVisible = true;
-    protected Vector2D size = new Vector2D();
+    protected Vector2D size;
     protected Vector2D position;
     protected long id;
 
@@ -25,11 +25,6 @@ public class Creature implements Serializable {
         size = new Vector2D(creatureA.size);
         isVisible = creatureA.isVisible;
         id = creatureA.id;
-    }
-
-    public Creature(Vector2D position) {
-        this.position = position;
-        id = next_id++;
     }
 
     public Creature(Vector2D position, Vector2D size) {

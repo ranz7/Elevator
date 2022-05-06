@@ -95,7 +95,7 @@ public class MainSettings {
         return buildingSize().x / (elevatorsCount() + 1);
     }
 
-    public Color betonCollor() {
+    public Color florBetonColor() {
         throwIfNull();
         return colorSettings.betonOfFloor;
     }
@@ -105,7 +105,18 @@ public class MainSettings {
         return mainInitializationSettings.customerSize;
     }
 
-    public Color windowBackGround() {
+    public Color windowBackGroundColor() {
+        throwIfNull();
         return colorSettings.windowBackGround;
+    }
+
+    public Color flooWallColor() {
+        throwIfNull();
+        return colorSettings.floorWall;
+    }
+
+    public Vector2D elevatorSize() {
+        throwIfNull();
+        return mainInitializationSettings.elevatorSize;
     }
 }

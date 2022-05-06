@@ -1,4 +1,4 @@
-package model.objects.movingObject;
+package model.objects;
 
 import configs.ConnectionSettings;
 import lombok.RequiredArgsConstructor;

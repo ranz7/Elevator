@@ -1,6 +1,5 @@
 package model;
 
-import architecture.tickable.Tickable;
 import architecture.tickable.TickableList;
 import configs.ConnectionSettings;
 import configs.CustomerSettings;
@@ -9,8 +8,8 @@ import configs.MainInitializationSettings;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import model.objects.movingObject.Creature;
-import model.objects.movingObject.CreaturesData;
+import model.objects.Creature;
+import model.objects.CreaturesData;
 import model.objects.movingObject.MovingObject;
 import model.objects.building.Building;
 import model.objects.customer.Customer;

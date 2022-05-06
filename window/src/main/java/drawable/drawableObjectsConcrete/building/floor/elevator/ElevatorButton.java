@@ -1,7 +1,7 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
 import configs.CanvasSettings.DrawSettings;
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.Drawable;
 import model.GuiModel;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
@@ -12,7 +12,7 @@ import java.awt.*;
 /**
  * Small buttons near elevators.
  */
-public class ElevatorButton extends DrawableCreature {
+public class ElevatorButton extends Drawable {
     private final long BUTTON_ON_TIME;
     private final Timer BUTTON_ON_TIMER = new Timer();
     private final Color COLOR_ON;

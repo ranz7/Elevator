@@ -3,7 +3,7 @@ package model.packageLoader;
 import configs.CanvasSettings.MainSettings;
 import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
-import model.objects.movingObject.Creature;
+import model.objects.Creature;
 
 import java.util.LinkedList;
 import java.util.List;

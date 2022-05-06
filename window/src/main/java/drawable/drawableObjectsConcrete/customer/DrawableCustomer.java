@@ -1,15 +1,15 @@
 package drawable.drawableObjectsConcrete.customer;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.Drawable;
 import lombok.Getter;
 import lombok.Setter;
-import model.objects.movingObject.Creature;
+import model.objects.Creature;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
 
-public class DrawableCustomer extends DrawableCreature {
+public class DrawableCustomer extends Drawable {
     private final Color COLOR_OF_CUSTOMER;
 
     @Getter

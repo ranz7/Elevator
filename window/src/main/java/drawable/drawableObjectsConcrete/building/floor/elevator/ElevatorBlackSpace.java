@@ -1,8 +1,8 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.Drawable;
 import model.GuiModel;
-import model.objects.movingObject.Creature;
+import model.objects.Creature;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
@@ -11,7 +11,7 @@ import java.awt.*;
 /*
  * Spaces behind elevators
  */
-public class ElevatorBlackSpace extends DrawableCreature {
+public class ElevatorBlackSpace extends Drawable {
     private final Color BLACK_SPACES_COLOR;
 
     public ElevatorBlackSpace(Vector2D position, Creature parentElevator, GuiModel guiModel) {

@@ -1,7 +1,7 @@
 package view.drawTools;
 
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
-import drawable.drawableBase.creatureWithTexture.DrawableCreatureWithTexture;
+import drawable.drawableBase.Drawable;
+import drawable.drawableBase.drawableWithTexture.DrawableWithTexture;
 import lombok.RequiredArgsConstructor;
 import tools.Vector2D;
 
@@ -55,7 +55,7 @@ public class GameDrawer {
                 (int) gameScaler.getFromGameToRealCoordinate(position, 0).y);
     }
 
-    public void drawFilledRect(DrawableCreature drawableCreature) {
+    public void drawFilledRect(Drawable drawableCreature) {
         Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawableCreature);
         graphics2D.fillRect(
                 (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).x,
@@ -83,25 +83,25 @@ public class GameDrawer {
         graphics2D = (Graphics2D) g;
     }
 
-    public void draw(DrawableCreatureWithTexture drawableCreature) {
-        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawableCreature);
+    public void draw(DrawableWithTexture drawableWithTexture) {
+        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawableWithTexture);
 
-        graphics2D.drawImage(drawableCreature.getImage(),
-                (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).x,
-                (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreature.getSize().y).y,
-                (int) gameScaler.getFromRealToGameLength(drawableCreature.getSize().x),
-                (int) gameScaler.getFromRealToGameLength(drawableCreature.getSize().y),
+        graphics2D.drawImage(drawableWithTexture.getImage(),
+                (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableWithTexture.getSize().y).x,
+                (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableWithTexture.getSize().y).y,
+                (int) gameScaler.getFromRealToGameLength(drawableWithTexture.getSize().x),
+                (int) gameScaler.getFromRealToGameLength(drawableWithTexture.getSize().y),
                 null);
     }
 
-    private Vector2D getPositionCenteredBySettings(DrawableCreature drawableCreature) {
-        return switch (drawableCreature.getDrawCenter()) {
-            case CENTER_BY_X -> drawableCreature.getPosition().getSubbed(
-                    new Vector2D(drawableCreature.getSize().x / 2., 0));
-            case CENTER_BY_Y -> drawableCreature.getPosition().getSubbed(
-                    new Vector2D(0, drawableCreature.getSize().y / 2.));
-            case CENTER_BY_XY -> drawableCreature.getPosition().getSubbed(
-                    new Vector2D(drawableCreature.getSize().x / 2., drawableCreature.getSize().y / 2.));
+    private Vector2D getPositionCenteredBySettings(Drawable drawable) {
+        return switch (drawable.getDrawCenter()) {
+            case CENTER_BY_X -> drawable.getPosition().getSubbed(
+                    new Vector2D(drawable.getSize().x / 2., 0));
+            case CENTER_BY_Y -> drawable.getPosition().getSubbed(
+                    new Vector2D(0, drawable.getSize().y / 2.));
+            case CENTER_BY_XY -> drawable.getPosition().getSubbed(
+                    new Vector2D(drawable.getSize().x / 2., drawable.getSize().y / 2.));
         };
     }
 }

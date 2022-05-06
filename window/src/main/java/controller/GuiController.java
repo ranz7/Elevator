@@ -7,7 +7,7 @@ import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessageListener;
 import model.*;
-import model.objects.movingObject.*;
+import model.objects.CreaturesData;
 import tools.Vector2D;
 import view.gui.Gui;
 

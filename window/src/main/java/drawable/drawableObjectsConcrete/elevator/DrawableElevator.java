@@ -1,9 +1,8 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
-import model.objects.movingObject.Creature;
-import drawable.drawableBase.creatureWithTexture.Drawable;
+import drawable.drawableBase.Drawable;
+import model.objects.Creature;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.awt.*;
 import java.util.List;
 
 @Getter
-public class DrawableElevator extends DrawableCreature {
+public class DrawableElevator extends Drawable {
     public final Color BACK_GROUND_COLOR;
     public final ElevatorDoors DOORS;
 

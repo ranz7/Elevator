@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class MainInitializationSettings implements Serializable {
     public final Vector2D buildingSize;
-    public final Vector2D ELEVATOR_SIZE;
+    public final Vector2D elevatorSize;
     public final Vector2D customerSize;
     public final long elevatoropenclosetime;
     public final int elevatorsCount;

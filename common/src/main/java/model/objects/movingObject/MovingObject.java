@@ -5,56 +5,40 @@ import architecture.tickable.Tickable;
 import lombok.Getter;
 import lombok.Setter;
 
+import model.objects.Creature;
 import tools.Vector2D;
 
-import java.awt.*;
-
 public class MovingObject extends Creature implements Tickable {
-    protected static final int SPEED_COEFFICIENT = 1000;
-    private final double SPEED;
 
-    @Getter
-    @Setter
-    private double speedMultiPly = 1;
     @Getter
     @Setter
     protected boolean isDead = false;
-    protected Vector2D destination;
+    private final Trajectory trajecotry;
 
-    public MovingObject(Vector2D position, double speed, Vector2D size) {
+    public MovingObject(Vector2D position, Vector2D size, Trajectory trajecotry) {
         super(position, size);
-        this.destination = position;
-        this.SPEED = speed;
-    }
-
-    public MovingObject(Vector2D position, double speed) {
-        super(position);
-        this.destination = position;
-        this.SPEED = speed;
+        this.trajecotry = trajecotry;
     }
 
     public void tick(long delta_time) {
         if (!isReachedDestination()) {
-            position = position.getShiftedByDistance(destination, delta_time * getSpeed() / SPEED_COEFFICIENT);
+            position.getAdded(trajecotry.tickAndGet(delta_time));
         }
     }
 
     public void setPosition(Vector2D newPosition) {
-        destination = destination.getAdded(newPosition.getSubbed(position));
         position = newPosition;
     }
 
     public boolean isReachedDestination() {
-        return new Vector2D(this.destination).getVectorTo(this.position).getLength() < Vector2D.EPSILON;
+        return trajecotry.reached();
     }
 
-    public double getSpeed() {
-        return SPEED * speedMultiPly;
+    public double getConstSpeed() {
+        return trajecotry.getConstSpeed();
     }
 
-    public void setDestination(Vector2D destination) {
-        this.destination = destination;
+    public void setMoveTrajectory(Trajectory trajectory) {
+        trajecotry.apply(trajectory);
     }
-
-
 }

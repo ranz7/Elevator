@@ -1,7 +1,6 @@
 package view.canvas;
 
 import configs.WindowSettings;
-import drawable.drawableBase.creatureWithTexture.Drawable;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;

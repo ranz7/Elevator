@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class ColorSettings {
     public final Color betonOfFloor = new Color(44, 49, 51);
-    public final Color FLOOR_WALL = new Color(74, 110, 94);
+    public final Color floorWall = new Color(74, 110, 94);
 
     public final Color firstText = new Color(229, 212, 98);
     public final Color secondTest = new Color(229, 212, 98);

@@ -60,7 +60,7 @@ public class CustomersConductor implements Tickable {
     private void processGoToButton(Customer customer) {
         var buttonPosition = AppCONTROLLER.appModel.getBuilding()
                 .getClosestButtonOnFloor(customer.getPosition());
-        customer.setDestination(buttonPosition);
+        customer.setMoveTrajectory(buttonPosition);
         if (customer.isReachedDestination()) {
             ELEVATOR_SYSTEM_CONTROLLER.buttonClick(new ElevatorRequest(customer.getPosition(), customer.wantsGoUp()));
             customer.MAIN_TIMER.restart(settings.TIME_TO_WAIT_AFTER_BUTTON_CLICK);
@@ -73,7 +73,7 @@ public class CustomersConductor implements Tickable {
         var nearestOpenedElevatorOnFloor = AppCONTROLLER.appModel.getBuilding()
                 .getClosestOpenedElevatorOnFloor(customer.getPosition(), customer.getCurrentFlor());
         if (nearestOpenedElevatorOnFloor != null) {
-            customer.setDestination(nearestOpenedElevatorOnFloor.getPosition());
+            customer.setMoveTrajectory(nearestOpenedElevatorOnFloor.getPosition());
             customer.setSpeedMultiPly(settings.FAST_SPEED_MULTIPLY);
             customer.setState(CustomerState.GET_IN);
             return;
@@ -84,7 +84,7 @@ public class CustomersConductor implements Tickable {
                     customer.getPosition().y);
             customer.setSpeedMultiPly(settings.SLOW_SPEED_MULTIPLY);
             customer.getMAIN_TIMER().restart(settings.TIME_TO_WALK);
-            customer.setDestination(getPositionToWalk);
+            customer.setMoveTrajectory(getPositionToWalk);
         }
     }
 
@@ -96,7 +96,7 @@ public class CustomersConductor implements Tickable {
             customer.setSpeedMultiPly(1);
             return;
         }
-        customer.setDestination(closestOpenedElevator.getPosition());
+        customer.setMoveTrajectory(closestOpenedElevator.getPosition());
 
         if (customer.isReachedDestination()) {
             ELEVATOR_SYSTEM_CONTROLLER.getCustomerIntoElevator(closestOpenedElevator);
@@ -109,7 +109,7 @@ public class CustomersConductor implements Tickable {
                             -makeSpaceInElevator,
                             makeSpaceInElevator - customer.getSize().x), 0);
             ELEVATOR_SYSTEM_CONTROLLER.setFloorToReach(customer.getCurrentElevator(), customer.getFLOOR_TO_END());
-            customer.setDestination(customer.getPosition().getAdded(newDestination));
+            customer.setMoveTrajectory(customer.getPosition().getAdded(newDestination));
             customer.setState(CustomerState.STAY_IN);
             customer.setSpeedMultiPly(1);
         }
@@ -119,7 +119,7 @@ public class CustomersConductor implements Tickable {
         if (customer.getCurrentElevator().isOpened()) {
             if (customer.getCurrentFlor() == customer.getFLOOR_TO_END()) {
                 ELEVATOR_SYSTEM_CONTROLLER.getOutFromElevator(customer.getCurrentElevator());
-                customer.setDestination(customer.getCurrentElevator().getPosition());
+                customer.setMoveTrajectory(customer.getCurrentElevator().getPosition());
                 customer.setState(CustomerState.GET_OUT);
                 customer.setCurrentElevator(null);
             }
@@ -135,7 +135,7 @@ public class CustomersConductor implements Tickable {
             customer.setDead(true);
             return;
         }
-        customer.setDestination(getStartPositionForCustomer(customer.getCurrentFlor()));
+        customer.setMoveTrajectory(getStartPositionForCustomer(customer.getCurrentFlor()));
         AppCONTROLLER.Send(Protocol.CUSTOMER_GET_IN_OUT, customer.getId());
     }
 

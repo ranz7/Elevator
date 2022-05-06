@@ -1,48 +1,27 @@
 package drawable.drawableBase;
 
-import drawable.drawableBase.creatureWithTexture.Drawable;
-import model.objects.movingObject.Creature;
+import configs.CanvasSettings.MainSettings;
+import model.objects.Creature;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
 
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.List;
+public abstract class DrawableCreature extends Drawable {
+    private final Creature creature;
 
-public class DrawableCreature extends Creature implements Drawable {
-    public DrawableCreature(Vector2D position) {
-        super(position);
+    public DrawableCreature(Vector2D position, Vector2D size, MainSettings settings) {
+        super(settings);
+        creature = new Creature(position, size);
     }
 
-    public DrawableCreature(Vector2D position, Vector2D size) {
-        super(position, size);
+    public Vector2D getPosition() {
+        return creature.getPosition();
     }
 
-    public DrawableCreature(Creature creatureA) {
-        super(creatureA);
+    public Vector2D getSize() {
+        return creature.getSize();
     }
 
-    @Override
-    public void draw(GameDrawer gameDrawer) {
+    public boolean getIsVisible() {
+        return creature.isVisible();
     }
 
-    @Override
-    public void tick(long delta_time) {
-    }
-
-    @Override
-    public List<Drawable> getDrawables() {
-        List<Drawable> drawables = new LinkedList<>();
-        drawables.add(this);
-        return drawables;
-    }
-
-    @Override
-    public Integer GetDrawPrioritet() {
-        return 10000;
-    }
-
-    public DrawCenter getDrawCenter(){
-        return DrawCenter.CENTER_BY_X;
-    }
 }

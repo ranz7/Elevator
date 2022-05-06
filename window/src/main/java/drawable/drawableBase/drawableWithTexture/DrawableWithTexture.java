@@ -1,5 +1,7 @@
-package drawable.drawableBase.creatureWithTexture;
+package drawable.drawableBase.drawableWithTexture;
 
+import drawable.drawableBase.Drawable;
+import drawable.drawableBase.DrawableCreature;
 import lombok.Getter;
 import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;
@@ -11,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class DrawableCreatureWithTexture extends DrawableCreature {
+public class DrawableWithTexture extends DrawableCreature {
     private final static Random random = new Random();
 
     @Getter
@@ -19,14 +21,14 @@ public class DrawableCreatureWithTexture extends DrawableCreature {
 
     private final GameResource gameResource;
 
-    public DrawableCreatureWithTexture(Vector2D position, String textureFolderName, String textureGameSourceName) {
-        super(position);
+    public DrawableWithTexture(Vector2D position, String textureFolderName, String textureGameSourceName) {
+        super(position,new Vector2D());
         gameResource = ResourceLoader.getGameResource(textureFolderName, textureGameSourceName);
         size = gameResource.getSize();
         image = gameResource.getResourceImage();
     }
 
-    public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource) {
+    public DrawableWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource) {
         this(position, textureFolderNameToGetRandomGameSource, getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource));
     }
 
@@ -41,9 +43,12 @@ public class DrawableCreatureWithTexture extends DrawableCreature {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        if (isVisible) {
-            gameDrawer.draw(this);
-        }
+        gameDrawer.draw(this);
+    }
+
+    @Override
+    public Integer GetDrawPrioritet() {
+        return 14;
     }
 
     @Override
@@ -52,5 +57,6 @@ public class DrawableCreatureWithTexture extends DrawableCreature {
         drawables.add(this);
         return drawables;
     }
+
 
 }

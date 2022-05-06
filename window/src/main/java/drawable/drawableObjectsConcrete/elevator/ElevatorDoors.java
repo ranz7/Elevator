@@ -1,14 +1,14 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.Drawable;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 import tools.Timer;
 
 import java.awt.*;
 
-public class ElevatorDoors extends DrawableCreature {
+public class ElevatorDoors extends Drawable {
     private final long openCloseDoorsTime;
     private final DrawableElevator parentElevator;
     private final Timer doorsTimer = new Timer();

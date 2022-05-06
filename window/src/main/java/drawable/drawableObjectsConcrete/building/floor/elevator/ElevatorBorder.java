@@ -1,17 +1,16 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import drawable.drawableBase.creatureWithTexture.Drawable;
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
+import drawable.drawableBase.Drawable;
 import lombok.Getter;
 import model.GuiModel;
-import model.objects.movingObject.Creature;
+import model.objects.Creature;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
 import java.awt.*;
 import java.util.List;
 
-public class ElevatorBorder extends DrawableCreature {
+public class ElevatorBorder extends Drawable {
     private final Creature PARENT_ELEVATOR;
     Color BORDER_COLOR;
     Color NUMBER_COLOR;

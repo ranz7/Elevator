@@ -4,6 +4,7 @@ import configs.ElevatorSystemSettings;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.movingObject.MovingObject;
+import model.objects.movingObject.Trajectory;
 import tools.Timer;
 import tools.Vector2D;
 
@@ -84,7 +85,7 @@ public class Elevator extends MovingObject {
     }
 
     public Elevator(ElevatorSystemSettings settings) {
-        super(new Vector2D(0, 0), settings.ELEVATOR_SPEED, settings.ELEVATOR_SIZE);
+        super(new Vector2D(0, 0),Trajectory.liner(settings.ELEVATOR_SPEED), settings.ELEVATOR_SIZE);
         this.TIME_TO_STOP_ON_FLOOR = settings.ELEVATOR_OPEN_CLOSE_TIME * 2 +
                 settings.ELEVATOR_AFTER_CLOSE_AFK_TIME + settings.ELEVATOR_WAIT_AS_OPENED_TIME;
         this.MAX_HUMAN_CAPACITY = settings.ELEVATOR_MAX_HUMAN_CAPACITY;
@@ -124,7 +125,7 @@ public class Elevator extends MovingObject {
     }
 
     public void setFloorDestination(int bestFloor) {
-        setDestination(new Vector2D(position.x, bestFloor * wallSize));
+        setMoveTrajectory(Trajectory.liner(new Vector2D(position.x, bestFloor * wallSize)));
     }
 
     public void arrived() {
@@ -195,7 +196,7 @@ public class Elevator extends MovingObject {
     }
 
     private double getTimeToGetTo(int requestFloor) {
-        return Math.abs(getPositionForFloor(requestFloor) - position.y) * SPEED_COEFFICIENT / getSpeed();
+        return Math.abs(getPositionForFloor(requestFloor) - position.y) * SPEED_COEFFICIENT / getConstSpeed();
     }
 
     public int getBooking() {

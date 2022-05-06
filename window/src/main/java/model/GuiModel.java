@@ -6,19 +6,20 @@ import configs.CanvasSettings.ColorSettings;
 import configs.CanvasSettings.DrawSettings;
 import configs.CanvasSettings.MainSettings;
 import configs.MainInitializationSettings;
+import drawable.drawableBase.Drawable;
 import model.packageLoader.PackageLoader;
-import drawable.drawableBase.creatureWithTexture.Drawable;
 import drawable.drawableObjectsConcrete.*;
 import drawable.drawableObjectsConcrete.building.floor.Floor;
 import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
 import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
-import model.objects.movingObject.CreaturesData;
+import model.objects.CreaturesData;
 import model.objects.movingObject.MovingObject;
 import tools.Vector2D;
 
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class GuiModel implements Model {
@@ -27,11 +28,11 @@ public class GuiModel implements Model {
 
     //TODO move into DRAW CLIENT OBJECTS
     @Getter
-    private final LinkedList<DrawableElevator> elevators = new LinkedList<>();
-    private final LinkedList<DrawableCustomer> customers = new LinkedList<>();
+    private final List<DrawableElevator> elevators = new LinkedList<>();
+    private final List<DrawableCustomer> customers = new LinkedList<>();
 
-    private final LinkedList<Floor> floors = new LinkedList<>();
-    private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
+    private final List<Floor> floors = new LinkedList<>();
+    private final List<FlyingText> flyingTexts = new LinkedList<>();
 
     public void start() {
     }
@@ -43,7 +44,7 @@ public class GuiModel implements Model {
     private void updateFloors(int floors_count) {
         int oldFloorsCount = floors.size();
         while (oldFloorsCount < floors_count) {
-            floors.add(new Floor(oldFloorsCount++, this));
+            floors.add(new Floor(oldFloorsCount++, getElevators(), mainSettings));
         }
         while (oldFloorsCount > floors_count) {
             floors.remove(oldFloorsCount--);

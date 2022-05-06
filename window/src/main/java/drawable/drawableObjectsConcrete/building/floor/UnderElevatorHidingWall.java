@@ -1,19 +1,16 @@
 package drawable.drawableObjectsConcrete.building.floor;
 
-import drawable.drawableBase.creatureWithTexture.DrawableCreature;
-import model.GuiModel;
+import configs.CanvasSettings.MainSettings;
+import drawable.drawableBase.Drawable;
 import tools.Vector2D;
 import view.drawTools.GameDrawer;
 
-import java.awt.*;
-
-public class UnderElevatorHidingWall extends DrawableCreature {
-    private final Color BACK_GROUND_COLOR;
-
-    public UnderElevatorHidingWall(int i, GuiModel model) {
-        super(new Vector2D(model.getMainInitializationSettings().BUILDING_SIZE.x / 2., model.getMainInitializationSettings().ELEVATOR_SIZE.y + model.getWallHeight() * i),
-                new Vector2D((int) model.getMainInitializationSettings().BUILDING_SIZE.x, (int) (model.getWallHeight() - model.getMainInitializationSettings().ELEVATOR_SIZE.y)));
-        this.BACK_GROUND_COLOR = model.colorSettings.FLOOR_WALL;
+public class UnderElevatorHidingWall extends Drawable {
+    public UnderElevatorHidingWall(int currentFloor, MainSettings setting) {
+        super(setting);
+        super(new Vector2D(setting.buildingSize().x / 2., setting.elevatorSize().y + setting.floorHeight() * currentFloor),
+                new Vector2D(setting.buildingSize().x, (model.getWallHeight() - model.getMainInitializationSettings().ELEVATOR_SIZE.y)));
+        this.backGroundColor = model.colorSettings.FLOOR_WALL;
     }
 
     @Override
@@ -23,7 +20,7 @@ public class UnderElevatorHidingWall extends DrawableCreature {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        gameDrawer.setColor(BACK_GROUND_COLOR);
+        gameDrawer.setColor(backGroundColor);
         gameDrawer.drawFilledRect(this);
     }
 
