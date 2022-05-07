@@ -14,14 +14,14 @@ import java.io.Serializable;
  */
 
 @AllArgsConstructor
-public class MainInitializationSettings implements Serializable {
+public class RemoteConfig implements Serializable {
     public final Vector2D buildingSize;
     public final Vector2D elevatorSize;
     public final Vector2D customerSize;
     public final long elevatoropenclosetime;
     public final int elevatorsCount;
     public final int floorsCount;
-    public final double BUTTON_RELATIVE_POSITION;
+    public final double buttonRelativePosition;
     public final double GAME_SPEED;
     public final double VERSION;
 

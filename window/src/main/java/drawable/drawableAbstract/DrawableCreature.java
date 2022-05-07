@@ -1,11 +1,11 @@
 package drawable.drawableAbstract;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import model.objects.Creature;
 import tools.Vector2D;
 
 abstract class DrawableCreature extends Drawable {
-    protected DrawableCreature(Creature creature, MainSettings settings) {
+    protected DrawableCreature(Creature creature, CombienedDrawDataBase settings) {
         super(settings);
         this.creature = creature;
     }

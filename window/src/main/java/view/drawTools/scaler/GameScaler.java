@@ -1,6 +1,6 @@
 package view.drawTools.scaler;
 
-import configs.GameScalerSettings;
+import configs.GameScalerConfig;
 import lombok.Getter;
 import architecture.tickable.Tickable;
 import tools.Vector2D;
@@ -8,7 +8,7 @@ import tools.Vector2D;
 import java.awt.*;
 
 public class GameScaler implements Tickable {
-    private final Vector2D blackZone = GameScalerSettings.blackZone;
+    private final Vector2D blackZone = GameScalerConfig.blackZone;
 
     private Vector2D screenSizeAfterShift = new Vector2D(0, 0);
     private Vector2D drawOffset = new Vector2D(0, 0);
@@ -74,7 +74,8 @@ public class GameScaler implements Tickable {
         additionalMoveFinishValue = new Vector2D(0, -screenSizeAfterShift.y)
                 .getAdded(drawOffset.getMultiplied(1 - additionalZoomFinishValue))
                 .getAdded(screenSizeAfterShift.getMultiplied(additionalZoomFinishValue / 2))
-                .getAdded(new Vector2D(-1, 1).getMultiplied(clickedPoint.getSubbed(blackZone.getDivided(2))));
+                .getAdded(new Vector2D(-1, 1).getMultiplied(clickedPoint.getSubbed(blackZone.getDivided(2)))
+                );
     }
 
     public void zoomIn(Vector2D point, double zoomScale) {

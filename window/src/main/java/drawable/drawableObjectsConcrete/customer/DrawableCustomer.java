@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.customer;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.DrawableRemoteCreature;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ public class DrawableCustomer extends DrawableRemoteCreature {
     @Setter
     private boolean behindElevator = true;
 
-    public DrawableCustomer(Creature creature, MainSettings settings) {
+    public DrawableCustomer(Creature creature, CombienedDrawDataBase settings) {
         super(creature, settings);
         var colors = settings.customerSkins();
         this.COLOR_OF_CUSTOMER = colors[(int) (getId() % colors.length)];

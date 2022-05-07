@@ -2,9 +2,9 @@ package model;
 
 import architecture.tickable.TickableList;
 import configs.ConnectionSettings;
-import configs.CustomerSettings;
-import configs.ElevatorSystemSettings;
-import configs.MainInitializationSettings;
+import configs.CustomerConfig;
+import configs.ElevatorSystemConfig;
+import configs.RemoteConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -62,15 +62,15 @@ public class AppModel implements Model {
     }
 
     public Serializable createMainInitializationSettingsToSend(
-            ElevatorSystemSettings settingsElevator, CustomerSettings settingsCustomer, double gameSpeed) {
-        return new MainInitializationSettings(
-                new Vector2D(settingsElevator.BUILDING_SIZE),
-                settingsElevator.ELEVATOR_SIZE,
-                settingsCustomer.CUSTOMER_SIZE,
-                settingsElevator.ELEVATOR_OPEN_CLOSE_TIME,
+            ElevatorSystemConfig settingsElevator, CustomerConfig settingsCustomer, double gameSpeed) {
+        return new RemoteConfig(
+                new Vector2D(settingsElevator.buildingSize),
+                settingsElevator.elevatorSize,
+                settingsCustomer.customerSize,
+                settingsElevator.elevatorOpenCloseTime,
                 settingsElevator.getElevatorsCount(),
-                settingsElevator.FLOORS_COUNT,
-                settingsElevator.BUTTON_RELATIVE_POSITION,
+                settingsElevator.floorsCount,
+                settingsElevator.buttonRelativePosition,
                 gameSpeed,
                 ConnectionSettings.VERSION);
     }

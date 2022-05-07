@@ -1,23 +1,16 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import drawable.drawableAbstract.Drawable;
-import model.GuiModel;
-import model.objects.Creature;
+import configs.tools.CombienedDrawDataBase;
+import drawable.drawableAbstract.DrawableLocalCreature;
 import tools.Vector2D;
 import view.drawTools.drawer.GameDrawer;
-
-import java.awt.*;
 
 /*
  * Spaces behind elevators
  */
-public class ElevatorBlackSpace extends Drawable {
-    private final Color BLACK_SPACES_COLOR;
-
-    public ElevatorBlackSpace(Vector2D position, Creature parentElevator, GuiModel guiModel) {
-        super(position, parentElevator.getSize());
-        size = new Vector2D(size.x + guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS * 2, size.y + guiModel.drawSettings.ELEVATOR_BORDER_THICKNESS);
-        this.BLACK_SPACES_COLOR = guiModel.colorSettings.windowBackGround;
+public class ElevatorBlackSpace extends DrawableLocalCreature {
+    public ElevatorBlackSpace(Vector2D position, Vector2D size, CombienedDrawDataBase settings) {
+        super(position, size,settings);
     }
 
     @Override
@@ -27,7 +20,7 @@ public class ElevatorBlackSpace extends Drawable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        gameDrawer.setColor(BLACK_SPACES_COLOR);
+        gameDrawer.setColor(settings.windowBackGroundColor());
         gameDrawer.draw(this);
     }
 }

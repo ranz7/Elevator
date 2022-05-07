@@ -1,12 +1,13 @@
 package drawable.drawableObjectsConcrete.building.floor.decorations;
 
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.drawableWithTexture.DrawCenter;
 import drawable.drawableAbstract.drawableWithTexture.DrawableCreatureWithTexture;
 import tools.Vector2D;
 
 public class FloorPainting extends DrawableCreatureWithTexture {
-    public FloorPainting(Vector2D position) {
-        super(position, "/images/paintings/");
+    public FloorPainting(Vector2D position, CombienedDrawDataBase settings) {
+        super(position, "/images/paintings/",settings);
     }
 
     @Override

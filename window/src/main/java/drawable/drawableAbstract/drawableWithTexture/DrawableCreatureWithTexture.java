@@ -1,6 +1,6 @@
 package drawable.drawableAbstract.drawableWithTexture;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.DrawableLocalCreature;
 import lombok.Getter;
@@ -22,13 +22,13 @@ public class DrawableCreatureWithTexture extends DrawableLocalCreature {
 
     private final GameResource gameResource;
 
-    public DrawableCreatureWithTexture(Vector2D position, String textureFolderName, String textureGameSourceName, MainSettings settings) {
+    public DrawableCreatureWithTexture(Vector2D position, String textureFolderName, String textureGameSourceName, CombienedDrawDataBase settings) {
         super(position, ResourceLoader.getGameResource(textureFolderName, textureGameSourceName).getSize(), settings);
         gameResource = ResourceLoader.getGameResource(textureFolderName, textureGameSourceName);
         image = gameResource.getResourceImage();
     }
 
-    public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource, MainSettings settings) {
+    public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource, CombienedDrawDataBase settings) {
         this(position, textureFolderNameToGetRandomGameSource, getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource), settings);
     }
 

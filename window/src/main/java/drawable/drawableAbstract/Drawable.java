@@ -1,7 +1,7 @@
 package drawable.drawableAbstract;
 
 import architecture.tickable.Tickable;
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.drawableWithTexture.DrawCenter;
 import lombok.RequiredArgsConstructor;
 import tools.Vector2D;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public abstract class Drawable implements Tickable {
-    final protected MainSettings settings;
+    final protected CombienedDrawDataBase settings;
 
     @Override
     public void tick(long deltaTime) {

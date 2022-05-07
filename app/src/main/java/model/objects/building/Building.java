@@ -1,7 +1,7 @@
 package model.objects.building;
 
 import architecture.tickable.Startable;
-import configs.ElevatorSystemSettings;
+import configs.ElevatorSystemConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import model.objects.elevator.Elevator;
@@ -13,7 +13,7 @@ import java.util.Random;
 
 @RequiredArgsConstructor
 public class Building implements Startable {
-    public final ElevatorSystemSettings settings;
+    public final ElevatorSystemConfig settings;
     @Getter
     public final List<Elevator> elevators = new LinkedList<>();
     @Getter
@@ -25,10 +25,10 @@ public class Building implements Startable {
     }
 
     public void updateElevatorsPosition() {
-        this.wallSize = ( settings.BUILDING_SIZE.y) / settings.FLOORS_COUNT;
-        double distanceBetweenElevators = ( settings.BUILDING_SIZE.x) / (settings.getElevatorsCount() + 1);
+        this.wallSize = ( settings.buildingSize.y) / settings.floorsCount;
+        double distanceBetweenElevators = ( settings.buildingSize.x) / (settings.getElevatorsCount() + 1);
         var elevatorIterator = elevators.iterator();
-        for (int i = 0; i < settings.MAX_ELEVATORS_COUNT; i++) {
+        for (int i = 0; i < settings.maxElevatorsCount; i++) {
             var elevator = elevatorIterator.next();
 
             if (i < settings.getElevatorsCount()) {
@@ -52,19 +52,19 @@ public class Building implements Startable {
         if (spawnInLeftCorner) {
             return new Vector2D(0, (int) (floorStart * wallSize));
         }
-        return new Vector2D(settings.BUILDING_SIZE.x, (int) (floorStart * wallSize));
+        return new Vector2D(settings.buildingSize.x, (int) (floorStart * wallSize));
     }
 
     public Vector2D getClosestButtonOnFloor(Vector2D position) {
         if (settings.getElevatorsCount() == 0) {
             return null;
         }
-        var nearestButton = new Vector2D(settings.BUILDING_SIZE.x * 2, position.y);
+        var nearestButton = new Vector2D(settings.buildingSize.x * 2, position.y);
         for (var elevator : elevators) {
             if (!elevator.isVisible()) {
                 break;
             }
-            var buttonPosition = new Vector2D(elevator.getPosition().x + settings.BUTTON_RELATIVE_POSITION,
+            var buttonPosition = new Vector2D(elevator.getPosition().x + settings.buttonRelativePosition,
                     position.y);
             nearestButton = position.getNearest(buttonPosition, nearestButton);
         }

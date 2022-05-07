@@ -1,6 +1,7 @@
 package view.canvas;
 
-import configs.WindowSettings;
+import configs.WindowConfig;
+import drawable.drawableAbstract.Drawable;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
@@ -23,17 +24,17 @@ public class GameWindow extends JPanel implements Tickable {
 
     public void setModel(GuiModel model) {
         windowModel = model;
-        setBackground(windowModel.colorSettings.windowBackGround);
+        setBackground(windowModel.getCombienedDrawDataBase().windowBackGroundColor());
     }
 
     public GameWindow() {
         setLayout(null);
         setVisible(false);
 
-        setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
+        setSize(WindowConfig.WindowStartSize.width, WindowConfig.WindowStartSize.height);
 
         jframe = new JFrame("ELEVATOR SYS");
-        jframe.setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
+        jframe.setSize(WindowConfig.WindowStartSize.width, WindowConfig.WindowStartSize.height);
         jframe.setVisible(true);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jframe.add(this);
@@ -46,7 +47,7 @@ public class GameWindow extends JPanel implements Tickable {
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-            gameScaler.updateSizes(newSize, windowModel.getMainInitializationSettings().BUILDING_SIZE);
+        gameScaler.updateSizes(newSize, windowModel.getCombienedDrawDataBase().elevatorButtonSize());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package drawable.drawableObjectsConcrete.elevator;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.DrawableLocalMoving;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
@@ -18,7 +18,7 @@ public class ElevatorDoors extends DrawableLocalMoving {
     private final Color doorsColor;
     private final Color doorsBorder;
 
-    public ElevatorDoors(DrawableElevator parentElevator, MainSettings settings) {
+    public ElevatorDoors(DrawableElevator parentElevator, CombienedDrawDataBase settings) {
         super(parentElevator.getPosition(), parentElevator.getSize(),
                 Trajectory.MomentarilyPositionChange(parentElevator.getPosition()), settings);
         this.parentElevator = parentElevator;
@@ -43,27 +43,27 @@ public class ElevatorDoors extends DrawableLocalMoving {
     @Override
     public void draw(GameDrawer gameDrawer) {
         double percentage = doorsTimer.getPercent();
-        if (!parentElevator.isVisible()) {
+        if (!parentElevator.getIsVisible()) {
             return;
         }
         if (!isClosed) {
             percentage = 1 - percentage;
         }
-        var openedGap = percentage * size.x / 2.;
+
+        var openedGap = percentage * getSize().x / 2.;
 
         gameDrawer.setColor(doorsColor);
-        gameDrawer.drawRect(position.getAdded(new Vector2D(-size.x / 2., 0)),
-                new Vector2D((int) (size.x / 2 - openedGap), size.y), doorsBorder, 2);
+        gameDrawer.drawRect(getPosition().getAdded(new Vector2D(-getSize().x / 2., 0)),
+                new Vector2D((getSize().x / 2 - openedGap), getSize().y), doorsBorder, 2);
 
         gameDrawer.setColor(doorsColor);
-        gameDrawer.drawRect(position.getAdded(new Vector2D(openedGap, 0)),
-                new Vector2D((int) (size.x / 2 - openedGap), size.y), doorsBorder, 2);
+        gameDrawer.drawRect(getPosition().getAdded(new Vector2D(openedGap, 0)),
+                new Vector2D((getSize().x / 2 - openedGap), getSize().y), doorsBorder, 2);
 
     }
 
     public void tick(long deltaTime) {
-        super(deltaTime);
-        position = parentElevator.getPosition();
+        super.tick(deltaTime);
         doorsTimer.tick(deltaTime);
     }
 

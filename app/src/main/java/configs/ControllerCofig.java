@@ -1,5 +1,5 @@
 package configs;
 
-public class MainControllerSettings {
+public class ControllerCofig {
     public static final int TPS = 50;
 }

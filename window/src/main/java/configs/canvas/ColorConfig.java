@@ -1,8 +1,8 @@
-package configs.CanvasSettings;
+package configs.canvas;
 
 import java.awt.*;
 
-public class ColorSettings {
+public class ColorConfig {
     public final Color betonOfFloor = new Color(44, 49, 51);
     public final Color floorWall = new Color(74, 110, 94);
 

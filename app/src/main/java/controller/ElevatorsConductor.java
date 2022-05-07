@@ -4,7 +4,7 @@ import model.objects.elevator.ElevatorRequest;
 import model.objects.elevator.ElevatorState;
 import model.objects.building.Building;
 import model.objects.elevator.Elevator;
-import configs.ElevatorSystemSettings;
+import configs.ElevatorSystemConfig;
 import connector.protocol.Protocol;
 import model.AppModel;
 import lombok.Getter;
@@ -17,11 +17,11 @@ import java.util.LinkedList;
 /**
  * Manipulate all elevators in game.
  *
- * @see ElevatorSystemSettings
+ * @see ElevatorSystemConfig
  */
 public class ElevatorsConductor implements Tickable {
     @Getter
-    private final ElevatorSystemSettings settings = new ElevatorSystemSettings();
+    private final ElevatorSystemConfig settings = new ElevatorSystemConfig();
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
     private final AppController appController;
 
@@ -85,7 +85,7 @@ public class ElevatorsConductor implements Tickable {
     private void processInMotion(Elevator elevator) {
         if (elevator.isReachedDestination()) {
             appController.Send(Protocol.ELEVATOR_OPEN, elevator.getId());
-            elevator.TIMER.restart(settings.ELEVATOR_OPEN_CLOSE_TIME);
+            elevator.TIMER.restart(settings.elevatorOpenCloseTime);
             elevator.setState(ElevatorState.OPENING);
         }
     }
@@ -95,12 +95,12 @@ public class ElevatorsConductor implements Tickable {
             return;
         }
         if (elevator.getState() == ElevatorState.OPENING) {
-            elevator.TIMER.restart(settings.ELEVATOR_WAIT_AS_OPENED_TIME);
+            elevator.TIMER.restart(settings.elevatorWaitAsOpenedTime);
             elevator.setState(ElevatorState.OPENED);
             elevator.arrived();
         }
         if (elevator.getState() == ElevatorState.CLOSING) {
-            elevator.TIMER.restart(settings.ELEVATOR_AFTER_CLOSE_AFK_TIME);
+            elevator.TIMER.restart(settings.elevatorAfterCloseAfkTime);
             elevator.setState(ElevatorState.WAIT);
         }
     }
@@ -109,7 +109,7 @@ public class ElevatorsConductor implements Tickable {
         if (!elevator.TIMER.isReady()) {
             return;
         }
-        elevator.TIMER.restart(settings.ELEVATOR_OPEN_CLOSE_TIME);
+        elevator.TIMER.restart(settings.elevatorOpenCloseTime);
         appController.Send(Protocol.ELEVATOR_CLOSE, elevator.getId());
         elevator.setState(ElevatorState.CLOSING);
     }
@@ -158,7 +158,7 @@ public class ElevatorsConductor implements Tickable {
 
     public void changeElevatorsCount(boolean data) {
         if (data) {
-            if (settings.getElevatorsCount() < settings.MAX_ELEVATORS_COUNT) {
+            if (settings.getElevatorsCount() < settings.maxElevatorsCount) {
                 settings.setElevatorsCount(settings.getElevatorsCount() + 1);
                 appModel.getBuilding().updateElevatorsPosition();
                 return;

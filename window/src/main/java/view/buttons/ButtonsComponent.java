@@ -1,5 +1,6 @@
 package view.buttons;
 
+import configs.tools.CombienedDrawDataBase;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.GuiModel;
@@ -14,7 +15,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ButtonsComponent {
     private final JComponent window;
-    private GuiModel guiModel;
+    private CombienedDrawDataBase settings;
     @Setter
     private ActionListener listenWindow;
     private ButtonsReact react;
@@ -26,18 +27,18 @@ public class ButtonsComponent {
 
     public void start() {
         for (int i = 0; i < 16; i++) {
-            var addClientButton = createButton("->", guiModel.colorSettings.jButtonsColor, window);
+            var addClientButton = createButton("->", settings.jButtonsColor(), window);
             addClientButton.setVisible(false);
             ADD_CUSTOMER_BUTTONS.add(addClientButton);
 
-            var selectFloorButon = createButton(String.valueOf(1), guiModel.colorSettings.jButtonsColor, window);
+            var selectFloorButon = createButton(String.valueOf(1), settings.jButtonsColor(), window);
             selectFloorButon.setVisible(false);
             SELECT_FLOOR_BUTTONS.add(selectFloorButon);
         }
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", guiModel.colorSettings.jButtonsColor, window));
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", guiModel.colorSettings.jButtonsColor, window));
-        CHANGE_SPEED_BUTTONS.add(createButton("<", guiModel.colorSettings.jButtonsColor, window));
-        CHANGE_SPEED_BUTTONS.add(createButton(">", guiModel.colorSettings.jButtonsColor, window));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", settings.jButtonsColor(), window));
+        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", settings.jButtonsColor(), window));
+        CHANGE_SPEED_BUTTONS.add(createButton("<", settings.jButtonsColor(), window));
+        CHANGE_SPEED_BUTTONS.add(createButton(">", settings.jButtonsColor(), window));
     }
 
     private JButton createButton(String text, Color buttonColor, JComponent buttonCarier) {
@@ -53,11 +54,11 @@ public class ButtonsComponent {
     public void resize(Dimension size) {
         Iterator<JButton> addCustomerButtonIt = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> selectFloorButtonIt = SELECT_FLOOR_BUTTONS.iterator();
-        double heightOfButton = (size.height - 100.) / guiModel.getMainInitializationSettings().FLOORS_COUNT;
+        double heightOfButton = (size.height - 100.) / settings.floorsCount();
         for (int i = 0; i < 16; i++) {
             JButton addCustomerButton = addCustomerButtonIt.next();
             addCustomerButton.setText("->");
-            if (i >= guiModel.getMainInitializationSettings().FLOORS_COUNT) {
+            if (i >= settings.floorsCount()) {
                 addCustomerButton.setVisible(false);
                 continue;
             }
@@ -122,6 +123,6 @@ public class ButtonsComponent {
     }
 
     public void setModel(GuiModel model) {
-        this.guiModel = model;
+        settings = model.getCombienedDrawDataBase();
     }
 }

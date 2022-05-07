@@ -1,6 +1,6 @@
 package drawable.drawableAbstract;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import model.objects.movingObject.MovingObject;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
@@ -8,12 +8,12 @@ import tools.Vector2D;
 public abstract class DrawableLocalMoving extends Drawable {
     private final MovingObject movingObject;
 
-    public DrawableLocalMoving(Vector2D position, Vector2D size, Trajectory trajecotry, MainSettings settings) {
+    public DrawableLocalMoving(Vector2D position, Vector2D size, Trajectory trajecotry, CombienedDrawDataBase settings) {
         super(settings);
         this.movingObject = new MovingObject(position, size, trajecotry);
     }
 
-    public DrawableLocalMoving(Vector2D position, double size, Trajectory trajecotry, MainSettings settings) {
+    public DrawableLocalMoving(Vector2D position, double size, Trajectory trajecotry, CombienedDrawDataBase settings) {
         super(settings);
         this.movingObject = new MovingObject(position, new Vector2D(size, size), trajecotry);
     }

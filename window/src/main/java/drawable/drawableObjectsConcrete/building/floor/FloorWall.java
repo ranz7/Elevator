@@ -1,13 +1,13 @@
 package drawable.drawableObjectsConcrete.building.floor;
 
 import architecture.tickable.Tickable;
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.DrawableLocalCreature;
 import tools.Vector2D;
 import view.drawTools.drawer.GameDrawer;
 
 public class FloorWall extends DrawableLocalCreature implements Tickable {
-    public FloorWall(Integer floorNumber, MainSettings settings) {
+    public FloorWall(Integer floorNumber, CombienedDrawDataBase settings) {
         super(new Vector2D(0, floorNumber * settings.floorHeight()),
                 new Vector2D(settings.buildingSize().x, settings.floorHeight()), settings);
     }
@@ -19,7 +19,7 @@ public class FloorWall extends DrawableLocalCreature implements Tickable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        gameDrawer.setColor(settings.flooWallColor());
+        gameDrawer.setColor(settings.floorWallColor());
         gameDrawer.draw(this);
     }
 

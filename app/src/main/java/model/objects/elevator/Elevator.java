@@ -1,6 +1,6 @@
 package model.objects.elevator;
 
-import configs.ElevatorSystemSettings;
+import configs.ElevatorSystemConfig;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.movingObject.MovingObject;
@@ -85,12 +85,12 @@ public class Elevator extends MovingObject {
         return currentCustomersCount <= this.MAX_HUMAN_CAPACITY;
     }
 
-    public Elevator(ElevatorSystemSettings settings) {
-        super(new Vector2D(0, 0), settings.ELEVATOR_SIZE,
-                new Trajectory().set(SpeedFunction.WithConstantSpeed(settings.ELEVATOR_SPEED)));
-        this.TIME_TO_STOP_ON_FLOOR = settings.ELEVATOR_OPEN_CLOSE_TIME * 2 +
-                settings.ELEVATOR_AFTER_CLOSE_AFK_TIME + settings.ELEVATOR_WAIT_AS_OPENED_TIME;
-        this.MAX_HUMAN_CAPACITY = settings.ELEVATOR_MAX_HUMAN_CAPACITY;
+    public Elevator(ElevatorSystemConfig settings) {
+        super(new Vector2D(0, 0), settings.elevatorSize,
+                new Trajectory().set(SpeedFunction.WithConstantSpeed(settings.elevatorSpeed)));
+        this.TIME_TO_STOP_ON_FLOOR = settings.elevatorOpenCloseTime * 2 +
+                settings.elevatorAfterCloseAfkTime + settings.elevatorWaitAsOpenedTime;
+        this.MAX_HUMAN_CAPACITY = settings.elevatorMaxHumanCapacity;
         this.state = ElevatorState.WAIT;
     }
 

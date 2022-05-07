@@ -1,6 +1,6 @@
 package controller;
 
-import configs.CustomerSettings;
+import configs.CustomerConfig;
 import lombok.Getter;
 import architecture.tickable.Tickable;
 import model.objects.movingObject.trajectory.Trajectory;
@@ -18,11 +18,11 @@ import tools.Timer;
 /**
  * Manipulate all customers in game.
  *
- * @see CustomerSettings
+ * @see CustomerConfig
  */
 public class CustomersConductor implements Tickable {
     @Getter
-    private final CustomerSettings settings = new CustomerSettings();
+    private final CustomerConfig settings = new CustomerConfig();
     private final ElevatorsConductor ELEVATOR_SYSTEM_CONTROLLER;
     private final Timer spawnTimer = new Timer();
     private final AppController AppCONTROLLER;
@@ -37,14 +37,14 @@ public class CustomersConductor implements Tickable {
     public void tick(long deltaTime) {
         spawnTimer.tick(deltaTime);
 
-        if (spawnTimer.isReady() && AppCONTROLLER.appModel.customers.size() < settings.MAX_CUSTOMERS) {
-            var maxFloor = ELEVATOR_SYSTEM_CONTROLLER.getSettings().FLOORS_COUNT;
+        if (spawnTimer.isReady() && AppCONTROLLER.appModel.customers.size() < settings.maxCustomers) {
+            var maxFloor = ELEVATOR_SYSTEM_CONTROLLER.getSettings().floorsCount;
             var randomStartFloor = new Random().nextInt(0, maxFloor);
             var randomEndFloor = new Random().nextInt(0, maxFloor);
             randomEndFloor = (maxFloor + randomStartFloor + randomEndFloor - 1) % maxFloor;
             CreateCustomer(randomStartFloor, randomEndFloor);
 
-            spawnTimer.restart(settings.SPAWN_RATE);
+            spawnTimer.restart(settings.spawnRate);
         }
 
         for (var customer : AppCONTROLLER.appModel.customers) {
@@ -64,7 +64,7 @@ public class CustomersConductor implements Tickable {
         customer.setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(buttonPosition));
         if (customer.isReachedDestination()) {
             ELEVATOR_SYSTEM_CONTROLLER.buttonClick(new ElevatorRequest(customer.getPosition(), customer.wantsGoUp()));
-            customer.MAIN_TIMER.restart(settings.TIME_TO_WAIT_AFTER_BUTTON_CLICK);
+            customer.MAIN_TIMER.restart(settings.timeToWaitAfterButtonClick);
             customer.setState(CustomerState.WAIT_UNTIL_ARRIVED);
         }
     }
@@ -81,12 +81,12 @@ public class CustomersConductor implements Tickable {
         }
         if (customer.getMAIN_TIMER().isReady()) {
             var getPositionToWalk = new Vector2D(
-                    new Random().nextInt(0, (int) ELEVATOR_SYSTEM_CONTROLLER.getSettings().BUILDING_SIZE.x),
+                    new Random().nextInt(0, (int) ELEVATOR_SYSTEM_CONTROLLER.getSettings().buildingSize.x),
                     customer.getPosition().y);
             customer.setMoveTrajectory(Trajectory.ToTheDestination(
                     customer.getConstSpeed(), // * settings.SLOW_SPEED_MULTIPLY
                     getPositionToWalk));
-            customer.getMAIN_TIMER().restart(settings.TIME_TO_WALK);
+            customer.getMAIN_TIMER().restart(settings.timeToWalk);
 
         }
     }
@@ -107,7 +107,7 @@ public class CustomersConductor implements Tickable {
             AppCONTROLLER.Send(Protocol.CUSTOMER_GET_IN_OUT, customer.getId());
             customer.setCurrentElevator(closestOpenedElevator);
 
-            var makeSpaceInElevator = ELEVATOR_SYSTEM_CONTROLLER.getSettings().ELEVATOR_SIZE.x / 2;
+            var makeSpaceInElevator = ELEVATOR_SYSTEM_CONTROLLER.getSettings().elevatorSize.x / 2;
             var newDestination = new Vector2D(
                     new Random().nextDouble(
                             -makeSpaceInElevator,
@@ -138,7 +138,7 @@ public class CustomersConductor implements Tickable {
         if (!customer.isReachedDestination()) {
             return;
         }
-        if (customer.getPosition().x > ELEVATOR_SYSTEM_CONTROLLER.getSettings().BUILDING_SIZE.x + customer.getSize().x ||
+        if (customer.getPosition().x > ELEVATOR_SYSTEM_CONTROLLER.getSettings().buildingSize.x + customer.getSize().x ||
                 customer.getPosition().x < -customer.getSize().x) {
             customer.setDead(true);
             return;
@@ -151,13 +151,13 @@ public class CustomersConductor implements Tickable {
 
     public void CreateCustomer(int floorStart, int floorEnd) {
         double speed = new Random().nextDouble(
-                settings.CUSTOMER_SPEED
-                        - settings.CUSTOMER_SPEED / 3,
-                settings.CUSTOMER_SPEED
-                        + settings.CUSTOMER_SPEED / 3);
+                settings.customerSpeed
+                        - settings.customerSpeed / 3,
+                settings.customerSpeed
+                        + settings.customerSpeed / 3);
         var startPosition = getStartPositionForCustomer(floorStart);
         var customer = new Customer(floorStart, floorEnd, startPosition, speed,
-                settings.CUSTOMER_SIZE);
+                settings.customerSize);
 
         customer.setState(CustomerState.GO_TO_BUTTON);
         AppCONTROLLER.appModel.customers.add(customer);
@@ -167,9 +167,9 @@ public class CustomersConductor implements Tickable {
         Vector2D startPosition = AppCONTROLLER.appModel.getBuilding().getStartPositionAfterBuilding(floorStart);
         // So u can't see customer when he spawns
         if (startPosition.x == 0) {
-            startPosition.x -= settings.CUSTOMER_SIZE.x * 2;
+            startPosition.x -= settings.customerSize.x * 2;
         } else {
-            startPosition.x += settings.CUSTOMER_SIZE.x * 2;
+            startPosition.x += settings.customerSize.x * 2;
         }
         return startPosition;
     }

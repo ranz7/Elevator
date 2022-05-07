@@ -51,14 +51,14 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         Serializable data = message.getDataInMessage();
         switch (protocol) {
             case APPLICATION_SETTINGS -> {
-                MainInitializationSettings settings = (MainInitializationSettings) data;
+                RemoteConfig settings = (RemoteConfig) data;
                 if (ConnectionSettings.VERSION != settings.VERSION) {
                     Logger.getLogger(GuiController.class.getName())
                             .warning("You have different versions with sever. Your version: %s, server version %s%n"
                                     .formatted(ConnectionSettings.VERSION, settings.VERSION));
                     return true;
                 }
-                windowModel.setMainInitializationSettings(settings);
+                windowModel.setRemoteConfig(settings);
                 setControllerSpeed(settings.GAME_SPEED);
                 setCurrentTime(message.getTimeStumpInMessage());
                 gui.resize();
@@ -79,7 +79,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
-        startFloorButtonNumber = windowModel.getMainSettings().floorsCount() - startFloorButtonNumber - 1;
+        startFloorButtonNumber = windowModel.getCombienedDrawDataBase().floorsCount() - startFloorButtonNumber - 1;
         LinkedList<Integer> data = new LinkedList<>();
         data.push(startFloorButtonNumber);
         data.push(endFloorNumber - 1);

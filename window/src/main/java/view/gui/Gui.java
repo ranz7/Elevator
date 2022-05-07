@@ -48,7 +48,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
 
     @Override
     public void resize() {
-        if (!guiModel.getMainSettings().initialized()) {
+        if (!guiModel.getCombienedDrawDataBase().initialized()) {
             return;
         }
         gameWindow.resize(gameWindow.getSize());
@@ -59,7 +59,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     public void rightMouseClicked(Vector2D point) {
         if (gameWindow.zoomedIn()) {
             var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
-            guiModel.addMovingDrawable(new DrawableLocalText("ZoomIn",gamePosition, TextData.flyTopFast));
+            guiModel.addMovingDrawable(new DrawableLocalText("ZoomIn", gamePosition, TextData.flyTopFast));
             gameWindow.zoomIn(point, 1 / 4.);
         } else {
             gameWindow.zoomOut();

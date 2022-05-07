@@ -98,7 +98,7 @@ public class Vector2D extends Point2D.Double {
         return new Point((int) x, (int) y);
     }
 
-    public Double getMultiplied(Vector2D multiply) {
+    public Vector2D getMultiplied(Vector2D multiply) {
         return new Vector2D(x * multiply.x, y * multiply.y);
     }
 

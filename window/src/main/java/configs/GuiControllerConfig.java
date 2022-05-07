@@ -1,5 +1,5 @@
 package configs;
 
-public class GuiControllerSettings {
+public class GuiControllerConfig {
     public static final int TPS = 120;
 }

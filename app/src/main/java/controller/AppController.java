@@ -80,6 +80,6 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
 
     @Override
     int getTickPerSecond() {
-        return MainControllerSettings.TPS;
+        return ControllerCofig.TPS;
     }
 }

@@ -1,10 +1,10 @@
 package drawable.drawableAbstract;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import model.objects.Creature;
 
 public abstract class DrawableRemoteCreature extends DrawableCreature {
-    public DrawableRemoteCreature(Creature creature, MainSettings settings) {
+    public DrawableRemoteCreature(Creature creature, CombienedDrawDataBase settings) {
         super(creature, settings);
     }
 

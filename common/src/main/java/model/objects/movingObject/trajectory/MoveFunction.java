@@ -4,10 +4,12 @@ import architecture.tickable.Tickable;
 import tools.Timer;
 import tools.Vector2D;
 
+import javax.swing.text.Position;
+
 public abstract class MoveFunction implements Tickable {
     protected final double speedCoefficient = 1000;
 
-    protected Vector2D position;
+    protected final Vector2D position;
 
     /**
      * get Current position of function
@@ -61,6 +63,7 @@ public abstract class MoveFunction implements Tickable {
     public static MoveFunction GetToDestination(Vector2D destinationTmp) {
         return new MoveFunction() {
             Vector2D destination = new Vector2D(destinationTmp);
+
             @Override
             public Vector2D getPosition() {
                 return position;

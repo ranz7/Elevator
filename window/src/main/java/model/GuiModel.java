@@ -2,10 +2,10 @@ package model;
 
 
 import architecture.tickable.TickableList;
-import configs.CanvasSettings.ColorSettings;
-import configs.CanvasSettings.DrawSettings;
-import configs.CanvasSettings.MainSettings;
-import configs.MainInitializationSettings;
+import configs.canvas.ColorConfig;
+import configs.canvas.DrawConfig;
+import configs.tools.CombienedDrawDataBase;
+import configs.RemoteConfig;
 import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.DrawableLocalMoving;
 import drawable.drawableObjectsConcrete.text.DrawableLocalText;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GuiModel implements Model {
     @Getter
-    private final MainSettings mainSettings = new MainSettings(new ColorSettings(), new DrawSettings());
+    private final CombienedDrawDataBase CombienedDrawDataBase = new CombienedDrawDataBase(new ColorConfig(), new DrawConfig());
 
     @Getter
     private final List<DrawableElevator> elevators = new LinkedList<>();
@@ -37,13 +37,13 @@ public class GuiModel implements Model {
     }
 
     public void update() {
-        updateFloors(mainSettings.floorsCount());
+        updateFloors(CombienedDrawDataBase.floorsCount());
     }
 
     private void updateFloors(int floors_count) {
         int oldFloorsCount = floors.size();
         while (oldFloorsCount < floors_count) {
-            floors.add(new Floor(oldFloorsCount++, getElevators(), mainSettings));
+            floors.add(new Floor(oldFloorsCount++, getElevators(), CombienedDrawDataBase));
         }
         while (oldFloorsCount > floors_count) {
             floors.remove(oldFloorsCount--);
@@ -102,8 +102,8 @@ public class GuiModel implements Model {
         return ref.foundDrawableElevator;
     }
 
-    public void setMainInitializationSettings(MainInitializationSettings mainInitializationSettings) {
-        mainSettings.set(mainInitializationSettings);
+    public void setRemoteConfig(RemoteConfig remoteConfig) {
+        CombienedDrawDataBase.setRemoteConfig(remoteConfig);
     }
 
     public void changeBehindElevatorForCustomer(long id) {
@@ -112,7 +112,7 @@ public class GuiModel implements Model {
     }
 
     public void updateData(CreaturesData data) {
-        PackageLoader.ApplyCustomers(data.CUSTOMERS, customers, mainSettings);
-        PackageLoader.ApplyElevators(data.ELEVATORS, elevators, mainSettings);
+        PackageLoader.ApplyCustomers(data.CUSTOMERS, customers, CombienedDrawDataBase);
+        PackageLoader.ApplyElevators(data.ELEVATORS, elevators, CombienedDrawDataBase);
     }
 }

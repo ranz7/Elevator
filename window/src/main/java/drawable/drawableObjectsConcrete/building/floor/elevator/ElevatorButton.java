@@ -1,28 +1,19 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import configs.CanvasSettings.DrawSettings;
-import drawable.drawableAbstract.Drawable;
-import model.GuiModel;
+import configs.tools.CombienedDrawDataBase;
+import drawable.drawableAbstract.DrawableLocalCreature;
 import tools.Vector2D;
 import view.drawTools.drawer.GameDrawer;
 import tools.Timer;
 
-import java.awt.*;
-
 /**
  * Small buttons near elevators.
  */
-public class ElevatorButton extends Drawable {
-    private final long BUTTON_ON_TIME;
+public class ElevatorButton extends DrawableLocalCreature {
     private final Timer BUTTON_ON_TIMER = new Timer();
-    private final Color COLOR_ON;
-    private final Color COLOR_OFF;
 
-    public ElevatorButton(Vector2D position, GuiModel guiModel) {
-        super(position, guiModel.drawSettings.ELEVATOR_BUTTON_SIZE);
-        this.COLOR_ON = guiModel.colorSettings.elevatorButtonOn;
-        this.COLOR_OFF = guiModel.colorSettings.elevatorButtonOff;
-        this.BUTTON_ON_TIME = DrawSettings.ELEVATOR_BUTTON_ON_TIME;
+    public ElevatorButton(Vector2D position, CombienedDrawDataBase settings) {
+        super(position, settings.elevatorButtonSize(), settings);
     }
 
     @Override
@@ -33,15 +24,15 @@ public class ElevatorButton extends Drawable {
     @Override
     public void draw(GameDrawer gameDrawer) {
         if (BUTTON_ON_TIMER.isReady()) {
-            gameDrawer.setColor(COLOR_ON);
+            gameDrawer.setColor(settings.buttonColorOn());
         } else {
-            gameDrawer.setColor(COLOR_OFF);
+            gameDrawer.setColor(settings.buttonColorOff());
         }
         gameDrawer.draw(this);
     }
 
     public void buttonClick() {
-        BUTTON_ON_TIMER.restart(BUTTON_ON_TIME);
+        BUTTON_ON_TIMER.restart(settings.buttonOnTime());
     }
 
     @Override

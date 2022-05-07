@@ -1,16 +1,13 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.DrawableLocalCreature;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
-import model.GuiModel;
-import model.objects.Creature;
 import tools.Vector2D;
 import view.drawTools.drawer.GameDrawer;
 
-import java.awt.*;
 import java.util.List;
 
 public class ElevatorBorder extends DrawableLocalCreature {
@@ -20,12 +17,14 @@ public class ElevatorBorder extends DrawableLocalCreature {
     @Getter
     ElevatorButton elevatorButton;
 
-    public ElevatorBorder(Vector2D position, DrawableElevator parentElevator, MainSettings settings) {
+    public ElevatorBorder(Vector2D position, DrawableElevator parentElevator, CombienedDrawDataBase settings) {
         super(position, parentElevator.getSize().getAdded(settings.borderThickness()), settings);
         elevatorToGetFloorFrom = parentElevator;
-        elevatorBlackSpace = new ElevatorBlackSpace(position, parentElevator, settings);
-        elevatorButton = new ElevatorButton(position.getAdded(new Vector2D(size).getDivided(2)).getAdded(
-                new Vector2D(guiModel.getMainInitializationSettings().BUTTON_RELATIVE_POSITION, 0)), guiModel);
+        elevatorBlackSpace = new ElevatorBlackSpace(position, getSize(), settings);
+        var buttonPosition =
+                position.getAdded(getSize().getDivided(2))
+                        .getAddedX(settings.buttonRelativePosition());
+        elevatorButton = new ElevatorButton(buttonPosition,settings);
     }
 
     @Override

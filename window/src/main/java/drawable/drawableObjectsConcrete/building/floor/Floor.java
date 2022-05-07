@@ -1,7 +1,7 @@
 package drawable.drawableObjectsConcrete.building.floor;
 
 import architecture.tickable.Tickable;
-import configs.CanvasSettings.MainSettings;
+import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.DrawableLocalCreature;
 import drawable.drawableObjectsConcrete.building.floor.decorations.FloorPainting;
@@ -24,7 +24,7 @@ public class Floor extends DrawableLocalCreature implements Tickable {
     private final FloorWall floorWall;
     int currentFloor;
 
-    public Floor(int currentFloor, List<DrawableElevator> elevators, MainSettings settings) {
+    public Floor(int currentFloor, List<DrawableElevator> elevators, CombienedDrawDataBase settings) {
         super(new Vector2D(settings.buildingSize().x, currentFloor * settings.floorHeight()),
                 new Vector2D(settings.buildingSize().x, settings.floorHeight()), settings);
         this.currentFloor = currentFloor;
@@ -43,7 +43,7 @@ public class Floor extends DrawableLocalCreature implements Tickable {
                         .getAdded(borders.get(j - 1).getPosition())
                         .getAddedY(borders.get(j - 1).getSize().y)
                         .getDivided(2);
-                floorPaintings.add(new FloorPainting(decorationPosition));
+                floorPaintings.add(new FloorPainting(decorationPosition, settings));
             }
         }
     }
