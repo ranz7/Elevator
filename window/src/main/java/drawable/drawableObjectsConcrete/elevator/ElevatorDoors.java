@@ -1,14 +1,15 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.DrawableLocalMoving;
+import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 import tools.Timer;
 
 import java.awt.*;
 
-public class ElevatorDoors extends Drawable {
+public class ElevatorDoors extends DrawableLocalMoving {
     private final long openCloseDoorsTime;
     private final DrawableElevator parentElevator;
     private final Timer doorsTimer = new Timer();
@@ -18,8 +19,8 @@ public class ElevatorDoors extends Drawable {
     private final Color doorsBorder;
 
     public ElevatorDoors(DrawableElevator parentElevator, MainSettings settings) {
-        super(parentElevator);
-        size.x += 7;
+        super(parentElevator.getPosition(), parentElevator.getSize(),
+                Trajectory.MomentarilyPositionChange(parentElevator.getPosition()), settings);
         this.parentElevator = parentElevator;
         openCloseDoorsTime = settings.elevatorOpenCloseTime();
         this.doorsColor = settings.doorsColor();
@@ -51,18 +52,24 @@ public class ElevatorDoors extends Drawable {
         var openedGap = percentage * size.x / 2.;
 
         gameDrawer.setColor(doorsColor);
-        gameDrawer.drawFilledRect(position.getAdded(new Vector2D(-size.x / 2., 0)),
+        gameDrawer.drawRect(position.getAdded(new Vector2D(-size.x / 2., 0)),
                 new Vector2D((int) (size.x / 2 - openedGap), size.y), doorsBorder, 2);
 
         gameDrawer.setColor(doorsColor);
-        gameDrawer.drawFilledRect(position.getAdded(new Vector2D(openedGap, 0)),
+        gameDrawer.drawRect(position.getAdded(new Vector2D(openedGap, 0)),
                 new Vector2D((int) (size.x / 2 - openedGap), size.y), doorsBorder, 2);
 
     }
 
-    public void tick(long delta_time) {
+    public void tick(long deltaTime) {
+        super(deltaTime);
         position = parentElevator.getPosition();
-        doorsTimer.tick(delta_time);
+        doorsTimer.tick(deltaTime);
+    }
+
+    @Override
+    public boolean isDead() {
+        return false;
     }
 
     public boolean isClosed() {

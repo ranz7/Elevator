@@ -1,10 +1,10 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
 import configs.CanvasSettings.DrawSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.Drawable;
 import model.GuiModel;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 import tools.Timer;
 
 import java.awt.*;
@@ -37,7 +37,7 @@ public class ElevatorButton extends Drawable {
         } else {
             gameDrawer.setColor(COLOR_OFF);
         }
-        gameDrawer.drawFilledRect(this);
+        gameDrawer.draw(this);
     }
 
     public void buttonClick() {

@@ -6,8 +6,8 @@ import model.GuiModel;
 import architecture.tickable.Tickable;
 import tools.Vector2D;
 import view.gui.windowListeners.WindowResizeListener;
-import view.drawTools.GameDrawer;
-import view.drawTools.GameScaler;
+import view.drawTools.drawer.GameDrawer;
+import view.drawTools.scaler.GameScaler;
 
 import javax.swing.*;
 import java.awt.*;

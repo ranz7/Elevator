@@ -1,22 +1,22 @@
 package drawable.drawableObjectsConcrete.elevator;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.Drawable;
+import drawable.drawableAbstract.DrawableRemoteCreature;
 import model.objects.Creature;
-import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 import lombok.Getter;
 
 import java.awt.*;
 import java.util.List;
 
 @Getter
-public class DrawableElevator extends Drawable {
+public class DrawableElevator extends DrawableRemoteCreature {
     public final Color BACK_GROUND_COLOR;
     public final ElevatorDoors DOORS;
 
     public DrawableElevator(Creature creature, MainSettings settings) {
-        super(creature);
+        super(creature, settings);
         BACK_GROUND_COLOR = settings.elevatorBackGroundColor();
         DOORS = new ElevatorDoors(this, settings);
     }
@@ -28,14 +28,11 @@ public class DrawableElevator extends Drawable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        if (!isVisible()) {
-            return;
-        }
         if (DOORS.isClosed()) {
             return;
         }
         gameDrawer.setColor(BACK_GROUND_COLOR);
-        gameDrawer.drawFilledRect(position.getSubbed(new Vector2D(this.size.x / 2., 0)), this.size);
+        gameDrawer.draw(this);
     }
 
     @Override

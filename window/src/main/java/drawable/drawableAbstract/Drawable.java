@@ -1,11 +1,11 @@
-package drawable.drawableBase;
+package drawable.drawableAbstract;
 
 import architecture.tickable.Tickable;
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.drawableWithTexture.DrawCenter;
+import drawable.drawableAbstract.drawableWithTexture.DrawCenter;
 import lombok.RequiredArgsConstructor;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,11 +17,8 @@ public abstract class Drawable implements Tickable {
     @Override
     public void tick(long deltaTime) {
     }
-    public abstract void draw(GameDrawer gameDrawer);
 
-    public abstract Integer GetDrawPrioritet();
-
-    public drawable.drawableBase.drawableWithTexture.DrawCenter getDrawCenter() {
+    public DrawCenter getDrawCenter() {
         return DrawCenter.CENTER_BY_X;
     }
 
@@ -30,6 +27,10 @@ public abstract class Drawable implements Tickable {
         drawables.add(this);
         return drawables;
     }
+
+    public abstract void draw(GameDrawer gameDrawer);
+
+    public abstract Integer GetDrawPrioritet();
 
     public abstract Vector2D getPosition();
 

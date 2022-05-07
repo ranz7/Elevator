@@ -1,15 +1,15 @@
 package drawable.drawableObjectsConcrete.customer;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.DrawableRemoteCreature;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.Creature;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 
 import java.awt.*;
 
-public class DrawableCustomer extends Drawable {
+public class DrawableCustomer extends DrawableRemoteCreature {
     private final Color COLOR_OF_CUSTOMER;
 
     @Getter
@@ -17,7 +17,7 @@ public class DrawableCustomer extends Drawable {
     private boolean behindElevator = true;
 
     public DrawableCustomer(Creature creature, MainSettings settings) {
-        super(creature);
+        super(creature, settings);
         var colors = settings.customerSkins();
         this.COLOR_OF_CUSTOMER = colors[(int) (getId() % colors.length)];
     }
@@ -32,12 +32,13 @@ public class DrawableCustomer extends Drawable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        if (!isVisible()) {
+        if (!getIsVisible()) {
             behindElevator = false;
             return;
         }
         gameDrawer.setColor(COLOR_OF_CUSTOMER);
-        gameDrawer.drawFilledRect(this.position, this.size, Color.DARK_GRAY, 2);
+
+        gameDrawer.drawWithBorder(this,Color.DARK_GRAY, 2);
     }
 
     public boolean isNotBehindElevator() {

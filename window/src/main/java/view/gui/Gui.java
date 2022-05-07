@@ -1,7 +1,8 @@
 package view.gui;
 
 import controller.GuiController;
-import drawable.drawableObjectsConcrete.FlyingText;
+import drawable.drawableObjectsConcrete.text.DrawableLocalText;
+import drawable.drawableObjectsConcrete.text.TextData;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
@@ -13,8 +14,6 @@ import view.gui.windowListeners.WindowResizeListener;
 import view.gui.windowReacts.ButtonsReact;
 import view.gui.windowReacts.MouseReact;
 import view.gui.windowReacts.ResizeReact;
-
-import java.awt.*;
 
 public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     private final GuiController controller;
@@ -59,9 +58,8 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void rightMouseClicked(Vector2D point) {
         if (gameWindow.zoomedIn()) {
-            guiModel.addMovingDrawable(
-                    new FlyingText("ZoomIn", gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4),
-                            Vector2D.North, 6, 5, 1000, new Color(255, 100, 100)));
+            var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
+            guiModel.addMovingDrawable(new DrawableLocalText("ZoomIn",gamePosition, TextData.flyTopFast));
             gameWindow.zoomIn(point, 1 / 4.);
         } else {
             gameWindow.zoomOut();
@@ -71,9 +69,8 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void leftMouseClicked(Vector2D point) {
         controller.clickButton(point);
-        guiModel.addMovingDrawable(
-                new FlyingText("Click", gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4),
-                        Vector2D.North, 6, 15, 300, new Color(255, 217, 13)));
+        var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
+        guiModel.addMovingDrawable(new DrawableLocalText("Click", gamePosition, TextData.flyTopSlow));
     }
 
     @Override

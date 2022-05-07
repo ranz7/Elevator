@@ -1,6 +1,7 @@
 package model.packageLoader;
 
 import configs.CanvasSettings.MainSettings;
+import drawable.drawableAbstract.DrawableRemoteCreature;
 import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import model.objects.Creature;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class PackageLoader {
     public static void ApplyCustomers(
-            List<Creature> customers, LinkedList<DrawableCustomer> drawableCustomers, MainSettings settings) {
+            List<Creature> customers, List<DrawableCustomer> drawableCustomers, MainSettings settings) {
         applyArrivedData(customers, drawableCustomers);
         customers.forEach(
                 creatureA -> {
@@ -23,10 +24,8 @@ public class PackageLoader {
     }
 
     public static void ApplyElevators(
-            List<Creature> elevators, LinkedList<DrawableElevator> drawableElevators, MainSettings settings) {
+            List<Creature> elevators, List<DrawableElevator> drawableElevators, MainSettings settings) {
         applyArrivedData(elevators, drawableElevators);
-
-
         // Add
         elevators.forEach(
                 creatureA -> {
@@ -39,17 +38,17 @@ public class PackageLoader {
         );
     }
 
-    private static void applyArrivedData(List<Creature> creatures_came, LinkedList<? extends Creature> creatures_to_apply) {
+    private static void applyArrivedData(List<Creature> creaturesThatRemotlyCame,
+                                         List<? extends DrawableRemoteCreature> creaturesToApplyData) {
         // erase
-        creatures_to_apply.removeIf(
-                creatureA -> creatures_came.stream().noneMatch(
-                        creatureB -> creatureA.getId() == creatureB.getId()));
+        creaturesToApplyData.removeIf(creatureA -> creaturesThatRemotlyCame.stream().noneMatch(
+                creatureB -> creatureA.getId() == creatureB.getId()));
         // update
-        creatures_to_apply.forEach(
-                creatureA -> {
-                    creatureA.set(creatures_came.stream().filter(
-                            creatureB -> creatureA.getId() == creatureB.getId()
-                    ).findFirst().get());
+        creaturesToApplyData.forEach(creatureA -> {
+                    creatureA.set(
+                            creaturesThatRemotlyCame.stream().filter(
+                                    creatureB -> creatureA.getId() == creatureB.getId()
+                            ).findFirst().get());
                 }
         );
     }

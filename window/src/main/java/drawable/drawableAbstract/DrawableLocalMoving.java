@@ -1,18 +1,19 @@
-package drawable.drawableBase;
+package drawable.drawableAbstract;
 
 import configs.CanvasSettings.MainSettings;
 import model.objects.movingObject.MovingObject;
+import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
 
-public abstract class DrawableMoving extends Drawable {
+public abstract class DrawableLocalMoving extends Drawable {
     private final MovingObject movingObject;
 
-    public DrawableMoving(Vector2D position, Vector2D size, Trajectory trajecotry, MainSettings settings) {
+    public DrawableLocalMoving(Vector2D position, Vector2D size, Trajectory trajecotry, MainSettings settings) {
         super(settings);
         this.movingObject = new MovingObject(position, size, trajecotry);
     }
 
-    public DrawableMoving(Vector2D position, double size, Trajectory trajecotry, MainSettings settings) {
+    public DrawableLocalMoving(Vector2D position, double size, Trajectory trajecotry, MainSettings settings) {
         super(settings);
         this.movingObject = new MovingObject(position, new Vector2D(size, size), trajecotry);
     }
@@ -33,4 +34,10 @@ public abstract class DrawableMoving extends Drawable {
     public boolean getIsVisible() {
         return movingObject.isVisible();
     }
+
+    public boolean isReachedDestination() {
+        return movingObject.isReachedDestination();
+    }
+
+    public abstract boolean isDead();
 }

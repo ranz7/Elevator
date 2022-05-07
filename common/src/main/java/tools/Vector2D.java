@@ -20,6 +20,10 @@ public class Vector2D extends Point2D.Double {
         super(x, y);
     }
 
+    public Vector2D(Vector2D position) {
+        this(position.x, position.y);
+    }
+
     public Vector2D(Point2D.Double position) {
         this(position.x, position.y);
     }
@@ -48,8 +52,12 @@ public class Vector2D extends Point2D.Double {
         return new Vector2D(x * length, y * length);
     }
 
-    public Vector2D getAdded(Point2D.Double second) {
+    public Vector2D getAdded(Vector2D second) {
         return new Vector2D(x + second.x, y + second.y);
+    }
+
+    public Vector2D getAdded(double add) {
+        return new Vector2D(x + add, y + add);
     }
 
     public Vector2D getSubbed(Vector2D vectorB) {
@@ -108,5 +116,18 @@ public class Vector2D extends Point2D.Double {
 
     public Vector2D getAddedY(double y) {
         return new Vector2D(x, this.y + y);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (null == obj)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Vector2D vector2D = (Vector2D) obj;
+        // field comparison
+        return Math.abs(x - vector2D.x) < EPSILON && Math.abs(y - vector2D.y) < EPSILON;
     }
 }

@@ -2,20 +2,20 @@ package drawable.drawableObjectsConcrete.building.floor;
 
 import architecture.tickable.Tickable;
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.Drawable;
-import drawable.drawableBase.DrawableCreature;
+import drawable.drawableAbstract.Drawable;
+import drawable.drawableAbstract.DrawableLocalCreature;
 import drawable.drawableObjectsConcrete.building.floor.decorations.FloorPainting;
 import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorBorder;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 
 import java.util.LinkedList;
 import java.util.List;
 
 //TODO CHANGE TO DrawableCreature
-public class Floor extends DrawableCreature implements Tickable {
+public class Floor extends DrawableLocalCreature implements Tickable {
 
     private final LinkedList<UnderElevatorHidingWall> underElevatorHidingWall = new LinkedList<>();
     @Getter
@@ -26,7 +26,7 @@ public class Floor extends DrawableCreature implements Tickable {
 
     public Floor(int currentFloor, List<DrawableElevator> elevators, MainSettings settings) {
         super(new Vector2D(settings.buildingSize().x, currentFloor * settings.floorHeight()),
-                new Vector2D(buildingSize.x, floorHeight), settings);
+                new Vector2D(settings.buildingSize().x, settings.floorHeight()), settings);
         this.currentFloor = currentFloor;
 
         floorWall = new FloorWall(currentFloor, settings);
@@ -55,36 +55,29 @@ public class Floor extends DrawableCreature implements Tickable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
-        var buildingSize = WINDOW_MODEL.getMainSettings().buildingSize();
-        int floorHeight = (int) WINDOW_MODEL.getMainSettings().floorHeight();
-        var customerSize = WINDOW_MODEL.getMainSettings().customerSize();
-        gameDrawer.setColor(WINDOW_MODEL.getMainSettings().betonCollor());
+        var buildingSize = settings.buildingSize();
+        int floorHeight = (int) settings.floorHeight();
+        var customerSize = settings.customerSize();
+        gameDrawer.setColor(settings.florBetonColor());
         gameDrawer.drawRect(
                 new Vector2D(buildingSize.x / 2., currentFloor * floorHeight),
                 new Vector2D(buildingSize.x, floorHeight), 7);
 
-        gameDrawer.setColor(WINDOW_MODEL.getMainSettings().windowBackGround());
-        gameDrawer.drawFilledRect(
+        gameDrawer.setColor(settings.windowBackGroundColor());
+        gameDrawer.fillRect(
                 new Vector2D(0 - customerSize.x * 4., currentFloor * floorHeight - 2),
                 new Vector2D(customerSize.x * 4, floorHeight)
         );
-        gameDrawer.drawFilledRect(
+        gameDrawer.fillRect(
                 new Vector2D(buildingSize.x, currentFloor * floorHeight - 2), new Vector2D(customerSize.x * 4, floorHeight)
         );
 
     }
 
     @Override
-    public void tick(long deltaTime) {
-
-    }
-
-    @Override
     public List<Drawable> getDrawables() {
-        var drawables = new LinkedList<Drawable>();
-        drawables.add(this);
+        var drawables = super.getDrawables();
         drawables.addAll(floorWall.getDrawables());
-
         floorPaintings.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         borders.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         underElevatorHidingWall.forEach(drawable -> drawables.addAll(drawable.getDrawables()));

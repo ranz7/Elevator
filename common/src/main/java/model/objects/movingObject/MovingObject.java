@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import model.objects.Creature;
+import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
 
 public class MovingObject extends Creature implements Tickable {
@@ -39,6 +40,6 @@ public class MovingObject extends Creature implements Tickable {
     }
 
     public void setMoveTrajectory(Trajectory trajectory) {
-        trajecotry.apply(trajectory);
+        trajecotry.set(trajectory);
     }
 }

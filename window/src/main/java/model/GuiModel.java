@@ -6,16 +6,16 @@ import configs.CanvasSettings.ColorSettings;
 import configs.CanvasSettings.DrawSettings;
 import configs.CanvasSettings.MainSettings;
 import configs.MainInitializationSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.Drawable;
+import drawable.drawableAbstract.DrawableLocalMoving;
+import drawable.drawableObjectsConcrete.text.DrawableLocalText;
 import model.packageLoader.PackageLoader;
-import drawable.drawableObjectsConcrete.*;
 import drawable.drawableObjectsConcrete.building.floor.Floor;
 import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
 import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
 import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
 import lombok.Getter;
 import model.objects.CreaturesData;
-import model.objects.movingObject.MovingObject;
 import tools.Vector2D;
 
 import java.util.LinkedList;
@@ -26,13 +26,12 @@ public class GuiModel implements Model {
     @Getter
     private final MainSettings mainSettings = new MainSettings(new ColorSettings(), new DrawSettings());
 
-    //TODO move into DRAW CLIENT OBJECTS
     @Getter
     private final List<DrawableElevator> elevators = new LinkedList<>();
     private final List<DrawableCustomer> customers = new LinkedList<>();
 
     private final List<Floor> floors = new LinkedList<>();
-    private final List<FlyingText> flyingTexts = new LinkedList<>();
+    private final List<DrawableLocalText> drawableTexts = new LinkedList<>();
 
     public void start() {
     }
@@ -56,7 +55,7 @@ public class GuiModel implements Model {
         elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         drawables.addAll(customers.stream().toList());
-        drawables.addAll(flyingTexts);
+        drawables.addAll(drawableTexts);
         return drawables;
     }
 
@@ -64,13 +63,13 @@ public class GuiModel implements Model {
         return new TickableList(getDrawableOjects());
     }
 
-    public void addMovingDrawable(FlyingText text) {
-        flyingTexts.add(text);
+    public void addMovingDrawable(DrawableLocalText text) {
+        drawableTexts.add(text);
     }
 
     @Override
     public void clearDead() {
-        flyingTexts.removeIf(MovingObject::isDead);
+        drawableTexts.removeIf(DrawableLocalMoving::isDead);
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {

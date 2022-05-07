@@ -1,10 +1,10 @@
 package drawable.drawableObjectsConcrete.building.floor.elevator;
 
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.Drawable;
 import model.GuiModel;
 import model.objects.Creature;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 
 import java.awt.*;
 
@@ -28,7 +28,7 @@ public class ElevatorBlackSpace extends Drawable {
     @Override
     public void draw(GameDrawer gameDrawer) {
         gameDrawer.setColor(BLACK_SPACES_COLOR);
-        gameDrawer.drawFilledRect(this);
+        gameDrawer.draw(this);
     }
 }
 

@@ -1,9 +1,9 @@
 package drawable.drawableObjectsConcrete.building.floor;
 
 import configs.CanvasSettings.MainSettings;
-import drawable.drawableBase.Drawable;
+import drawable.drawableAbstract.Drawable;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 
 public class UnderElevatorHidingWall extends Drawable {
     public UnderElevatorHidingWall(int currentFloor, MainSettings setting) {
@@ -21,7 +21,7 @@ public class UnderElevatorHidingWall extends Drawable {
     @Override
     public void draw(GameDrawer gameDrawer) {
         gameDrawer.setColor(backGroundColor);
-        gameDrawer.drawFilledRect(this);
+        gameDrawer.draw(this);
     }
 
 }

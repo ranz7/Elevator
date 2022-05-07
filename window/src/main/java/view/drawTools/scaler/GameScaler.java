@@ -1,5 +1,6 @@
-package view.drawTools;
+package view.drawTools.scaler;
 
+import configs.GameScalerSettings;
 import lombok.Getter;
 import architecture.tickable.Tickable;
 import tools.Vector2D;

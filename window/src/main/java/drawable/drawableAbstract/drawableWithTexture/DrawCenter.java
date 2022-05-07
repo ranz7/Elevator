@@ -1,4 +1,4 @@
-package drawable.drawableBase.drawableWithTexture;
+package drawable.drawableAbstract.drawableWithTexture;
 
 public enum DrawCenter {
     CENTER_BY_X,CENTER_BY_Y,CENTER_BY_XY,

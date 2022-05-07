@@ -1,19 +1,20 @@
-package drawable.drawableBase.drawableWithTexture;
+package drawable.drawableAbstract.drawableWithTexture;
 
-import drawable.drawableBase.Drawable;
-import drawable.drawableBase.DrawableCreature;
+import configs.CanvasSettings.MainSettings;
+import drawable.drawableAbstract.Drawable;
+import drawable.drawableAbstract.DrawableLocalCreature;
 import lombok.Getter;
 import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;
 import tools.Vector2D;
-import view.drawTools.GameDrawer;
+import view.drawTools.drawer.GameDrawer;
 
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class DrawableWithTexture extends DrawableCreature {
+public class DrawableCreatureWithTexture extends DrawableLocalCreature {
     private final static Random random = new Random();
 
     @Getter
@@ -21,15 +22,14 @@ public class DrawableWithTexture extends DrawableCreature {
 
     private final GameResource gameResource;
 
-    public DrawableWithTexture(Vector2D position, String textureFolderName, String textureGameSourceName) {
-        super(position,new Vector2D());
+    public DrawableCreatureWithTexture(Vector2D position, String textureFolderName, String textureGameSourceName, MainSettings settings) {
+        super(position, ResourceLoader.getGameResource(textureFolderName, textureGameSourceName).getSize(), settings);
         gameResource = ResourceLoader.getGameResource(textureFolderName, textureGameSourceName);
-        size = gameResource.getSize();
         image = gameResource.getResourceImage();
     }
 
-    public DrawableWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource) {
-        this(position, textureFolderNameToGetRandomGameSource, getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource));
+    public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource, MainSettings settings) {
+        this(position, textureFolderNameToGetRandomGameSource, getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource), settings);
     }
 
     private static String getRandomGameSourceFrom(String textureFolderNameToGetRandomGameSource) {
@@ -57,6 +57,4 @@ public class DrawableWithTexture extends DrawableCreature {
         drawables.add(this);
         return drawables;
     }
-
-
 }

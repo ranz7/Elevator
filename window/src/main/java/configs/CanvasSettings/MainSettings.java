@@ -119,4 +119,17 @@ public class MainSettings {
         throwIfNull();
         return mainInitializationSettings.elevatorSize;
     }
+
+    public double borderThickness() {
+        throwIfNull();
+        return drawSettings.elevatorBorderThickness;
+    }
+
+    public Color borderColor() {
+        return colorSettings.elevatorBorder;
+    }
+
+    public Color colorOfNumber() {
+        return colorSettings.elevatorFloorNumber;
+    }
 }

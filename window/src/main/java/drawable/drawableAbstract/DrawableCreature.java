@@ -1,15 +1,13 @@
-package drawable.drawableBase;
+package drawable.drawableAbstract;
 
 import configs.CanvasSettings.MainSettings;
 import model.objects.Creature;
 import tools.Vector2D;
 
-public abstract class DrawableCreature extends Drawable {
-    private final Creature creature;
-
-    public DrawableCreature(Vector2D position, Vector2D size, MainSettings settings) {
+abstract class DrawableCreature extends Drawable {
+    protected DrawableCreature(Creature creature, MainSettings settings) {
         super(settings);
-        creature = new Creature(position, size);
+        this.creature = creature;
     }
 
     public Vector2D getPosition() {
@@ -24,4 +22,5 @@ public abstract class DrawableCreature extends Drawable {
         return creature.isVisible();
     }
 
+    protected Creature creature;
 }

@@ -9,7 +9,7 @@ public class ColorSettings {
     public final Color firstText = new Color(229, 212, 98);
     public final Color secondTest = new Color(229, 212, 98);
 
-    public final Color elevatorCurrentFloor = new Color(59, 236, 0);
+    public final Color elevatorFloorNumber = new Color(59, 236, 0);
     public final Color elevatorDoor = new Color(255, 172, 26);
     public final Color elevatorBorder = new Color(0, 0, 0);
     public final Color elevatorBackGround = new Color(193, 191, 255);
