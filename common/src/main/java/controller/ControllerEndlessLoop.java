@@ -6,12 +6,14 @@ import lombok.Setter;
 import model.Model;
 import architecture.tickable.Tickable;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-public class ControllerEndlessLoop {
+public abstract class ControllerEndlessLoop {
     @Getter
     @Setter
-    private double controllerSpeed = 1;
+    private double controllerTimeSpeed = 1;
     @Setter
     long currentTime;
 
@@ -20,20 +22,19 @@ public class ControllerEndlessLoop {
 
     void start(Runnable additionalMetodToRun) {
         currentTime = System.currentTimeMillis();
-        if(model!=null) {
+        if (model != null) {
             model.start();
         }
 
         while (true) {
             long deltaTime = System.currentTimeMillis() - currentTime;
             currentTime += deltaTime;
-
-            objectsToTick.tick(deltaTime * controllerSpeed);
+            objectsToTick.tick(deltaTime * controllerTimeSpeed);
 
             additionalMetodToRun.run();
 
             if (model != null) {
-                new TickableList().add(model.getTickableList()).tick(deltaTime * controllerSpeed);
+                new TickableList().add(model.getTickableList()).tick(deltaTime * controllerTimeSpeed);
                 model.clearDead();
             }
             try {
@@ -44,23 +45,21 @@ public class ControllerEndlessLoop {
     }
 
     protected void multiplyControllerSpeedBy(double multiply) {
-        controllerSpeed *= multiply;
+        controllerTimeSpeed *= multiply;
     }
 
-    void addModel(Model model) {
+    protected void addModel(Model model) {
         this.model = model;
     }
 
-    void addTickable(Tickable tickable) {
+    protected void addTickable(Tickable tickable) {
         objectsToTick.add(tickable);
     }
 
-    void start() {
+    protected void start() {
         start(() -> {
         });
     }
 
-    int getTickPerSecond() {
-        return 1;
-    }
+    protected abstract int getTickPerSecond();
 }

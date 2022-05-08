@@ -38,7 +38,7 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
                         appModel.createMainInitializationSettingsToSend(
                                 elevatorsConductor.getSettings(),
                                 customerConductor.getSettings(),
-                                getControllerSpeed())));
+                                this.getControllerTimeSpeed())));
         gates.setSpamEvent(
                 () -> gates.send(
                         Protocol.UPDATE_DATA, appModel.getDataToSent()),
@@ -65,11 +65,11 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
             case CHANGE_ELEVATORS_COUNT -> {
                 elevatorsConductor.changeElevatorsCount((boolean) data);
                 gates.send(Protocol.APPLICATION_SETTINGS, appModel.createMainInitializationSettingsToSend(
-                        elevatorsConductor.getSettings(), customerConductor.getSettings(), getControllerSpeed()));
+                        elevatorsConductor.getSettings(), customerConductor.getSettings(), this.getControllerTimeSpeed()));
             }
             case CHANGE_GAME_SPEED -> {
                 multiplyControllerSpeedBy((double) data);
-                gates.send(Protocol.CHANGE_GAME_SPEED, getControllerSpeed());
+                gates.send(Protocol.CHANGE_GAME_SPEED, this.getControllerTimeSpeed());
             }
         }
         return true;
@@ -80,7 +80,7 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     @Override
-    int getTickPerSecond() {
-        return ControllerCofig.TPS;
+    public int getTickPerSecond() {
+        return AppControllerConfig.TPS;
     }
 }

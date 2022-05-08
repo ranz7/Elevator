@@ -33,9 +33,9 @@ public class SocketStreamReader extends Thread {
                     break;
                 }
             }
-        } catch (IOException | ClassNotFoundException exception) {
+        } catch (Exception exception) {
             socket.close();
-            exception.printStackTrace();
+            // exception.printStackTrace();
         }
     }
 }

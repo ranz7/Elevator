@@ -6,8 +6,8 @@ import drawable.drawableAbstract.DrawableLocalCreature;
 import tools.Vector2D;
 import view.drawTools.drawer.GameDrawer;
 
-public class FloorWall extends DrawableLocalCreature implements Tickable {
-    public FloorWall(Integer floorNumber, CombienedDrawDataBase settings) {
+public class FloorBackground extends DrawableLocalCreature implements Tickable {
+    public FloorBackground(Integer floorNumber, CombienedDrawDataBase settings) {
         super(new Vector2D(0, floorNumber * settings.floorHeight()),
                 new Vector2D(settings.buildingSize().x, settings.floorHeight()), settings);
     }

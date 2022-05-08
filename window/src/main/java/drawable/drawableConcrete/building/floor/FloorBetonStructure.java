@@ -16,21 +16,24 @@ import java.util.List;
 import java.util.Random;
 
 //TODO CHANGE TO DrawableCreature
-public class Floor extends DrawableLocalCreature implements Tickable {
+public class FloorBetonStructure extends DrawableLocalCreature implements Tickable {
 
     private final LinkedList<UnderElevatorHidingWall> underElevatorHidingWall = new LinkedList<>();
     @Getter
     private final LinkedList<ElevatorBorder> borders = new LinkedList<>();
     private final LinkedList<FloorPainting> floorPaintings = new LinkedList<>();
-    private final FloorWall floorWall;
+    private final FloorBackground floorBackground;
+    private final FloorBetonStructure floorBetonStructure;
+
+
     int currentFloor;
 
-    public Floor(int currentFloor, CombienedDrawDataBase settings) {
+    public FloorBetonStructure(int currentFloor, CombienedDrawDataBase settings) {
         super(new Vector2D(settings.buildingSize().x / 2, currentFloor * settings.floorHeight()),
                 new Vector2D(settings.buildingSize().x, settings.floorHeight()), settings);
         this.currentFloor = currentFloor;
 
-        floorWall = new FloorWall(currentFloor, settings);
+        floorBackground = new FloorBackground(currentFloor, settings);
         underElevatorHidingWall.add(new UnderElevatorHidingWall(currentFloor, settings));
     }
 
@@ -41,10 +44,11 @@ public class Floor extends DrawableLocalCreature implements Tickable {
 
     @Override
     public void draw(GameDrawer gameDrawer) {
+        gameDrawer.draw(this, settings.florBetonColor(), 7);
         var buildingSize = settings.buildingSize();
         int floorHeight = (int) settings.floorHeight();
         var customerSize = settings.customerSize();
-        gameDrawer.draw(this, settings.florBetonColor(), 7);
+
         // gameDrawer.setColor(settings.windowBackGroundColor());
         //  gameDrawer.fillRect(
         //        new Vector2D(0 - customerSize.x * 4., currentFloor * floorHeight - 2),

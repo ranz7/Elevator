@@ -10,14 +10,14 @@ import java.awt.*;
 public class GameScaler implements Tickable {
     private final Vector2D blackZone = GameScalerConfig.blackZone;
 
-    private Vector2D screenSizeAfterShift = new Vector2D(0, 0);
+    private Vector2D screenSizeAfterShift;
     private Vector2D drawOffset = new Vector2D(0, 0);
     private double scalingCoefficient;
 
     // ZOOM DATA
     @Getter
     private double additionalZoomFinishValue = 1.;
-    private double additionalZoomCurrentValue = 30.;
+    private double additionalZoomCurrentValue = GameScalerConfig.zoomStartValue;
 
     private Vector2D additionalMoveFinishValue = new Vector2D(0, 0);
     private Vector2D additionalMove = new Vector2D(0, 0);
@@ -37,6 +37,7 @@ public class GameScaler implements Tickable {
     }
 
     public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, double heigthOfTheObject) {
+        isInitialised();
         return new Vector2D(
                 drawOffset.x
                         + gameCoordinate.x / (scalingCoefficient * additionalZoomCurrentValue)
@@ -47,6 +48,7 @@ public class GameScaler implements Tickable {
     }
 
     public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+        isInitialised();
         return new Vector2D(
                 (realPosition.x - drawOffset.x - blackZone.x / 2
                         - additionalMove.x / (additionalZoomCurrentValue)) * scalingCoefficient * additionalZoomCurrentValue,
@@ -70,12 +72,20 @@ public class GameScaler implements Tickable {
     }
 
     private void updateZoomVector() {
+        isInitialised();
         additionalZoomFinishValue = zoomScale / Math.sqrt(scalingCoefficient);
         additionalMoveFinishValue = new Vector2D(0, -screenSizeAfterShift.y)
                 .getAdded(drawOffset.getMultiplied(1 - additionalZoomFinishValue))
                 .getAdded(screenSizeAfterShift.getMultiplied(additionalZoomFinishValue / 2))
                 .getAdded(new Vector2D(-1, 1).getMultiplied(clickedPoint.getSubbed(blackZone.getDivided(2)))
                 );
+    }
+
+    private void isInitialised() {
+        if(screenSizeAfterShift==null || scalingCoefficient < 0.01){
+            throw new RuntimeException("Scaler is not initialized Or scaling coefficient is to small." +
+                    " Do update before use of draw functions and check if coefficient is set properly.");
+        }
     }
 
     public void zoomIn(Vector2D point, double zoomScale) {

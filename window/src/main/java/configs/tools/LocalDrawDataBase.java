@@ -50,7 +50,6 @@ public class LocalDrawDataBase implements DataBase {
     }
 
     public Color florBetonColor() {
-
         return colorConfig.betonOfFloor;
     }
 

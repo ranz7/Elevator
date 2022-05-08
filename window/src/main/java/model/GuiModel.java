@@ -10,7 +10,7 @@ import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.DrawableLocalMoving;
 import drawable.drawableConcrete.text.DrawableLocalText;
 import model.packageLoader.PackageLoader;
-import drawable.drawableConcrete.building.floor.Floor;
+import drawable.drawableConcrete.building.floor.FloorBetonStructure;
 import drawable.drawableConcrete.building.floor.elevator.ElevatorButton;
 import drawable.drawableConcrete.customer.DrawableCustomer;
 import drawable.drawableConcrete.elevator.DrawableElevator;
@@ -30,7 +30,7 @@ public class GuiModel implements Model {
     private final List<DrawableElevator> elevators = new LinkedList<>();
     private final List<DrawableCustomer> customers = new LinkedList<>();
 
-    private final List<Floor> floors = new LinkedList<>();
+    private final List<FloorBetonStructure> floorBetonStructures = new LinkedList<>();
     private final List<DrawableLocalText> drawableTexts = new LinkedList<>();
 
     public void start() {
@@ -42,23 +42,23 @@ public class GuiModel implements Model {
     }
 
     private void updateElevators() {
-        floors.forEach(floor->floor.updateElevatorBorders(elevators));
+        floorBetonStructures.forEach(floorBetonStructure -> floorBetonStructure.updateElevatorBorders(elevators));
     }
 
     private void updateFloors(int floors_count) {
-        int oldFloorsCount = floors.size();
+        int oldFloorsCount = floorBetonStructures.size();
         while (oldFloorsCount < floors_count) {
-            floors.add(new Floor(oldFloorsCount++, CombienedDrawDataBase));
+            floorBetonStructures.add(new FloorBetonStructure(oldFloorsCount++, CombienedDrawDataBase));
         }
         while (oldFloorsCount > floors_count) {
-            floors.remove(oldFloorsCount--);
+            floorBetonStructures.remove(oldFloorsCount--);
         }
     }
 
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();
  //       elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-        floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
+         floorBetonStructures.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
 //        drawables.addAll(customers.stream().toList());
 //        drawables.addAll(drawableTexts);
         return drawables;
@@ -79,7 +79,7 @@ public class GuiModel implements Model {
 
     public ElevatorButton getNearestButton(Vector2D data) {
         LinkedList<ElevatorButton> elevatorButtons = new LinkedList<>();
-        floors.forEach(floor -> floor.getBorders().forEach(
+        floorBetonStructures.forEach(floorBetonStructure -> floorBetonStructure.getBorders().forEach(
                 border -> elevatorButtons.add(border.getElevatorButton())));
 
         return elevatorButtons.stream()

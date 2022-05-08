@@ -18,17 +18,18 @@ public class BasicsDrawer {
 
     private void fillRect(Vector2D position, Vector2D size, Color fillColor) {
         graphics2D.setColor(fillColor);
+        var realPosition = gameScaler.getFromGameToRealCoordinate(position, size.y);
         graphics2D.fillRect(
-                (int) gameScaler.getFromGameToRealCoordinate(position, size.y).x,
-                (int) gameScaler.getFromGameToRealCoordinate(position, size.y).y,
+                (int) realPosition.x,
+                (int) realPosition.y,
                 (int) gameScaler.getFromGameToRealLength(size.x),
                 (int) gameScaler.getFromGameToRealLength(size.y)
         );
     }
 
     protected void drawFilledRect(Vector2D position, Vector2D size,
-                               Color fillColor,
-                               Color borderColor, double thickness) {
+                                  Color fillColor,
+                                  Color borderColor, double thickness) {
         fillRect(position, size, fillColor);
         drawOnlyBorderRect(position, size, borderColor, thickness);
     }
@@ -36,10 +37,12 @@ public class BasicsDrawer {
     protected void drawOnlyBorderRect(Vector2D position, Vector2D size, Color borderColor, double thickness) {
         Stroke oldStroke = graphics2D.getStroke();
         graphics2D.setColor(borderColor);
-        graphics2D.setStroke(new BasicStroke((float) gameScaler.getFromGameToRealLength(thickness)));
+        var newThickness = (float) gameScaler.getFromGameToRealLength(thickness);
+        graphics2D.setStroke(new BasicStroke(newThickness));
+        var realPosition = gameScaler.getFromGameToRealCoordinate(position, size.y);
         graphics2D.drawRect(
-                (int) gameScaler.getFromGameToRealCoordinate(position, size.y).x,
-                (int) gameScaler.getFromGameToRealCoordinate(position, size.y).y,
+                (int) realPosition.x,
+                (int) realPosition.y,
                 (int) gameScaler.getFromGameToRealLength(size.x),
                 (int) gameScaler.getFromGameToRealLength(size.y)
         );
@@ -56,10 +59,12 @@ public class BasicsDrawer {
                 (int) gameScaler.getFromGameToRealCoordinate(position, fontSize).y);
 
     }
-    protected void drawImage(Image image,Vector2D position, Vector2D size) {
+
+    protected void drawImage(Image image, Vector2D position, Vector2D size) {
+        var realPosition = gameScaler.getFromGameToRealCoordinate(position, size.y);
         graphics2D.drawImage(image,
-                (int) gameScaler.getFromGameToRealCoordinate(position, size.y).x,
-                (int) gameScaler.getFromGameToRealCoordinate(position, size.y).y,
+                (int) realPosition.x,
+                (int) realPosition.y,
                 (int) gameScaler.getFromGameToRealLength(size.x),
                 (int) gameScaler.getFromGameToRealLength(size.y),
                 null);

@@ -43,7 +43,6 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void tick(double deltaTime) {
         gameWindow.tick(deltaTime);
-
     }
 
     @Override

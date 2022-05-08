@@ -60,7 +60,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
                     return true;
                 }
                 windowModel.setRemoteConfig(settings);
-                setControllerSpeed(settings.GAME_SPEED);
+                setControllerTimeSpeed(settings.GAME_SPEED);
                 setCurrentTime(message.getTimeStumpInMessage());
                 gui.resize();
             }
@@ -74,7 +74,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
             case ELEVATOR_OPEN -> windowModel.getElevator((long) data).DOORS.changeDoorsState(false);
             case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).DOORS.changeDoorsState(true);
             case CUSTOMER_GET_IN_OUT -> windowModel.changeBehindElevatorForCustomer((long) data);
-            case CHANGE_GAME_SPEED -> setControllerSpeed((double) data);
+            case CHANGE_GAME_SPEED -> setControllerTimeSpeed((double) data);
         }
         return true;
     }
@@ -111,7 +111,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     @Override
-    int getTickPerSecond() {
-        return 120;
+    protected int getTickPerSecond() {
+        return GuiControllerConfig.TPS;
     }
 }

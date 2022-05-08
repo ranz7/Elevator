@@ -24,7 +24,7 @@ public class ElevatorSystemConfig implements Serializable {
     public final int elevatorMaxHumanCapacity = 4;
     public final int maxElevatorsCount = 16;
     public final double elevatorSpeed = 150;
-    public final int floorsCount = 6;
+    public final int floorsCount = 1;
 
     @Getter
     @Setter

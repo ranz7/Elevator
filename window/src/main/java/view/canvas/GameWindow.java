@@ -1,11 +1,13 @@
 package view.canvas;
 
+import configs.GuiControllerConfig;
 import configs.WindowConfig;
 import drawable.drawableAbstract.Drawable;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
 import tools.Vector2D;
+import view.FPScounter;
 import view.gui.windowListeners.WindowResizeListener;
 import view.drawTools.drawer.GameDrawer;
 import view.drawTools.scaler.GameScaler;
@@ -17,6 +19,7 @@ import java.util.Comparator;
 public class GameWindow extends JPanel implements Tickable {
     private final JFrame jframe;
     private GuiModel windowModel;
+    private FPScounter counter = new FPScounter("42");
 
     @Getter
     private GameScaler gameScaler = new GameScaler();
@@ -37,6 +40,7 @@ public class GameWindow extends JPanel implements Tickable {
         jframe.setSize(WindowConfig.WindowStartSize.width, WindowConfig.WindowStartSize.height);
         jframe.setVisible(true);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jframe.add(counter);
         jframe.add(this);
     }
 
@@ -47,7 +51,7 @@ public class GameWindow extends JPanel implements Tickable {
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-        gameScaler.updateSizes(newSize, windowModel.getCombienedDrawDataBase().elevatorButtonSize());
+        gameScaler.updateSizes(newSize, windowModel.getCombienedDrawDataBase().buildingSize());
     }
 
     @Override
@@ -75,6 +79,7 @@ public class GameWindow extends JPanel implements Tickable {
     @Override
     public void tick(double deltaTime) {
         gameScaler.tick(deltaTime);
+        counter.tick(deltaTime);
         jframe.repaint();
     }
 
