@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Random;
 
 public class DrawableCreatureWithTexture extends DrawableLocalCreature {
-    private final static Random random = new Random();
-
     @Getter
     Image image;
 
@@ -28,11 +26,13 @@ public class DrawableCreatureWithTexture extends DrawableLocalCreature {
         image = gameResource.getResourceImage();
     }
 
-    public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource, CombienedDrawDataBase settings) {
-        this(position, textureFolderNameToGetRandomGameSource, getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource), settings);
+    public DrawableCreatureWithTexture(Vector2D position, String textureFolderNameToGetRandomGameSource,
+                                       CombienedDrawDataBase settings, Random random) {
+        this(position, textureFolderNameToGetRandomGameSource,
+                getRandomGameSourceFrom(textureFolderNameToGetRandomGameSource, random), settings);
     }
 
-    private static String getRandomGameSourceFrom(String textureFolderNameToGetRandomGameSource) {
+    private static String getRandomGameSourceFrom(String textureFolderNameToGetRandomGameSource, Random random) {
         int uperBound = ResourceLoader.getNumOfFilesIn(textureFolderNameToGetRandomGameSource);
         if (uperBound == 0) {
             throw new RuntimeException("There is no config(json) in:" + textureFolderNameToGetRandomGameSource);

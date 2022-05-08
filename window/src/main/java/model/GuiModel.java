@@ -5,15 +5,15 @@ import architecture.tickable.TickableList;
 import configs.canvas.ColorConfig;
 import configs.canvas.DrawConfig;
 import configs.tools.CombienedDrawDataBase;
-import configs.RemoteConfig;
+import configs.ConnectionEstalblishConfig;
 import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.DrawableLocalMoving;
-import drawable.drawableObjectsConcrete.text.DrawableLocalText;
+import drawable.drawableConcrete.text.DrawableLocalText;
 import model.packageLoader.PackageLoader;
-import drawable.drawableObjectsConcrete.building.floor.Floor;
-import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
-import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
-import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
+import drawable.drawableConcrete.building.floor.Floor;
+import drawable.drawableConcrete.building.floor.elevator.ElevatorButton;
+import drawable.drawableConcrete.customer.DrawableCustomer;
+import drawable.drawableConcrete.elevator.DrawableElevator;
 import lombok.Getter;
 import model.objects.CreaturesData;
 import tools.Vector2D;
@@ -38,12 +38,17 @@ public class GuiModel implements Model {
 
     public void update() {
         updateFloors(CombienedDrawDataBase.floorsCount());
+        updateElevators();
+    }
+
+    private void updateElevators() {
+        floors.forEach(floor->floor.updateElevatorBorders(elevators));
     }
 
     private void updateFloors(int floors_count) {
         int oldFloorsCount = floors.size();
         while (oldFloorsCount < floors_count) {
-            floors.add(new Floor(oldFloorsCount++, getElevators(), CombienedDrawDataBase));
+            floors.add(new Floor(oldFloorsCount++, CombienedDrawDataBase));
         }
         while (oldFloorsCount > floors_count) {
             floors.remove(oldFloorsCount--);
@@ -52,10 +57,10 @@ public class GuiModel implements Model {
 
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();
-        elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
+ //       elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
         floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-        drawables.addAll(customers.stream().toList());
-        drawables.addAll(drawableTexts);
+//        drawables.addAll(customers.stream().toList());
+//        drawables.addAll(drawableTexts);
         return drawables;
     }
 
@@ -102,8 +107,8 @@ public class GuiModel implements Model {
         return ref.foundDrawableElevator;
     }
 
-    public void setRemoteConfig(RemoteConfig remoteConfig) {
-        CombienedDrawDataBase.setRemoteConfig(remoteConfig);
+    public void setRemoteConfig(ConnectionEstalblishConfig connectionEstalblishConfig) {
+        CombienedDrawDataBase.setConnectionEstalblishConfig(connectionEstalblishConfig);
     }
 
     public void changeBehindElevatorForCustomer(long id) {

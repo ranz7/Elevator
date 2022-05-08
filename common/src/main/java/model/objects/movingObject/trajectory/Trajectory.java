@@ -26,22 +26,23 @@ public class Trajectory {
                 .set(SpeedFunction.WithConstantSpeed(constSpeed));
     }
 
-    public Vector2D tickAndGet(long deltaTime) {
+    public static Trajectory StaticPoint() {
+        return new Trajectory().set(MoveFunction.Constant()).set(SpeedFunction.WithConstantSpeed(0));
+    }
+
+    public Vector2D tickAndGet(double deltaTime, Vector2D startPosition) {
         if (!initialized()) {
             throw new RuntimeException("Trajectory need to have sett Function and Speed");
         }
-
-        var oldPos = moveFunction.getPosition();
-        moveFunction.tick(deltaTime);
-        return moveFunction.getPosition().getSubbed(oldPos);
+        return moveFunction.tickAndGet(deltaTime, startPosition);
     }
 
     private boolean initialized() {
         return moveFunction != null && speedFunction != null;
     }
 
-    public boolean reached() {
-        return moveFunction.isReached();
+    public boolean reached(Vector2D position) {
+        return moveFunction.isReached(position);
     }
 
     public double getConstSpeed() {

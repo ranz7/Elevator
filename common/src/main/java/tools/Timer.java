@@ -13,7 +13,7 @@ public class Timer implements Tickable {
     }
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         currentTimeInMillisec -= deltaTime;
     }
 

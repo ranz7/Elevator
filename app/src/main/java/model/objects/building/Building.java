@@ -11,14 +11,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-@RequiredArgsConstructor
 public class Building implements Startable {
     public final ElevatorSystemConfig settings;
     @Getter
     public final List<Elevator> elevators = new LinkedList<>();
     @Getter
     public double wallSize;
-
+    public Building(ElevatorSystemConfig settings) {
+        this.settings = settings;
+        for (int i = 0; i < settings.maxElevatorsCount; i++) {
+            var newElevator = new Elevator(settings);
+            newElevator.setVisible(false);
+            elevators.add(newElevator);
+        }
+    }
     @Override
     public void start() {
         updateElevatorsPosition();

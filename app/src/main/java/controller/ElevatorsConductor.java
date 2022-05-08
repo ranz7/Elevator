@@ -36,7 +36,7 @@ public class ElevatorsConductor implements Tickable {
         appModel.Initialize(new Building(settings));
     }
 
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         pendingElevatorRequests.removeIf(this::tryToCallElevator);
         for (var elevator : appModel.getBuilding().elevators) {
             if (!elevator.isVisible()) {

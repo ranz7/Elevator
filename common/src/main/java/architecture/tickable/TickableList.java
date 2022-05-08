@@ -36,13 +36,8 @@ public class TickableList implements Tickable {
         return this;
     }
 
-
-    public void tick(double deltaTime) {
-        this.tick((long) deltaTime);
-    }
-
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         tickables.forEach(tickable -> tickable.tick(deltaTime));
         tickablesDynamic.forEach(
                 tickablesDynamic -> tickablesDynamic.get()

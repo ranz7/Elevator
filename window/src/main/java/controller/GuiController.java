@@ -2,10 +2,11 @@ package controller;
 
 import configs.*;
 import connector.*;
+import connector.dualConnectionStation.Client;
 import connector.filtersAndScenarios.FilterScenarios;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
-import connector.protocol.ProtocolMessageListener;
+import connector.protocol.ProtocolMessagesConductor;
 import model.*;
 import model.objects.CreaturesData;
 import tools.Vector2D;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * control window, created with Swing
  */
-public class GuiController extends ControllerEndlessLoop implements ProtocolMessageListener {
+public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesConductor {
     public final Gates gates = new Gates(new Client(), this);
     private final Gui gui = new Gui(this);
 
@@ -31,11 +32,11 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
 
     public void start() {
         gates.setOnDisconnectEvent(() -> {
-            gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
+            gates.setScenario(FilterScenarios.CatchSettingsThenUpdateThenAnything());
             gates.start();
             windowModel.clearDead();
         });
-        gates.setScenario(FilterScenarios.catchSettingsThenUpdateThenAnything);
+        gates.setScenario(FilterScenarios.CatchSettingsThenUpdateThenAnything());
         gates.start();
 
         gui.start();
@@ -51,7 +52,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         Serializable data = message.getDataInMessage();
         switch (protocol) {
             case APPLICATION_SETTINGS -> {
-                RemoteConfig settings = (RemoteConfig) data;
+                ConnectionEstalblishConfig settings = (ConnectionEstalblishConfig) data;
                 if (ConnectionSettings.VERSION != settings.VERSION) {
                     Logger.getLogger(GuiController.class.getName())
                             .warning("You have different versions with sever. Your version: %s, server version %s%n"

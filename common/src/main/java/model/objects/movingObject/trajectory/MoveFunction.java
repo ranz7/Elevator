@@ -1,82 +1,79 @@
 package model.objects.movingObject.trajectory;
 
-import architecture.tickable.Tickable;
 import tools.Timer;
 import tools.Vector2D;
 
-import javax.swing.text.Position;
-
-public abstract class MoveFunction implements Tickable {
+public abstract class MoveFunction {
     protected final double speedCoefficient = 1000;
 
-    protected final Vector2D position;
 
-    /**
-     * get Current position of function
-     */
-    public abstract Vector2D getPosition();
+    public abstract boolean isReached(Vector2D position);
 
-    public abstract boolean isReached();
+    public abstract Vector2D tickAndGet(double deltaTime, Vector2D position);
+
+    public void parentPositionWasChangedBy(Vector2D diference) {
+    }
 
     public static MoveFunction InDirectionAndTimer(Vector2D direction, long timeToDie) {
         return new MoveFunction() {
             Timer timer = new Timer(timeToDie);
 
-            @Override
-            public void tick(long deltaTime) {
+            public Vector2D tickAndGet(double deltaTime, Vector2D startPosition) {
                 timer.tick(deltaTime);
-                position.getAdded(direction.getMultiplied(deltaTime / speedCoefficient));
+                return startPosition.getAdded(direction.getMultiplied(deltaTime / speedCoefficient));
             }
 
             @Override
-            public Vector2D getPosition() {
-                return position;
-            }
-
-            @Override
-            public boolean isReached() {
+            public boolean isReached(Vector2D ignored) {
                 return timer.isReady();
             }
-
         };
     }
 
     public static MoveFunction SetPosition(Vector2D positionToSet) {
         return new MoveFunction() {
-
             @Override
-            public Vector2D getPosition() {
+            public Vector2D tickAndGet(double deltaTime, Vector2D position) {
                 return positionToSet;
             }
 
             @Override
-            public boolean isReached() {
+            public boolean isReached(Vector2D ignored) {
                 return true;
-            }
-
-            @Override
-            public void tick(long deltaTime) {
             }
         };
     }
 
-    public static MoveFunction GetToDestination(Vector2D destinationTmp) {
+    public static MoveFunction GetToDestination(Vector2D destination) {
         return new MoveFunction() {
-            Vector2D destination = new Vector2D(destinationTmp);
+            final Vector2D destinationCopy = destination;
 
             @Override
-            public Vector2D getPosition() {
+            public boolean isReached(Vector2D position) {
+                return position.equals(destinationCopy);
+            }
+
+            @Override
+            public Vector2D tickAndGet(double deltaTime, Vector2D position) {
+                return position.getShiftedByDistance(destinationCopy, deltaTime);
+            }
+
+            public void parentPositionWasChangedBy(Vector2D diference) {
+                destinationCopy.getAdded(diference);
+            }
+        };
+    }
+
+    public static MoveFunction Constant() {
+        return new MoveFunction() {
+            @Override
+            public boolean isReached(Vector2D position) {
+                return true;
+            }
+
+            @Override
+            public Vector2D tickAndGet(double deltaTime, Vector2D position) {
                 return position;
-            }
-
-            @Override
-            public boolean isReached() {
-                return position.equals(destination);
-            }
-
-            @Override
-            public void tick(long deltaTime) {
-
             }
         };
     }

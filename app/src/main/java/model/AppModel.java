@@ -4,7 +4,7 @@ import architecture.tickable.TickableList;
 import configs.ConnectionSettings;
 import configs.CustomerConfig;
 import configs.ElevatorSystemConfig;
-import configs.RemoteConfig;
+import configs.ConnectionEstalblishConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,9 +38,7 @@ public class AppModel implements Model {
     }
 
     @Override
-    public void start() {
-
-    }
+    public void start() {}
 
     @Override
     public void update() {
@@ -63,7 +61,7 @@ public class AppModel implements Model {
 
     public Serializable createMainInitializationSettingsToSend(
             ElevatorSystemConfig settingsElevator, CustomerConfig settingsCustomer, double gameSpeed) {
-        return new RemoteConfig(
+        return new ConnectionEstalblishConfig(
                 new Vector2D(settingsElevator.buildingSize),
                 settingsElevator.elevatorSize,
                 settingsCustomer.customerSize,

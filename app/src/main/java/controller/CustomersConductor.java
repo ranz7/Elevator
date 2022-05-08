@@ -34,7 +34,7 @@ public class CustomersConductor implements Tickable {
     }
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         spawnTimer.tick(deltaTime);
 
         if (spawnTimer.isReady() && AppCONTROLLER.appModel.customers.size() < settings.maxCustomers) {

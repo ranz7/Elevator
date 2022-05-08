@@ -15,11 +15,11 @@ public abstract class Drawable implements Tickable {
     final protected CombienedDrawDataBase settings;
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
     }
 
     public DrawCenter getDrawCenter() {
-        return DrawCenter.CENTER_BY_X;
+        return DrawCenter.MIDDLE_BY_X;
     }
 
     public List<Drawable> getDrawables() {

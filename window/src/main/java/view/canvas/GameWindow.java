@@ -53,7 +53,7 @@ public class GameWindow extends JPanel implements Tickable {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        gameDrawer.startDraw(g);
+        gameDrawer.prepareDrawer(g);
 
         var drawableObjets = windowModel.getDrawableOjects();
         drawableObjets.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
@@ -73,7 +73,7 @@ public class GameWindow extends JPanel implements Tickable {
     }
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         gameScaler.tick(deltaTime);
         jframe.repaint();
     }

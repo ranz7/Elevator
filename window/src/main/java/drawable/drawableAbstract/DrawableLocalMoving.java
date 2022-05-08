@@ -19,7 +19,7 @@ public abstract class DrawableLocalMoving extends Drawable {
     }
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         movingObject.tick(deltaTime);
     }
 

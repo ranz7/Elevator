@@ -2,14 +2,14 @@ package connector;
 
 import architecture.tickable.Tickable;
 import tools.Timer;
-import connector.baseStation.BaseStation;
-import connector.baseStation.download.SocketCompactData;
-import connector.baseStation.download.Uplink;
+import connector.dualConnectionStation.BaseDualConectionStation;
+import connector.dualConnectionStation.download.SocketCompactData;
+import connector.dualConnectionStation.download.Downlink;
 import connector.filtersAndScenarios.FilterScenarios;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
-import connector.protocol.ProtocolMessageListener;
-import connector.baseStation.Downlink;
+import connector.protocol.ProtocolMessagesConductor;
+import connector.dualConnectionStation.upload.Uplink;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -22,14 +22,14 @@ import java.util.logging.Logger;
  * Reads stream from Client or Server, as SocketEventListner
  * Controls Server or Client by Backhaul interface and send messages
  *
- * @see Downlink
  * @see Uplink
+ * @see Downlink
  */
-public class Gates implements Tickable, Uplink {
+public class Gates implements Tickable, Downlink {
 
 
-    private final BaseStation upload;
-    private final ProtocolMessageListener listener;
+    private final BaseDualConectionStation upload;
+    private final ProtocolMessagesConductor listener;
     private final LinkedList<ProtocolMessage> mesages = new LinkedList<>();
 
     // EVENTS
@@ -47,7 +47,7 @@ public class Gates implements Tickable, Uplink {
     List<Function<Protocol, Boolean>> scenario = FilterScenarios.noFilter;
     Function<Protocol, Boolean> filter;
 
-    public Gates(BaseStation upload, ProtocolMessageListener listener) {
+    public Gates(BaseDualConectionStation upload, ProtocolMessagesConductor listener) {
         this.upload = upload;
         this.listener = listener;
         this.upload.setDownlink(this);
@@ -59,8 +59,8 @@ public class Gates implements Tickable, Uplink {
     }
 
     @Override
-    public void tick(long deltaTime) {
-        if (upload.isStopped()) {
+    public void tick(double deltaTime) {
+        if (upload.isDisconnect()) {
             if (onDisconnectEvent != null) {
                 onDisconnectEvent.run();
             }

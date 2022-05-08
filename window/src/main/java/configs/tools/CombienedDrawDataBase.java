@@ -1,6 +1,6 @@
 package configs.tools;
 
-import configs.RemoteConfig;
+import configs.ConnectionEstalblishConfig;
 import configs.canvas.ColorConfig;
 import configs.canvas.DrawConfig;
 import lombok.Setter;
@@ -9,31 +9,31 @@ import tools.Vector2D;
 
 public class CombienedDrawDataBase extends LocalDrawDataBase {
     @Setter
-    private RemoteConfig remoteConfig;
+    private ConnectionEstalblishConfig connectionEstalblishConfig;
 
     public CombienedDrawDataBase(ColorConfig colorConfig, DrawConfig drawConfig) {
         super(colorConfig, drawConfig);
     }
 
     public boolean initialized() {
-        if (remoteConfig == null) {
+        if (connectionEstalblishConfig == null) {
             return false;
         }
-        return super.initialized(remoteConfig.getClass());
+        return super.initialized(connectionEstalblishConfig.getClass());
     }
 
     public int floorsCount() {
-        return remoteConfig.floorsCount;
+        return connectionEstalblishConfig.floorsCount;
     }
 
 
     public long elevatorOpenCloseTime() {
-        return remoteConfig.elevatoropenclosetime;
+        return connectionEstalblishConfig.elevatoropenclosetime;
     }
 
 
     public int elevatorsCount() {
-        return remoteConfig.elevatorsCount;
+        return connectionEstalblishConfig.elevatorsCount;
     }
 
 
@@ -42,7 +42,7 @@ public class CombienedDrawDataBase extends LocalDrawDataBase {
     }
 
     public Vector2D buildingSize() {
-        return remoteConfig.buildingSize;
+        return connectionEstalblishConfig.buildingSize;
     }
 
     public double distanceBetweenElevators() {
@@ -51,15 +51,15 @@ public class CombienedDrawDataBase extends LocalDrawDataBase {
 
 
     public Vector2D customerSize() {
-        return remoteConfig.customerSize;
+        return connectionEstalblishConfig.customerSize;
     }
 
     public Vector2D elevatorSize() {
-        return remoteConfig.elevatorSize;
+        return connectionEstalblishConfig.elevatorSize;
     }
 
     public double buttonRelativePosition() {
-        return remoteConfig.buttonRelativePosition;
+        return connectionEstalblishConfig.buttonRelativePosition;
     }
 
 }

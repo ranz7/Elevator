@@ -26,13 +26,13 @@ public class GameScaler implements Tickable {
     double zoomScale = 1;
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         additionalZoomCurrentValue += (additionalZoomFinishValue - additionalZoomCurrentValue) / 20;
         additionalMove = additionalMove
                 .getAdded(additionalMoveFinishValue.getSubbed(additionalMove).getDivided(10));
     }
 
-    public double getFromRealToGameLength(double length) {
+    public double getFromGameToRealLength(double length) {
         return length / (scalingCoefficient * additionalZoomCurrentValue);
     }
 

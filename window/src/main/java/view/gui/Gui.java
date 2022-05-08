@@ -1,8 +1,8 @@
 package view.gui;
 
 import controller.GuiController;
-import drawable.drawableObjectsConcrete.text.DrawableLocalText;
-import drawable.drawableObjectsConcrete.text.TextData;
+import drawable.drawableConcrete.text.DrawableLocalText;
+import drawable.drawableConcrete.text.TextData;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
@@ -41,7 +41,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     }
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         gameWindow.tick(deltaTime);
 
     }

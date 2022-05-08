@@ -2,7 +2,7 @@ package view.drawTools.drawer;
 
 import drawable.drawableAbstract.Drawable;
 import drawable.drawableAbstract.drawableWithTexture.DrawableCreatureWithTexture;
-import drawable.drawableObjectsConcrete.text.DrawableLocalText;
+import drawable.drawableConcrete.text.DrawableLocalText;
 import tools.Vector2D;
 import view.drawTools.scaler.GameScaler;
 
@@ -13,7 +13,7 @@ import java.awt.*;
  * real coordinates and have an image streched in a normal natural way.
  */
 
-public class GameDrawer extends ShapeDrawer {
+public class GameDrawer extends BasicsDrawer {
     public GameDrawer(GameScaler gameScaler) {
         super(gameScaler);
     }
@@ -23,46 +23,41 @@ public class GameDrawer extends ShapeDrawer {
                 drawableText.getSize().x, drawableText.getColor());
     }
 
-    public void draw(Drawable drawable) {
+    public void draw(Drawable drawable, Color objectColor) {
+        draw(drawable, objectColor, objectColor, 0);
+    }
+
+    public void draw(Drawable drawable, Color objectColor, Color borderColor, int thickness) {
         if (!drawable.getIsVisible()) {
             return;
         }
-        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawable);
-        this.fillRect(positionOfTheCreature, drawable.getSize());
+        Vector2D positionOfTheCreature = getShiftDrawPosition(drawable);
+        this.drawFilledRect(positionOfTheCreature, drawable.getSize(), objectColor, borderColor, thickness);
     }
 
+    public void draw(Drawable drawable, Color borderColor, double thickness) {
+        if (!drawable.getIsVisible()) {
+            return;
+        }
+        Vector2D positionOfTheCreature = getShiftDrawPosition(drawable);
+        this.drawOnlyBorderRect(positionOfTheCreature, drawable.getSize(), borderColor, thickness);
+    }
 
     public void draw(DrawableCreatureWithTexture drawableCreatureWithTexture) {
-        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawableCreatureWithTexture);
-        graphics2D.drawImage(drawableCreatureWithTexture.getImage(),
-                (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreatureWithTexture.getSize().y).x,
-                (int) gameScaler.getFromGameToRealCoordinate(positionOfTheCreature, drawableCreatureWithTexture.getSize().y).y,
-                (int) gameScaler.getFromRealToGameLength(drawableCreatureWithTexture.getSize().x),
-                (int) gameScaler.getFromRealToGameLength(drawableCreatureWithTexture.getSize().y),
-                null);
+        Vector2D positionOfTheCreature = getShiftDrawPosition(drawableCreatureWithTexture);
+        drawImage(drawableCreatureWithTexture.getImage(), positionOfTheCreature, drawableCreatureWithTexture.getSize());
     }
 
-    private Vector2D getPositionCenteredBySettings(Drawable drawable) {
+    private Vector2D getShiftDrawPosition(Drawable drawable) {
         return switch (drawable.getDrawCenter()) {
-            case CENTER_BY_X -> drawable.getPosition().getSubbed(
+            case MIDDLE_BY_X -> drawable.getPosition().getSubbed(
                     new Vector2D(drawable.getSize().x / 2., 0));
-            case CENTER_BY_Y -> drawable.getPosition().getSubbed(
+            case MIDDLE_BY_Y -> drawable.getPosition().getSubbed(
                     new Vector2D(0, drawable.getSize().y / 2.));
-            case CENTER_BY_XY -> drawable.getPosition().getSubbed(
+            case MIDDLE_BY_XY -> drawable.getPosition().getSubbed(
                     new Vector2D(drawable.getSize().x / 2., drawable.getSize().y / 2.));
+            case RIGHT_BY_X -> drawable.getPosition().getSubbed(
+                    new Vector2D(drawable.getSize().x, 0));
         };
-    }
-
-    public void drawWithBorder(Drawable drawable, Color colorOfTheBorder, double thicknes) {
-        if (!drawable.getIsVisible()) {
-            return;
-        }
-        Vector2D positionOfTheCreature = getPositionCenteredBySettings(drawable);
-        this.drawRect(
-                positionOfTheCreature,
-                drawable.getSize(),
-                colorOfTheBorder,
-                thicknes
-        );
     }
 }

@@ -40,7 +40,7 @@ public class Elevator extends MovingObject {
     private final TreeSet<Integer> THROW_OUT_BOTTOM = new TreeSet<>();
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         super.tick(deltaTime);
         TIMER.tick(deltaTime);
     }

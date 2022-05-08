@@ -22,9 +22,7 @@ public class MovingObject extends Creature implements Tickable {
     }
 
     public void tick(long delta_time) {
-        if (!isReachedDestination()) {
-            position.getAdded(trajecotry.tickAndGet(delta_time));
-        }
+        position = trajecotry.tickAndGet(delta_time, position);
     }
 
     public void setPosition(Vector2D newPosition) {
@@ -32,7 +30,7 @@ public class MovingObject extends Creature implements Tickable {
     }
 
     public boolean isReachedDestination() {
-        return trajecotry.reached();
+        return trajecotry.reached(position);
     }
 
     public double getConstSpeed() {

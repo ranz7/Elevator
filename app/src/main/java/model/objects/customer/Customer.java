@@ -4,7 +4,6 @@ import model.objects.movingObject.MovingObject;
 import model.objects.elevator.Elevator;
 import lombok.Setter;
 import lombok.Getter;
-import model.objects.movingObject.trajectory.MoveFunction;
 import model.objects.movingObject.trajectory.SpeedFunction;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Timer;
@@ -28,7 +27,7 @@ public class Customer extends MovingObject {
     }
 
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         super.tick(deltaTime);
         MAIN_TIMER.tick(deltaTime);
         if (currentElevator != null) {

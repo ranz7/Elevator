@@ -12,8 +12,10 @@ import java.util.function.Function;
  *  until new scenario is set
  */
 public class FilterScenarios {
-    public static final List<Function<Protocol, Boolean>> catchSettingsThenUpdateThenAnything = new LinkedList<>(
-            Arrays.asList(Filters.catchOnlySettings, Filters.catchOnlyUpdate, Filters.noFilter));
+    public static List<Function<Protocol, Boolean>> CatchSettingsThenUpdateThenAnything() {
+        return new LinkedList<>(
+                Arrays.asList(Filters.catchOnlySettings, Filters.catchOnlyUpdate, Filters.noFilter));
+    }
 
     public static final List<Function<Protocol, Boolean>> noFilter = new LinkedList<>(Arrays.asList(Filters.noFilter));
 }

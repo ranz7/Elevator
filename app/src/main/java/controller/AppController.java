@@ -2,6 +2,7 @@ package controller;
 
 import configs.*;
 import connector.*;
+import connector.dualConnectionStation.Server;
 import connector.protocol.*;
 import lombok.RequiredArgsConstructor;
 import model.*;
@@ -16,7 +17,7 @@ import java.util.LinkedList;
  * @see ElevatorsConductor
  */
 @RequiredArgsConstructor
-public class AppController extends ControllerEndlessLoop implements ProtocolMessageListener {
+public class AppController extends ControllerEndlessLoop implements ProtocolMessagesConductor {
     public final ElevatorsConductor elevatorsConductor = new ElevatorsConductor(this);
     private final CustomersConductor customerConductor = new CustomersConductor(this);
 

@@ -14,6 +14,16 @@ import java.io.Serializable;
 public class ProtocolMessage {
     private final PureData pureData;
 
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    public static class PureData implements Serializable {
+        private final Protocol protocol;
+        private final Serializable data;
+
+        @Setter
+        private long timeStump;
+    }
+
     public ProtocolMessage(Protocol protocol, Serializable data) {
         pureData = new PureData(protocol, data);
     }
@@ -34,15 +44,4 @@ public class ProtocolMessage {
         pureData.setTimeStump(System.currentTimeMillis());
         return new PureData(pureData.protocol, pureData.data, pureData.timeStump);
     }
-
-    @AllArgsConstructor
-    @RequiredArgsConstructor
-    public static class PureData implements Serializable {
-        private final Protocol protocol;
-        private final Serializable data;
-
-        @Setter
-        private long timeStump;
-    }
-
 }

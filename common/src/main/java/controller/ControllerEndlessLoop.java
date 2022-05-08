@@ -28,7 +28,7 @@ public class ControllerEndlessLoop {
             long deltaTime = System.currentTimeMillis() - currentTime;
             currentTime += deltaTime;
 
-            objectsToTick.tick((deltaTime * controllerSpeed));
+            objectsToTick.tick(deltaTime * controllerSpeed);
 
             additionalMetodToRun.run();
 

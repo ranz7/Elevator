@@ -2,8 +2,8 @@ package model.packageLoader;
 
 import configs.tools.CombienedDrawDataBase;
 import drawable.drawableAbstract.DrawableRemoteCreature;
-import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
-import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
+import drawable.drawableConcrete.customer.DrawableCustomer;
+import drawable.drawableConcrete.elevator.DrawableElevator;
 import model.objects.Creature;
 
 import java.util.List;

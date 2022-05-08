@@ -7,7 +7,6 @@ import tools.DataBase;
 import tools.Vector2D;
 
 import java.awt.*;
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 public class LocalDrawDataBase implements DataBase {
@@ -84,5 +83,9 @@ public class LocalDrawDataBase implements DataBase {
 
     public Color jButtonsColor() {
         return colorConfig.jButtonsColor;
+    }
+
+    public long picturesGeneratorSeed() {
+        return drawConfig.picturesGeneratorSeed;
     }
 }
