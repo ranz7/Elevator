@@ -1,8 +1,7 @@
 package view.drawTools.drawer;
 
-import drawable.drawableAbstract.Drawable;
-import drawable.drawableAbstract.drawableWithTexture.DrawableCreatureWithTexture;
-import drawable.drawableConcrete.text.DrawableLocalText;
+import drawable.abstracts.Drawable;
+import drawable.abstracts.withTexture.DrawableCreatureWithTexture;
 import tools.Vector2D;
 import view.drawTools.scaler.GameScaler;
 
@@ -50,14 +49,16 @@ public class GameDrawer extends BasicsDrawer {
 
     private Vector2D getShiftDrawPosition(Drawable drawable) {
         return switch (drawable.getDrawCenter()) {
-            case MIDDLE_BY_X -> drawable.getPosition().getSubbed(
+            case bottomCenter -> drawable.getPosition().getSubbed(
                     new Vector2D(drawable.getSize().x / 2., 0));
-            case MIDDLE_BY_Y -> drawable.getPosition().getSubbed(
+            case leftCenter -> drawable.getPosition().getSubbed(
                     new Vector2D(0, drawable.getSize().y / 2.));
-            case MIDDLE_BY_XY -> drawable.getPosition().getSubbed(
+            case center -> drawable.getPosition().getSubbed(
                     new Vector2D(drawable.getSize().x / 2., drawable.getSize().y / 2.));
-            case RIGHT_BY_X -> drawable.getPosition().getSubbed(
+            case bottomRight -> drawable.getPosition().getSubbed(
                     new Vector2D(drawable.getSize().x, 0));
+            case bottomLeft -> drawable.getPosition().getSubbed(
+                    new Vector2D(0, 0));
         };
     }
 }

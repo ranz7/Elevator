@@ -40,12 +40,10 @@ public class LocalDrawDataBase implements DataBase {
     }
 
     public Color doorsBorder() {
-
         return colorConfig.elevatorDoor;
     }
 
     public Color[] customerSkins() {
-
         return colorConfig.customersSkin;
     }
 
@@ -53,13 +51,11 @@ public class LocalDrawDataBase implements DataBase {
         return colorConfig.betonOfFloor;
     }
 
-    public Color windowBackGroundColor() {
-
-        return colorConfig.windowBackGround;
+    public Color backGroundColor() {
+        return colorConfig.backGroundColor;
     }
 
     public Color floorWallColor() {
-
         return colorConfig.floorWall;
     }
 

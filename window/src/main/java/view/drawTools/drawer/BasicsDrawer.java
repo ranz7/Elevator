@@ -52,11 +52,12 @@ public class BasicsDrawer {
     protected void drawText(String text, Vector2D position, double size, Color color) {
         int fontSize = (int) gameScaler.getFromGameToRealLength(size);
         setColor(color);
-        graphics2D.setFont(
-                new Font("TimesRoman", Font.PLAIN, fontSize));
+        var font = new Font("TimesRoman", Font.PLAIN, fontSize);
+        graphics2D.setFont(font);
+        int metrics = graphics2D.getFontMetrics(font).stringWidth(text) ;
         graphics2D.drawString(text,
-                (int) gameScaler.getFromGameToRealCoordinate(position, fontSize).x,
-                (int) gameScaler.getFromGameToRealCoordinate(position, fontSize).y);
+                (int) gameScaler.getFromGameToRealCoordinate(position, 0).x - metrics/ 2,
+                (int) gameScaler.getFromGameToRealCoordinate(position, 0).y);
 
     }
 

@@ -21,7 +21,8 @@ public class MovingObject extends Creature implements Tickable {
         this.trajecotry = trajecotry;
     }
 
-    public void tick(long delta_time) {
+    @Override
+    public void tick(double delta_time) {
         position = trajecotry.tickAndGet(delta_time, position);
     }
 
@@ -38,6 +39,6 @@ public class MovingObject extends Creature implements Tickable {
     }
 
     public void setMoveTrajectory(Trajectory trajectory) {
-        trajecotry.set(trajectory);
+        trajecotry.add(trajectory);
     }
 }

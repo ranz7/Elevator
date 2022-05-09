@@ -1,9 +1,7 @@
 package model.objects.building;
 
-import architecture.tickable.Startable;
 import configs.ElevatorSystemConfig;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import model.objects.elevator.Elevator;
 import tools.Vector2D;
 
@@ -11,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Building implements Startable {
+public class Building  {
     public final ElevatorSystemConfig settings;
     @Getter
     public final List<Elevator> elevators = new LinkedList<>();
@@ -24,12 +22,8 @@ public class Building implements Startable {
             newElevator.setVisible(false);
             elevators.add(newElevator);
         }
-    }
-    @Override
-    public void start() {
         updateElevatorsPosition();
     }
-
     public void updateElevatorsPosition() {
         this.wallSize = ( settings.buildingSize.y) / settings.floorsCount;
         double distanceBetweenElevators = ( settings.buildingSize.x) / (settings.getElevatorsCount() + 1);

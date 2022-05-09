@@ -6,14 +6,13 @@ import configs.canvas.ColorConfig;
 import configs.canvas.DrawConfig;
 import configs.tools.CombienedDrawDataBase;
 import configs.ConnectionEstalblishConfig;
-import drawable.drawableAbstract.Drawable;
-import drawable.drawableAbstract.DrawableLocalMoving;
-import drawable.drawableConcrete.text.DrawableLocalText;
+import drawable.abstracts.Drawable;
+import drawable.abstracts.withShape.moving.DrawableLocalMoving;
 import model.packageLoader.PackageLoader;
-import drawable.drawableConcrete.building.floor.FloorBetonStructure;
-import drawable.drawableConcrete.building.floor.elevator.ElevatorButton;
-import drawable.drawableConcrete.customer.DrawableCustomer;
-import drawable.drawableConcrete.elevator.DrawableElevator;
+import drawable.concretes.building.floor.Floor;
+import drawable.concretes.building.floor.elevatorSpace.ElevatorButton;
+import drawable.concretes.customer.DrawableCustomer;
+import drawable.concretes.elevator.DrawableElevator;
 import lombok.Getter;
 import model.objects.CreaturesData;
 import tools.Vector2D;
@@ -30,7 +29,7 @@ public class GuiModel implements Model {
     private final List<DrawableElevator> elevators = new LinkedList<>();
     private final List<DrawableCustomer> customers = new LinkedList<>();
 
-    private final List<FloorBetonStructure> floorBetonStructures = new LinkedList<>();
+    private final List<Floor> floors = new LinkedList<>();
     private final List<DrawableLocalText> drawableTexts = new LinkedList<>();
 
     public void start() {
@@ -42,25 +41,25 @@ public class GuiModel implements Model {
     }
 
     private void updateElevators() {
-        floorBetonStructures.forEach(floorBetonStructure -> floorBetonStructure.updateElevatorBorders(elevators));
+        floors.forEach(floor -> floor.updateElevatorBorders(elevators));
     }
 
     private void updateFloors(int floors_count) {
-        int oldFloorsCount = floorBetonStructures.size();
+        int oldFloorsCount = floors.size();
         while (oldFloorsCount < floors_count) {
-            floorBetonStructures.add(new FloorBetonStructure(oldFloorsCount++, CombienedDrawDataBase));
+            floors.add(new Floor(oldFloorsCount++, CombienedDrawDataBase));
         }
         while (oldFloorsCount > floors_count) {
-            floorBetonStructures.remove(oldFloorsCount--);
+            floors.remove(oldFloorsCount--);
         }
     }
 
     public LinkedList<Drawable> getDrawableOjects() {
         LinkedList<Drawable> drawables = new LinkedList<>();
- //       elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-         floorBetonStructures.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-//        drawables.addAll(customers.stream().toList());
-//        drawables.addAll(drawableTexts);
+         elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
+         floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
+         drawables.addAll(customers.stream().toList());
+         drawables.addAll(drawableTexts);
         return drawables;
     }
 
@@ -79,7 +78,7 @@ public class GuiModel implements Model {
 
     public ElevatorButton getNearestButton(Vector2D data) {
         LinkedList<ElevatorButton> elevatorButtons = new LinkedList<>();
-        floorBetonStructures.forEach(floorBetonStructure -> floorBetonStructure.getBorders().forEach(
+        floors.forEach(floor -> floor.getBorders().forEach(
                 border -> elevatorButtons.add(border.getElevatorButton())));
 
         return elevatorButtons.stream()
@@ -116,7 +115,7 @@ public class GuiModel implements Model {
                 DrawableCustomer::changeBehindElevator);
     }
 
-    public void updateData(CreaturesData data) {
+    public void updateArivedCreaturesData(CreaturesData data) {
         PackageLoader.ApplyCustomers(data.CUSTOMERS, customers, CombienedDrawDataBase);
         PackageLoader.ApplyElevators(data.ELEVATORS, elevators, CombienedDrawDataBase);
     }

@@ -9,15 +9,22 @@ import java.io.Serializable;
 /**
  * Basic object of all objects in project
  */
-@Getter
+
 public class Creature implements Serializable {
     // used in sent data
     private static Integer next_id = 0;
 
     @Setter
+    @Getter
     protected boolean isVisible = true;
+    @Setter
+    @Getter
     protected Vector2D size;
+
+    @Getter
     protected Vector2D position;
+
+    @Getter
     protected long id;
 
     public Creature(Creature creatureA) {
@@ -36,8 +43,8 @@ public class Creature implements Serializable {
     // sets object in window, by copy it into created instance
     // to be used
     public void set(Creature creature) {
-        this.position = creature.position;
+        this.position.set(creature.position);
+        this.size.set(creature.size);
         this.isVisible = creature.isVisible;
-        this.size = creature.size;
     }
 }

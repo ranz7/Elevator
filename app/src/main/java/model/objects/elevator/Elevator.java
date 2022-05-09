@@ -4,7 +4,6 @@ import configs.ElevatorSystemConfig;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.movingObject.MovingObject;
-import model.objects.movingObject.trajectory.SpeedFunction;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Timer;
 import tools.Vector2D;
@@ -38,6 +37,16 @@ public class Elevator extends MovingObject {
     private final TreeMap<Integer, Integer> PICK_UP_BOTTOM = new TreeMap<>(Comparator.reverseOrder());
     private final TreeSet<Integer> THROW_OUT_TOP = new TreeSet<>();
     private final TreeSet<Integer> THROW_OUT_BOTTOM = new TreeSet<>();
+
+
+    public Elevator(ElevatorSystemConfig settings) {
+        super(new Vector2D(0, 0), settings.elevatorSize,
+                Trajectory.StayOnPlaceWithDefaultConstantSpeed(settings.elevatorSpeed));
+        this.TIME_TO_STOP_ON_FLOOR = settings.elevatorOpenCloseTime * 2 +
+                settings.elevatorAfterCloseAfkTime + settings.elevatorWaitAsOpenedTime;
+        this.MAX_HUMAN_CAPACITY = settings.elevatorMaxHumanCapacity;
+        this.state = ElevatorState.WAIT;
+    }
 
     @Override
     public void tick(double deltaTime) {
@@ -83,15 +92,6 @@ public class Elevator extends MovingObject {
 
     public boolean isFree() {
         return currentCustomersCount <= this.MAX_HUMAN_CAPACITY;
-    }
-
-    public Elevator(ElevatorSystemConfig settings) {
-        super(new Vector2D(0, 0), settings.elevatorSize,
-                new Trajectory().set(SpeedFunction.WithConstantSpeed(settings.elevatorSpeed)));
-        this.TIME_TO_STOP_ON_FLOOR = settings.elevatorOpenCloseTime * 2 +
-                settings.elevatorAfterCloseAfkTime + settings.elevatorWaitAsOpenedTime;
-        this.MAX_HUMAN_CAPACITY = settings.elevatorMaxHumanCapacity;
-        this.state = ElevatorState.WAIT;
     }
 
 
@@ -198,7 +198,7 @@ public class Elevator extends MovingObject {
     }
 
     private double getTimeToGetTo(int requestFloor) {
-        return  Math.abs(getPositionForFloor(requestFloor) - position.y) / getConstSpeed();
+        return Math.abs(getPositionForFloor(requestFloor) - position.y) / getConstSpeed();
     }
 
     public int getBooking() {

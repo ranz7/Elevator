@@ -1,8 +1,7 @@
 package view.gui;
 
 import controller.GuiController;
-import drawable.drawableConcrete.text.DrawableLocalText;
-import drawable.drawableConcrete.text.TextData;
+import drawable.drawTool.text.TextData;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
@@ -58,7 +57,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     public void rightMouseClicked(Vector2D point) {
         if (gameWindow.zoomedIn()) {
             var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
-            guiModel.addMovingDrawable(new DrawableLocalText("ZoomIn", gamePosition, TextData.flyTopFast));
+            guiModel.addMovingDrawable(new DrawableLocalText("ZoomIn", gamePosition, TextData.FlyTopSlow()));
             gameWindow.zoomIn(point, 1 / 4.);
         } else {
             gameWindow.zoomOut();
@@ -69,7 +68,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     public void leftMouseClicked(Vector2D point) {
         controller.clickButton(point);
         var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
-        guiModel.addMovingDrawable(new DrawableLocalText("Click", gamePosition, TextData.flyTopSlow));
+        guiModel.addMovingDrawable(new DrawableLocalText("Click", gamePosition, TextData.FlyTopFast()));
     }
 
     @Override

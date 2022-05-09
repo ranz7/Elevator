@@ -96,9 +96,8 @@ public class CustomersConductor implements Tickable {
                 .getClosestOpenedElevatorOnFloor(customer.getPosition(), customer.getCurrentFlor());
         if (closestOpenedElevator == null) {
             customer.setState(CustomerState.GO_TO_BUTTON);
-            customer.setMoveTrajectory(Trajectory.ToTheDestination(
-                    customer.getConstSpeed(), // * 1
-                    closestOpenedElevator.getPosition()));
+            customer.setMoveTrajectory(
+                    new Trajectory().WithNewConstSpeedToOldDestination(customer.getConstSpeed()));
             return;
         }
 

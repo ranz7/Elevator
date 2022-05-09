@@ -1,8 +1,7 @@
 package view.canvas;
 
-import configs.GuiControllerConfig;
 import configs.WindowConfig;
-import drawable.drawableAbstract.Drawable;
+import drawable.abstracts.Drawable;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
@@ -27,7 +26,7 @@ public class GameWindow extends JPanel implements Tickable {
 
     public void setModel(GuiModel model) {
         windowModel = model;
-        setBackground(windowModel.getCombienedDrawDataBase().windowBackGroundColor());
+        setBackground(windowModel.getCombienedDrawDataBase().backGroundColor());
     }
 
     public GameWindow() {

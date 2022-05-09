@@ -1,11 +1,13 @@
 package connector;
 
 import architecture.tickable.Tickable;
+import connector.filtersAndScenarios.Filters;
+import connector.filtersAndScenarios.ScenarioBuilder;
 import tools.Timer;
 import connector.dualConnectionStation.BaseDualConectionStation;
 import connector.dualConnectionStation.download.SocketCompactData;
 import connector.dualConnectionStation.download.Downlink;
-import connector.filtersAndScenarios.FilterScenarios;
+import connector.filtersAndScenarios.Scenario;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessagesConductor;
@@ -44,7 +46,7 @@ public class Gates implements Tickable, Downlink {
 
     // Filter Scenario
     @Setter
-    List<Function<Protocol, Boolean>> scenario = FilterScenarios.noFilter;
+    Scenario scenario = new ScenarioBuilder().build(Filters.noFilter);
     Function<Protocol, Boolean> filter;
 
     public Gates(BaseDualConectionStation upload, ProtocolMessagesConductor listener) {
@@ -91,9 +93,9 @@ public class Gates implements Tickable, Downlink {
     }
 
     private boolean isFiltered(Protocol protocol) {
-        filter = scenario.get(0);
-        if ((!filter.apply(protocol)) && scenario.size() != 1) {
-            scenario.remove(0);
+        filter = scenario.get();
+        if ((!filter.apply(protocol))) {
+            scenario.pop();
         }
         return filter.apply(protocol);
     }

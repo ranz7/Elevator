@@ -1,18 +1,9 @@
 package model.objects.movingObject.trajectory;
 
 public abstract class SpeedFunction {
-    public SpeedFunction(double speed) {
-        this.speed = speed;
-    }
-
-    protected double speed;
 
     public static SpeedFunction WithConstantSpeed(double speed) {
-        return new SpeedFunction(speed) {
-            @Override
-            public double getSpeed() {
-                return speed;
-            }
+        return new SpeedFunction() {
 
             @Override
             public boolean isConstFunction() {
@@ -21,17 +12,13 @@ public abstract class SpeedFunction {
 
             @Override
             public double tickAndGet(double deltaTime) {
-                return getSpeed();
+                return speed;
             }
         };
     }
 
     public static SpeedFunction Momentarily() {
-        return new SpeedFunction(0) {
-            @Override
-            public double getSpeed() {
-                return 9999;
-            }
+        return new SpeedFunction() {
 
             @Override
             public boolean isConstFunction() {
@@ -45,7 +32,6 @@ public abstract class SpeedFunction {
         };
     }
 
-    public abstract double getSpeed();
 
     public abstract boolean isConstFunction();
 

@@ -45,11 +45,6 @@ public class CombienedDrawDataBase extends LocalDrawDataBase {
         return connectionEstalblishConfig.buildingSize;
     }
 
-    public double distanceBetweenElevators() {
-        return buildingSize().x / (elevatorsCount() + 1);
-    }
-
-
     public Vector2D customerSize() {
         return connectionEstalblishConfig.customerSize;
     }
@@ -62,4 +57,7 @@ public class CombienedDrawDataBase extends LocalDrawDataBase {
         return connectionEstalblishConfig.buttonRelativePosition;
     }
 
+    public double distanceBetweenElevators() {
+        return buildingSize().x / (elevatorsCount() + 1);
+    }
 }

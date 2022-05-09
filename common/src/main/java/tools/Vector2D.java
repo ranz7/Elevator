@@ -130,4 +130,9 @@ public class Vector2D extends Point2D.Double {
         // field comparison
         return Math.abs(x - vector2D.x) < EPSILON && Math.abs(y - vector2D.y) < EPSILON;
     }
+
+    public void set(Vector2D position) {
+        this.x = position.x;
+        this.y = position.y;
+    }
 }

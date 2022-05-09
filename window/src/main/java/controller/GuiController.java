@@ -3,7 +3,8 @@ package controller;
 import configs.*;
 import connector.*;
 import connector.dualConnectionStation.Client;
-import connector.filtersAndScenarios.FilterScenarios;
+import connector.filtersAndScenarios.Filters;
+import connector.filtersAndScenarios.ScenarioBuilder;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessagesConductor;
@@ -31,12 +32,16 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     public void start() {
+        ScenarioBuilder connectedScenario = new ScenarioBuilder()
+                .add(Filters.catchOnlySettings)
+                .add(Filters.catchOnlyUpdate)
+                .setEndFunction(windowModel::update);
         gates.setOnDisconnectEvent(() -> {
-            gates.setScenario(FilterScenarios.CatchSettingsThenUpdateThenAnything());
+            gates.setScenario(connectedScenario.build(Filters.noFilter));
             gates.start();
             windowModel.clearDead();
         });
-        gates.setScenario(FilterScenarios.CatchSettingsThenUpdateThenAnything());
+        gates.setScenario(connectedScenario.build(Filters.noFilter));
         gates.start();
 
         gui.start();
@@ -65,14 +70,13 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
                 gui.resize();
             }
             case UPDATE_DATA -> {
-                windowModel.updateData((CreaturesData) data);
-                windowModel.update();
+                windowModel.updateArivedCreaturesData((CreaturesData) data);
             }
             case ELEVATOR_BUTTON_CLICK -> {
                 clickButton((Vector2D) data);
             }
-            case ELEVATOR_OPEN -> windowModel.getElevator((long) data).DOORS.changeDoorsState(false);
-            case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).DOORS.changeDoorsState(true);
+            case ELEVATOR_OPEN -> windowModel.getElevator((long) data).doors.changeDoorsState(false);
+            case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).doors.changeDoorsState(true);
             case CUSTOMER_GET_IN_OUT -> windowModel.changeBehindElevatorForCustomer((long) data);
             case CHANGE_GAME_SPEED -> setControllerTimeSpeed((double) data);
         }

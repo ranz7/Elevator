@@ -21,7 +21,7 @@ public class Customer extends MovingObject {
     private CustomerState state = CustomerState.GO_TO_BUTTON;
 
     public Customer(int currentFlor, int floorEnd, Vector2D position, double speed, Vector2D size) {
-        super(position, size, new Trajectory().set(SpeedFunction.WithConstantSpeed(speed)));
+        super(position, size, new Trajectory().add(SpeedFunction.WithConstantSpeed(speed)));
         this.FLOOR_TO_END = floorEnd;
         this.currentFlor = currentFlor;
     }

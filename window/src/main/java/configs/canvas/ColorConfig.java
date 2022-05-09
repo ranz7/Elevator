@@ -25,6 +25,6 @@ public class ColorConfig {
             new Color(232, 156, 123)
     };
 
-    public final Color windowBackGround = new Color(0, 0, 0);
+    public final Color backGroundColor = new Color(0, 0, 0);
     public final Color jButtonsColor = new Color(30, 57, 98);
 }
