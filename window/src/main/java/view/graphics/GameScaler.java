@@ -1,4 +1,4 @@
-package view.drawTools.scaler;
+package view.graphics;
 
 import configs.GameScalerConfig;
 import lombok.Getter;

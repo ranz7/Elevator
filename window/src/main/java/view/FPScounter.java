@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 public class FPScounter extends JLabel implements Tickable {
     private List<Double> values = new LinkedList();
-    private final Integer countOfLastValues = 20;
+    private final int countOfLastValues = 20;
     private final Color fpsColor = new Color(17, 255, 17);
 
     @Override

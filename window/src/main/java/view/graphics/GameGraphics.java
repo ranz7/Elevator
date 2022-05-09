@@ -1,13 +1,16 @@
-package view.drawTools.drawer;
+package view.graphics;
 
 import lombok.RequiredArgsConstructor;
 import tools.Vector2D;
-import view.drawTools.scaler.GameScaler;
 
 import java.awt.*;
 
+/*
+ * this class transform game coordinates to normal coordinates and viceversa , so u can change
+ * real coordinates and have an image streched in a normal natural way.
+ */
 @RequiredArgsConstructor
-public class BasicsDrawer {
+public class GameGraphics {
     // The ratio of game coordinates to real
     protected final GameScaler gameScaler;
     protected Graphics2D graphics2D;
@@ -27,14 +30,14 @@ public class BasicsDrawer {
         );
     }
 
-    protected void drawFilledRect(Vector2D position, Vector2D size,
-                                  Color fillColor,
-                                  Color borderColor, double thickness) {
+    public void drawFilledRect(Vector2D position, Vector2D size,
+                               Color fillColor,
+                               Color borderColor, double thickness) {
         fillRect(position, size, fillColor);
         drawOnlyBorderRect(position, size, borderColor, thickness);
     }
 
-    protected void drawOnlyBorderRect(Vector2D position, Vector2D size, Color borderColor, double thickness) {
+    public void drawOnlyBorderRect(Vector2D position, Vector2D size, Color borderColor, double thickness) {
         Stroke oldStroke = graphics2D.getStroke();
         graphics2D.setColor(borderColor);
         var newThickness = (float) gameScaler.getFromGameToRealLength(thickness);
@@ -49,19 +52,19 @@ public class BasicsDrawer {
         graphics2D.setStroke(oldStroke);
     }
 
-    protected void drawText(String text, Vector2D position, double size, Color color) {
+    public void drawText(String text, Vector2D position, double size, Color color) {
         int fontSize = (int) gameScaler.getFromGameToRealLength(size);
         setColor(color);
         var font = new Font("TimesRoman", Font.PLAIN, fontSize);
         graphics2D.setFont(font);
-        int metrics = graphics2D.getFontMetrics(font).stringWidth(text) ;
+        int metrics = graphics2D.getFontMetrics(font).stringWidth(text);
         graphics2D.drawString(text,
-                (int) gameScaler.getFromGameToRealCoordinate(position, 0).x - metrics/ 2,
+                (int) gameScaler.getFromGameToRealCoordinate(position, 0).x - metrics / 2,
                 (int) gameScaler.getFromGameToRealCoordinate(position, 0).y);
 
     }
 
-    protected void drawImage(Image image, Vector2D position, Vector2D size) {
+    public void drawImage(Image image, Vector2D position, Vector2D size) {
         var realPosition = gameScaler.getFromGameToRealCoordinate(position, size.y);
         graphics2D.drawImage(image,
                 (int) realPosition.x,

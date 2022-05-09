@@ -160,13 +160,13 @@ public class ElevatorsConductor implements Tickable {
         if (data) {
             if (settings.getElevatorsCount() < settings.maxElevatorsCount) {
                 settings.setElevatorsCount(settings.getElevatorsCount() + 1);
-                appModel.getBuilding().updateElevatorsPosition();
+             //   appModel.getBuilding().updateElevatorsPosition();
                 return;
             }
         }
         if (settings.getElevatorsCount() > 0) {
             settings.setElevatorsCount(settings.getElevatorsCount() - 1);
-            appModel.getBuilding().updateElevatorsPosition();
+         //   appModel.getBuilding().updateElevatorsPosition();
         }
     }
 }

@@ -1,18 +1,18 @@
 package drawable.concretes.building.floor;
 
 import configs.tools.CombienedDrawDataBase;
-import drawable.abstracts.withShape.creatures.DrawableLocalCreature;
 import drawable.abstracts.DrawCenter;
+import drawable.abstracts.DrawableCreature;
+import drawable.drawTool.figuresComponent.Rectangle;
+import model.objects.Creature;
 import tools.Vector2D;
-import view.drawTools.drawer.GameDrawer;
 
-public class UnderElevatorHidingWall extends DrawableLocalCreature {
-    public UnderElevatorHidingWall(int currentFloor, CombienedDrawDataBase setting) {
-        super(new Vector2D(0,
-                        setting.elevatorSize().y + setting.floorHeight() * currentFloor),
-                new Vector2D(setting.buildingSize().x,
-                        (setting.floorHeight() - setting.elevatorSize().y)),
-                setting);
+public class UnderElevatorHidingWall extends DrawableCreature {
+    public UnderElevatorHidingWall( CombienedDrawDataBase settings) {
+        super(new Creature( new Vector2D(0,settings.elevatorSize().y),
+                new Vector2D(settings.buildingSize().x , (settings.floorHeight() - settings.elevatorSize().y))),
+                new Rectangle(settings.floorWallColor()),
+                settings);
     }
 
     @Override
@@ -21,13 +21,8 @@ public class UnderElevatorHidingWall extends DrawableLocalCreature {
     }
 
     @Override
-    public Integer GetDrawPrioritet() {
+    public int GetDrawPrioritet() {
         return 8;
-    }
-
-    @Override
-    public void draw(GameDrawer gameDrawer) {
-        gameDrawer.draw(this, settings.floorWallColor());
     }
 
 }

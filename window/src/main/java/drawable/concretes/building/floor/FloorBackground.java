@@ -1,30 +1,26 @@
 package drawable.concretes.building.floor;
 
-import architecture.tickable.Tickable;
 import configs.tools.CombienedDrawDataBase;
-import drawable.abstracts.withShape.creatures.DrawableLocalCreature;
 import drawable.abstracts.DrawCenter;
+import drawable.abstracts.DrawableCreature;
+import drawable.drawTool.figuresComponent.Rectangle;
+import model.objects.Creature;
 import tools.Vector2D;
-import view.drawTools.drawer.GameDrawer;
 
-public class FloorBackground extends DrawableLocalCreature implements Tickable {
-    public FloorBackground(Integer floorNumber, CombienedDrawDataBase settings) {
-        super(new Vector2D(0, floorNumber * settings.floorHeight()),
-                new Vector2D(settings.buildingSize().x, settings.floorHeight()), settings);
+public class FloorBackground extends DrawableCreature {
+    public FloorBackground(CombienedDrawDataBase settings) {
+        super(new Creature(new Vector2D(0, 0), new Vector2D(settings.buildingSize().x, settings.floorHeight())),
+                new Rectangle(settings.floorWallColor()),
+                settings);
     }
 
     @Override
-    public Integer GetDrawPrioritet() {
+    public int GetDrawPrioritet() {
         return 0;
     }
 
     @Override
     public DrawCenter getDrawCenter() {
         return DrawCenter.bottomLeft;
-    }
-
-    @Override
-    public void draw(GameDrawer gameDrawer) {
-        gameDrawer.draw(this,settings.floorWallColor());
     }
 }

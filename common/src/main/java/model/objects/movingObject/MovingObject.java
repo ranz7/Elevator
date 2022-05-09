@@ -10,10 +10,6 @@ import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
 
 public class MovingObject extends Creature implements Tickable {
-
-    @Getter
-    @Setter
-    protected boolean isDead = false;
     private final Trajectory trajecotry;
 
     public MovingObject(Vector2D position, Vector2D size, Trajectory trajecotry) {
@@ -23,15 +19,11 @@ public class MovingObject extends Creature implements Tickable {
 
     @Override
     public void tick(double delta_time) {
-        position = trajecotry.tickAndGet(delta_time, position);
-    }
-
-    public void setPosition(Vector2D newPosition) {
-        position = newPosition;
+        position = trajecotry.tickAndGet(delta_time, getPosition());
     }
 
     public boolean isReachedDestination() {
-        return trajecotry.reached(position);
+        return trajecotry.reached(getPosition());
     }
 
     public double getConstSpeed() {

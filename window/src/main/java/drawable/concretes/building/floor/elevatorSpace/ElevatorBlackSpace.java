@@ -1,27 +1,31 @@
 package drawable.concretes.building.floor.elevatorSpace;
 
 import configs.tools.CombienedDrawDataBase;
-import drawable.abstracts.withShape.creatures.DrawableLocalCreature;
+import drawable.abstracts.DrawCenter;
+import drawable.abstracts.DrawableCreature;
+import drawable.drawTool.figuresComponent.Rectangle;
+import model.objects.Creature;
 import tools.Vector2D;
-import view.drawTools.drawer.GameDrawer;
 
 /*
  * Spaces behind elevators
  */
-public class ElevatorBlackSpace extends DrawableLocalCreature {
-    public ElevatorBlackSpace(Vector2D position, Vector2D size, CombienedDrawDataBase settings) {
-        super(position, size,settings);
+public class ElevatorBlackSpace extends DrawableCreature {
+    public ElevatorBlackSpace(Vector2D size, CombienedDrawDataBase settings) {
+        super(new Creature(new Vector2D(0, 0), size), new Rectangle(settings.backGroundColor()), settings);
     }
 
     @Override
-    public Integer GetDrawPrioritet() {
+    public DrawCenter getDrawCenter() {
+        return DrawCenter.bottomLeft;
+    }
+
+    @Override
+    public int GetDrawPrioritet() {
         return 2;
     }
 
-    @Override
-    public void draw(GameDrawer gameDrawer) {
-        gameDrawer.draw(this,settings.backGroundColor());
-    }
+
 }
 
 

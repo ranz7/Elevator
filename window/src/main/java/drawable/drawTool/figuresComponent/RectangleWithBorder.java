@@ -1,21 +1,38 @@
 package drawable.drawTool.figuresComponent;
 
+import drawable.abstracts.Drawable;
 import tools.Vector2D;
+import view.graphics.GameGraphics;
 
 import java.awt.*;
 
 public class RectangleWithBorder extends Figure {
-    private  final  Integer borderThickness;
-    private final Color borderColor;
+    private final Double borderThickness;
+    private final Color secondColor;
 
-    public RectangleWithBorder(Color color, Vector2D position, Vector2D size, Color borderColor, Integer borderThickness) {
-        super(color, position, size);
+    public RectangleWithBorder(Color color, Color secondColor, double borderThickness) {
+        super(color, new Vector2D(100, 100), new Vector2D(100, 100));
         this.borderThickness = borderThickness;
-        this.borderColor = borderColor;
+        this.secondColor = secondColor;
+    }
+
+    public RectangleWithBorder(Color secondColor, double borderThickness) {
+        super(secondColor, new Vector2D(100, 100), new Vector2D(100, 100));
+        this.borderThickness = borderThickness;
+        this.secondColor = null;
     }
 
     @Override
-    protected void draw() {
-
+    public void draw(Vector2D position, Vector2D size, GameGraphics drawer) {
+        if(secondColor==null){ //without fill
+            drawer.drawOnlyBorderRect(position, size, mainColor, borderThickness);
+        }else{
+            drawer.drawFilledRect(position, size, mainColor, secondColor, borderThickness);
+        }
     }
+
+
+
 }
+
+

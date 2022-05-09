@@ -2,18 +2,20 @@ package drawable.concretes.building.floor.decorations;
 
 import configs.tools.CombienedDrawDataBase;
 import drawable.abstracts.DrawCenter;
-import drawable.abstracts.withTexture.DrawableCreatureWithTexture;
+import drawable.abstracts.DrawableCreature;
+import drawable.drawTool.Texture;
+import model.objects.Creature;
 import tools.Vector2D;
 
 import java.util.Random;
 
-public class FloorPainting extends DrawableCreatureWithTexture {
+public class FloorPainting extends DrawableCreature {
     public FloorPainting(Vector2D position, CombienedDrawDataBase settings, Random random) {
-        super(position, "/images/paintings/", settings, random);
+        super(new Creature(position, new Vector2D(100, 100)), new Texture( "/images/paintings/", random), settings);
     }
 
     @Override
-    public Integer GetDrawPrioritet() {
+    public int GetDrawPrioritet() {
         return 2;
     }
 

@@ -5,15 +5,17 @@ import drawable.abstracts.Drawable;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
+import tools.Pair;
 import tools.Vector2D;
 import view.FPScounter;
 import view.gui.windowListeners.WindowResizeListener;
-import view.drawTools.drawer.GameDrawer;
-import view.drawTools.scaler.GameScaler;
+import view.graphics.GameGraphics;
+import view.graphics.GameScaler;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 public class GameWindow extends JPanel implements Tickable {
     private final JFrame jframe;
@@ -22,7 +24,7 @@ public class GameWindow extends JPanel implements Tickable {
 
     @Getter
     private GameScaler gameScaler = new GameScaler();
-    private GameDrawer gameDrawer = new GameDrawer(gameScaler);
+    private GameGraphics gameDrawer = new GameGraphics(gameScaler);
 
     public void setModel(GuiModel model) {
         windowModel = model;
@@ -58,9 +60,12 @@ public class GameWindow extends JPanel implements Tickable {
         super.paintComponent(g);
         gameDrawer.prepareDrawer(g);
 
-        var drawableObjets = windowModel.getDrawableOjects();
-        drawableObjets.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
-        drawableObjets.forEach(drawable -> drawable.draw(gameDrawer));
+        LinkedList<Pair<Vector2D, Drawable>> objectsAndRelativePositions = windowModel.getDrawableOjects();
+        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().GetDrawPrioritet()));
+        objectsAndRelativePositions.forEach(
+                positionAndObject -> {
+                    positionAndObject.getSecond().draw(positionAndObject.getThirst(), gameDrawer);
+                });
     }
 
     public boolean zoomedIn() {

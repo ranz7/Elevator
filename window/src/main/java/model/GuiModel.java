@@ -7,18 +7,20 @@ import configs.canvas.DrawConfig;
 import configs.tools.CombienedDrawDataBase;
 import configs.ConnectionEstalblishConfig;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.withShape.moving.DrawableLocalMoving;
+import drawable.abstracts.DrawableCreature;
 import model.packageLoader.PackageLoader;
 import drawable.concretes.building.floor.Floor;
 import drawable.concretes.building.floor.elevatorSpace.ElevatorButton;
-import drawable.concretes.customer.DrawableCustomer;
-import drawable.concretes.elevator.DrawableElevator;
+import drawable.concretes.customer.DrawableCreatureCustomer;
+import drawable.concretes.elevator.DrawableCreatureElevator;
 import lombok.Getter;
 import model.objects.CreaturesData;
+import tools.Pair;
 import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class GuiModel implements Model {
@@ -26,11 +28,11 @@ public class GuiModel implements Model {
     private final CombienedDrawDataBase CombienedDrawDataBase = new CombienedDrawDataBase(new ColorConfig(), new DrawConfig());
 
     @Getter
-    private final List<DrawableElevator> elevators = new LinkedList<>();
-    private final List<DrawableCustomer> customers = new LinkedList<>();
+    private final List<DrawableCreatureElevator> elevators = new LinkedList<>();
+    private final List<DrawableCreatureCustomer> customers = new LinkedList<>();
 
     private final List<Floor> floors = new LinkedList<>();
-    private final List<DrawableLocalText> drawableTexts = new LinkedList<>();
+    private final List<DrawableCreature> autoDieObjects = new LinkedList<>();
 
     public void start() {
     }
@@ -54,26 +56,27 @@ public class GuiModel implements Model {
         }
     }
 
-    public LinkedList<Drawable> getDrawableOjects() {
-        LinkedList<Drawable> drawables = new LinkedList<>();
-         elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-         floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-         drawables.addAll(customers.stream().toList());
-         drawables.addAll(drawableTexts);
+    public LinkedList<Pair<Vector2D, Drawable>> getDrawableOjects() {
+        var startGamePosition = new Vector2D(0, 0);
+        LinkedList<Pair<Vector2D, Drawable>> drawables = new LinkedList<>();
+        autoDieObjects.forEach(drawable -> drawables.addAll(drawable.getDrawables(startGamePosition)));
+        customers.forEach(drawable -> drawables.addAll(drawable.getDrawables(startGamePosition)));
+        elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables(startGamePosition)));
+        floors.forEach(drawable -> drawables.addAll(drawable.getDrawables(startGamePosition)));
         return drawables;
     }
 
     public TickableList getTickableList() {
-        return new TickableList(getDrawableOjects());
+        return new TickableList(getDrawableOjects().stream().map(Pair::getSecond).collect(Collectors.toList()));
     }
 
-    public void addMovingDrawable(DrawableLocalText text) {
-        drawableTexts.add(text);
+    public void addMovingDrawable(DrawableCreature text) {
+        autoDieObjects.add(text);
     }
 
     @Override
     public void clearDead() {
-        drawableTexts.removeIf(DrawableLocalMoving::isDead);
+        autoDieObjects.removeIf(DrawableCreature::isDead);
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {
@@ -97,9 +100,9 @@ public class GuiModel implements Model {
                 });
     }
 
-    public DrawableElevator getElevator(long id) {
+    public DrawableCreatureElevator getElevator(long id) {
         var ref = new Object() {
-            DrawableElevator foundDrawableElevator;
+            DrawableCreatureElevator foundDrawableElevator;
         };
         elevators.stream().filter(elevator -> elevator.getId() == id).findFirst().ifPresent(
                 drawableElevator -> ref.foundDrawableElevator = drawableElevator);
@@ -112,7 +115,7 @@ public class GuiModel implements Model {
 
     public void changeBehindElevatorForCustomer(long id) {
         customers.stream().filter(drawableCustomer -> drawableCustomer.getId() == id).findFirst().ifPresent(
-                DrawableCustomer::changeBehindElevator);
+                DrawableCreatureCustomer::changeBehindElevator);
     }
 
     public void updateArivedCreaturesData(CreaturesData data) {

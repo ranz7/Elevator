@@ -1,12 +1,14 @@
 package drawable.drawTool.figuresComponent;
 
 import drawable.drawTool.DrawTool;
-import model.objects.Creature;
-import view.drawTools.drawer.GameDrawer;
+import tools.Vector2D;
+import view.graphics.GameGraphics;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+// in case of multiple figures
 public class FiguresComponent extends DrawTool {
     LinkedList<Figure> figures;
 
@@ -15,7 +17,12 @@ public class FiguresComponent extends DrawTool {
     }
 
     @Override
-    public void draw(GameDrawer drawer, Creature creature) {
-        // CO DALEJ
+    public void draw(Vector2D position, Vector2D size, GameGraphics drawer) {
+
+    }
+
+    @Override
+    public void setColor(Color color) {
+        // wtf
     }
 }

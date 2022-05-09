@@ -6,6 +6,9 @@ import configs.canvas.DrawConfig;
 import lombok.Setter;
 import tools.Vector2D;
 
+import java.awt.*;
+import java.util.Random;
+
 
 public class CombienedDrawDataBase extends LocalDrawDataBase {
     @Setter
@@ -59,5 +62,10 @@ public class CombienedDrawDataBase extends LocalDrawDataBase {
 
     public double distanceBetweenElevators() {
         return buildingSize().x / (elevatorsCount() + 1);
+    }
+
+    public Color getRandomCustomerSkin() {
+        var colors =  customerSkins();
+        return colors[(int) ((Math.abs( new Random().nextInt())) % colors.length)];
     }
 }

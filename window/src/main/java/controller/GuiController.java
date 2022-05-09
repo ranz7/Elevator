@@ -75,8 +75,8 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
             case ELEVATOR_BUTTON_CLICK -> {
                 clickButton((Vector2D) data);
             }
-            case ELEVATOR_OPEN -> windowModel.getElevator((long) data).doors.changeDoorsState(false);
-            case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).doors.changeDoorsState(true);
+            case ELEVATOR_OPEN -> windowModel.getElevator((long) data).changeDoorsState(false);
+            case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).changeDoorsState(true);
             case CUSTOMER_GET_IN_OUT -> windowModel.changeBehindElevatorForCustomer((long) data);
             case CHANGE_GAME_SPEED -> setControllerTimeSpeed((double) data);
         }

@@ -12,20 +12,24 @@ import java.io.Serializable;
 
 public class Creature implements Serializable {
     // used in sent data
-    private static Integer next_id = 0;
+    private static int next_id = 0;
 
     @Setter
     @Getter
-    protected boolean isVisible = true;
+    private boolean isVisible = true;
     @Setter
     @Getter
-    protected Vector2D size;
+    private Vector2D size;
 
     @Getter
     protected Vector2D position;
 
     @Getter
-    protected long id;
+    @Setter
+    protected boolean isDead = false;
+
+    @Getter
+    private long id;
 
     public Creature(Creature creatureA) {
         position = new Vector2D(creatureA.position);

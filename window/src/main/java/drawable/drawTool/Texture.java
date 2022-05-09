@@ -1,13 +1,11 @@
 package drawable.drawTool;
 
-import configs.tools.CombienedDrawDataBase;
-import drawable.drawTool.figuresComponent.Figure;
-import lombok.Getter;
-import model.objects.Creature;
 import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;
-import view.drawTools.drawer.GameDrawer;
+import tools.Vector2D;
+import view.graphics.GameGraphics;
 
+import java.awt.*;
 import java.util.Random;
 
 public class Texture extends DrawTool {
@@ -31,9 +29,15 @@ public class Texture extends DrawTool {
         return ResourceLoader.getGameResourceNameIn(textureFolderNameToGetRandomGameSource, randomResourceNum);
     }
 
+    @Override
+    public void draw(Vector2D position, Vector2D size, GameGraphics drawer) {
+        // TODO make stretch of the image with size , for example size 50  50 mieans that image is smaller 2 times
+        drawer.drawImage(gameResource.getResourceImage(),position, gameResource.getSize());
+    }
 
     @Override
-    public void draw(GameDrawer drawer, Creature creature) {
-        // CO MAM TUTAJ ROBIC
+    public void setColor(Color color) {
+        // HA LOL WTH
     }
+
 }

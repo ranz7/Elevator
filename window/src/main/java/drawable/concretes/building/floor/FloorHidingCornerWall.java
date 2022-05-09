@@ -1,14 +1,15 @@
 package drawable.concretes.building.floor;
 
 import configs.tools.CombienedDrawDataBase;
-import drawable.abstracts.withShape.creatures.DrawableLocalCreature;
 import drawable.abstracts.DrawCenter;
+import drawable.abstracts.DrawableCreature;
+import drawable.drawTool.figuresComponent.Rectangle;
+import model.objects.Creature;
 import tools.Vector2D;
-import view.drawTools.drawer.GameDrawer;
 
-public class FloorHidingCornerWall extends DrawableLocalCreature {
+public class FloorHidingCornerWall extends DrawableCreature {
     public FloorHidingCornerWall(Vector2D position, Vector2D size, CombienedDrawDataBase settings) {
-        super(position, size, settings);
+        super(new Creature(position, size), new Rectangle(settings.backGroundColor()), settings);
     }
 
     @Override
@@ -17,12 +18,7 @@ public class FloorHidingCornerWall extends DrawableLocalCreature {
     }
 
     @Override
-    public void draw(GameDrawer gameDrawer) {
-        gameDrawer.draw(this, settings.backGroundColor());
-    }
-
-    @Override
-    public Integer GetDrawPrioritet() {
+    public int GetDrawPrioritet() {
         return 14;
     }
 }

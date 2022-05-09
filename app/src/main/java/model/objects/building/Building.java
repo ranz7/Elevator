@@ -9,40 +9,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Building  {
+public class Building {
     public final ElevatorSystemConfig settings;
     @Getter
     public final List<Elevator> elevators = new LinkedList<>();
     @Getter
     public double wallSize;
+
     public Building(ElevatorSystemConfig settings) {
         this.settings = settings;
+        double distanceBetweenElevators = (settings.buildingSize.x) / (settings.getElevatorsCount() + 1);
+
+        this.wallSize = (settings.buildingSize.y) / settings.floorsCount;
+
         for (int i = 0; i < settings.maxElevatorsCount; i++) {
-            var newElevator = new Elevator(settings);
+            var newElevator = new Elevator(new Vector2D(distanceBetweenElevators * (i + 1), 0),settings);
+            newElevator.setWallSize(wallSize);
             newElevator.setVisible(false);
             elevators.add(newElevator);
-        }
-        updateElevatorsPosition();
-    }
-    public void updateElevatorsPosition() {
-        this.wallSize = ( settings.buildingSize.y) / settings.floorsCount;
-        double distanceBetweenElevators = ( settings.buildingSize.x) / (settings.getElevatorsCount() + 1);
-        var elevatorIterator = elevators.iterator();
-        for (int i = 0; i < settings.maxElevatorsCount; i++) {
-            var elevator = elevatorIterator.next();
-
-            if (i < settings.getElevatorsCount()) {
-                elevator.setWallSize(wallSize);
-                if (elevator.isVisible()) {
-                    elevator.setPosition(new Vector2D(distanceBetweenElevators * (i + 1), elevator.getPosition().y));
-                } else {
-                    elevator.setVisible(true);
-                    elevator.setPosition(new Vector2D(distanceBetweenElevators * (i + 1), 0));
-                    elevator.reset();
-                }
-            } else {
-                elevator.setVisible(false);
-            }
         }
 
     }

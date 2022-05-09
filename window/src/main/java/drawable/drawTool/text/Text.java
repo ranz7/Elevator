@@ -1,43 +1,26 @@
 package drawable.drawTool.text;
 
 import drawable.drawTool.DrawTool;
-import model.objects.Creature;
-import view.drawTools.drawer.GameDrawer;
+import lombok.Setter;
+import tools.Vector2D;
+import view.graphics.GameGraphics;
 
 import java.awt.*;
 
 public class Text extends DrawTool {
-    private  String text;
-    private  Color textColor;
+    @Setter
+    private String text;
+    @Setter
+    private Color color;
 
-    public Text(String text,TextData data) {
+    public Text(String text, Color color) {
         this.text = text;
-        this.textColor = data.getTextColor();
+        this.color = color;
     }
 
     @Override
-    public void draw(GameDrawer drawer, Creature creature) {
-
+    public void draw(Vector2D position, Vector2D size, GameGraphics drawer) {
+        drawer.drawText(text,position, size.y, color);
+        // TODO tutaj jak x jest 50 to text jest skrocony o 2 razy
     }
-/*
-    @Override
-    public Integer GetDrawPrioritet() {
-        return 16;
-    }
-
-    @Override
-    public void tick(double deltaTime) {
-        super.tick(deltaTime);
-    }
-
-    public Color getColor() {
-        return textColor;
-    }
-
-    @Override
-    public boolean isDead() {
-        return isReachedDestination();
-    }
-
-    */
 }

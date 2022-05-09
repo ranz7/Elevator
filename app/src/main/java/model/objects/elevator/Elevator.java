@@ -39,8 +39,8 @@ public class Elevator extends MovingObject {
     private final TreeSet<Integer> THROW_OUT_BOTTOM = new TreeSet<>();
 
 
-    public Elevator(ElevatorSystemConfig settings) {
-        super(new Vector2D(0, 0), settings.elevatorSize,
+    public Elevator(Vector2D position, ElevatorSystemConfig settings) {
+        super(position, settings.elevatorSize,
                 Trajectory.StayOnPlaceWithDefaultConstantSpeed(settings.elevatorSpeed));
         this.TIME_TO_STOP_ON_FLOOR = settings.elevatorOpenCloseTime * 2 +
                 settings.elevatorAfterCloseAfkTime + settings.elevatorWaitAsOpenedTime;
