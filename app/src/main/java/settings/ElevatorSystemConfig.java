@@ -1,6 +1,6 @@
-package databases.configs;
+package databases;
 
-import controller.ElevatorsConductor;
+import controller.subControllers.ElevatorsController;
 import lombok.Getter;
 import lombok.Setter;
 import tools.Vector2D;
@@ -11,10 +11,10 @@ import java.io.Serializable;
 /**
  * Info be used in elevator creation
  *
- * @see ElevatorsConductor
+ * @see ElevatorsController
  */
 
-public class ElevatorSystemConfig implements Serializable {
+ class ElevatorSystemConfig implements Serializable {
     public final Vector2D buildingSize = new Vector2D(800, 896);
     public final long elevatorAfterCloseAfkTime = 500;
     public final long elevatorWaitAsOpenedTime = 3000;

@@ -1,6 +1,6 @@
-package databases.configs;
+package databases;
 
-import controller.CustomersConductor;
+import controller.subControllers.CustomersController;
 import tools.Vector2D;
 
 import java.io.Serializable;
@@ -8,9 +8,10 @@ import java.io.Serializable;
 /**
  * Info be used in customers creation
  *
- * @see CustomersConductor
+ * @see CustomersController
  */
-public class CustomerConfig implements Serializable {
+
+ class CustomerConfig implements Serializable {
     public final long timeToWaitAfterButtonClick = 1000;
     public final Vector2D customerSize = new Vector2D(30, 50);
     public final double slowSpeedMultiply = 0.5;

@@ -1,8 +1,8 @@
-package databases.configs.canvas;
+package databases.localDraw;
 
 import java.awt.*;
 
-public class ColorConfig {
+  class ColorConfig {
     public final Color betonOfFloor = new Color(44, 49, 51);
     public final Color floorWall = new Color(74, 110, 94);
 

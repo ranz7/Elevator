@@ -1,8 +1,7 @@
 package databases;
 
 import configs.ConnectionEstalblishConfig;
-import databases.configs.canvas.ColorConfig;
-import databases.configs.canvas.DrawConfig;
+import databases.localDraw.LocalDrawDataBase;
 import lombok.Setter;
 import tools.Vector2D;
 
@@ -13,10 +12,6 @@ import java.util.Random;
 public class CombienedDrawDataBase extends LocalDrawDataBase {
     @Setter
     private ConnectionEstalblishConfig connectionEstalblishConfig;
-
-    public CombienedDrawDataBase(ColorConfig colorConfig, DrawConfig drawConfig) {
-        super(colorConfig, drawConfig);
-    }
 
     public boolean initialized() {
         if (connectionEstalblishConfig == null) {
@@ -31,7 +26,7 @@ public class CombienedDrawDataBase extends LocalDrawDataBase {
 
 
     public long elevatorOpenCloseTime() {
-        return connectionEstalblishConfig.elevatoropenclosetime;
+        return connectionEstalblishConfig.elevatorOpenCloseTime;
     }
 
 
