@@ -1,84 +1,92 @@
 package model;
 
 
-import configs.MainInitializationSettings;
-import configs.ColorSettings;
-import configs.DrawSettings;
-import drawable.drawableBase.creatureWithTexture.Drawable;
-import drawable.drawableObjectsConcrete.*;
-import drawable.drawableObjectsConcrete.building.floor.Floor;
-import drawable.drawableObjectsConcrete.building.floor.elevator.ElevatorButton;
-import drawable.drawableObjectsConcrete.customer.DrawableCustomer;
-import drawable.drawableObjectsConcrete.elevator.DrawableElevator;
+import architecture.tickable.TickableList;
+import databases.configs.canvas.ColorConfig;
+import databases.configs.canvas.DrawConfig;
+import databases.CombienedDrawDataBase;
+import configs.ConnectionEstalblishConfig;
+import drawable.abstracts.DrawableCreature;
+import drawable.abstracts.DrawableMovingCreature;
+import drawable.concretes.building.floor.decorations.FloorPainting;
+import drawable.concretes.building.floor.elevatorSpace.ElevatorBorder;
+import model.packageLoader.PackageLoader;
+import drawable.concretes.building.floor.Floor;
+import drawable.concretes.building.floor.elevatorSpace.ElevatorButton;
+import drawable.concretes.customer.DrawableCustomerCreature;
+import drawable.concretes.elevator.DrawableElevatorCreature;
 import lombok.Getter;
-import model.objects.movingObject.Creature;
-import model.objects.movingObject.CreaturesData;
-import model.objects.movingObject.MovingObject;
-import tools.tools.Vector2D;
+import model.objects.CreaturesData;
+import tools.Pair;
+import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
-public class GuiModel {
-    // TODO REFACTOR - move to one SUPER SETINGS class
-    public final ColorSettings COLOR_SETTINGS = new ColorSettings();
-    public final DrawSettings DRAW_SETTINGS = new DrawSettings();
+public class GuiModel implements Model {
     @Getter
-    private MainInitializationSettings settings;
-    //
+    private final CombienedDrawDataBase combienedDrawDataBase = new CombienedDrawDataBase(new ColorConfig(), new DrawConfig());
 
-    //TODO move into DRAW CLIENT OBJECTS
     @Getter
-    private final LinkedList<DrawableElevator> elevators = new LinkedList<>();
-    private final LinkedList<DrawableCustomer> customers = new LinkedList<>();
+    private final List<DrawableElevatorCreature> elevators = new LinkedList<>();
+    private final List<DrawableCustomerCreature> customers = new LinkedList<>();
 
-    private final LinkedList<Floor> floors = new LinkedList<>();
-    private final LinkedList<FlyingText> flyingTexts = new LinkedList<>();
+    private final List<Floor> floors = new LinkedList<>();
+    private final List<DrawableMovingCreature> autoDieObjects = new LinkedList<>();
 
-
-    private boolean needToInitialize = true;
-
-
-    public Double getWallHeight() {
-        return settings.BUILDING_SIZE.y / settings.FLOORS_COUNT;
+    public void start() {
     }
 
-    public Double getDistanceBetweenElevators() {
-        return settings.BUILDING_SIZE.x / (settings.ELEVATORS_COUNT + 1);
-    }
-
-    private void initialiseFirstData() {
-        for (int i = 0; i < settings.FLOORS_COUNT; i++) {
-            floors.add(new Floor(i, this));
+    public void update() {
+        int oldFloorsCount = floors.size();
+        var random = new Random(combienedDrawDataBase.picturesGeneratorSeed());
+        while (oldFloorsCount < combienedDrawDataBase.floorsCount()) {
+            var floor = new Floor(oldFloorsCount++, combienedDrawDataBase);
+            for (var elevator : elevators) {
+                floor.addSubDrawable(
+                        new ElevatorBorder(new Vector2D(elevator.getPosition().x, 0), elevator, combienedDrawDataBase));
+                var decorationPosition = new Vector2D(elevator.getPosition().x + combienedDrawDataBase.distanceBetweenElevators() / 2,
+                        combienedDrawDataBase.floorHeight() / 2);
+                floor.addSubDrawable(
+                        new FloorPainting(decorationPosition, combienedDrawDataBase, random));
+            }
+            var decorationPosition = new Vector2D(combienedDrawDataBase.distanceBetweenElevators() / 2,
+                    combienedDrawDataBase.floorHeight() / 2);
+            floor.addSubDrawable(
+                    new FloorPainting(decorationPosition, combienedDrawDataBase, random));
+            floors.add(floor);
         }
-
-        needToInitialize = false;
     }
 
-    public LinkedList<Drawable> getDrawableOjects() {
-        LinkedList<Drawable> drawables = new LinkedList<>();
-        elevators.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-        floors.forEach(drawable -> drawables.addAll(drawable.getDrawables()));
-        drawables.addAll(customers.stream().toList());
-        drawables.addAll(flyingTexts);
-        return drawables;
+    public LinkedList<Pair<Vector2D, DrawableCreature>> getDrawableOjects() {
+        var startGamePosition = new Vector2D(0, 0);
+        LinkedList<Pair<Vector2D, DrawableCreature>> drawablesAndPositions = new LinkedList<>();
+        autoDieObjects.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
+        customers.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
+        elevators.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
+        floors.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
+        return drawablesAndPositions;
     }
 
-    public void addMovingDrawable(FlyingText text) {
-        flyingTexts.add(text);
+    public TickableList getTickableList() {
+        return new TickableList(getDrawableOjects().stream().map(Pair::getSecond).collect(Collectors.toList()));
     }
 
+    public void addMovingDrawable(DrawableMovingCreature text) {
+        autoDieObjects.add(text);
+    }
+
+    @Override
     public void clearDead() {
-        flyingTexts.removeIf(MovingObject::isDead);
+        autoDieObjects.removeIf(DrawableMovingCreature::isDead);
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {
-        LinkedList<ElevatorButton> elevatorButtons = new LinkedList<>();
-        floors.forEach(floor -> floor.getBorders().forEach(
-                border -> elevatorButtons.add(border.getElevatorButton())));
-
-        return elevatorButtons.stream()
+        return streamOf(ElevatorButton.class)
                 .reduce(null, (elevatorButtonA, elevatorButtonB) -> {
                     if (elevatorButtonA == null) {
                         return elevatorButtonB;
@@ -94,78 +102,36 @@ public class GuiModel {
                 });
     }
 
-    public DrawableElevator getElevator(long id) {
+    private <T extends DrawableCreature> Stream<T> streamOf(Class<T> classToFind) {
+        return (Stream<T>) getDrawableOjects().stream()
+                .filter(object -> object.getClass().equals(classToFind)).map(Pair::getSecond);
+    }
+
+    public DrawableCustomerCreature getCustomer(long id) {
         var ref = new Object() {
-            DrawableElevator foundDrawableElevator;
+            DrawableCustomerCreature customer;
+        };
+        customers.stream().filter(elevator -> elevator.getId() == id).findFirst().ifPresent(
+                customer -> ref.customer = customer);
+        return ref.customer;
+    }
+
+    public DrawableElevatorCreature getElevator(long id) {
+        var ref = new Object() {
+            DrawableElevatorCreature foundDrawableElevator;
         };
         elevators.stream().filter(elevator -> elevator.getId() == id).findFirst().ifPresent(
                 drawableElevator -> ref.foundDrawableElevator = drawableElevator);
         return ref.foundDrawableElevator;
     }
 
-    public void setSettings(MainInitializationSettings settings) {
-        this.settings = settings;
+    public void setRemoteConfig(ConnectionEstalblishConfig connectionEstalblishConfig) {
+        combienedDrawDataBase.setConnectionEstalblishConfig(connectionEstalblishConfig);
     }
 
-    public boolean isNeedToInitialise() {
-        return needToInitialize;
-    }
-
-    public void clear() {
-        needToInitialize = true;
-    }
-
-    public void changeBehindElevatorForCustomer(long id) {
-        customers.stream().filter(drawableCustomer -> drawableCustomer.getId() == id).findFirst().ifPresent(
-                DrawableCustomer::changeBehindElevator);
-    }
-
-
-    private void applyArrivedData(List<Creature> creatures_came,
-                                  LinkedList<? extends Creature> creatures_to_apply) {
-        // erease
-        creatures_to_apply.removeIf(
-                creatureA -> creatures_came.stream().noneMatch(
-                        creatureB -> creatureA.getId() == creatureB.getId()));
-        // update
-        creatures_to_apply.forEach(
-                creatureA -> {
-                    creatureA.set(creatures_came.stream().filter(
-                            creatureB -> creatureA.getId() == creatureB.getId()
-                    ).findFirst().get());
-                }
-        );
-    }
-
-    public void updateData(CreaturesData data) {
-        this.applyArrivedData(data.ELEVATORS, elevators);
-        this.applyArrivedData(data.CUSTOMERS, customers);
-
-        // Add
-        data.ELEVATORS.forEach(
-                creatureA -> {
-                    if (elevators.stream()
-                            .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
-                        elevators.add(
-                                new DrawableElevator(creatureA, settings.ELEVATOR_OPEN_CLOSE_TIME,
-                                        COLOR_SETTINGS.ELEVATOR_BACKGROUND_COLOR, COLOR_SETTINGS.ELEVATOR_DOOR_COLOR,
-                                        COLOR_SETTINGS.ELEVATOR_BORDER_COLOR));
-                    }
-                }
-        );
-
-        data.CUSTOMERS.forEach(
-                creatureA -> {
-                    if (customers.stream()
-                            .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
-                        customers.add(new DrawableCustomer(creatureA,
-                                COLOR_SETTINGS.CUSTOMER_SKIN_COLOR));
-                    }
-                }
-        );
-        if (isNeedToInitialise()) {
-            initialiseFirstData();
-        }
+    public void updateArivedCreaturesData(CreaturesData data) {
+        PackageLoader.ApplyCustomers(data.CUSTOMERS, customers, combienedDrawDataBase);
+        PackageLoader.ApplyElevators(data.ELEVATORS, elevators, combienedDrawDataBase);
     }
 
 }

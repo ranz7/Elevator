@@ -1,14 +1,17 @@
 package connector;
 
-import tools.tools.Timer;
-import connector.baseStation.BaseStation;
-import connector.baseStation.download.SocketCompactData;
-import connector.baseStation.download.Uplink;
-import connector.filtersAndScenarios.FilterScenarios;
+import architecture.tickable.Tickable;
+import connector.filtersAndScenarios.Filters;
+import connector.filtersAndScenarios.ScenarioBuilder;
+import tools.Timer;
+import connector.dualConnectionStation.BaseDualConectionStation;
+import connector.dualConnectionStation.download.SocketCompactData;
+import connector.dualConnectionStation.download.Downlink;
+import connector.filtersAndScenarios.Scenario;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
-import connector.protocol.ProtocolMessageListener;
-import connector.baseStation.Downlink;
+import connector.protocol.ProtocolMessagesConductor;
+import connector.dualConnectionStation.upload.Uplink;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -21,14 +24,14 @@ import java.util.logging.Logger;
  * Reads stream from Client or Server, as SocketEventListner
  * Controls Server or Client by Backhaul interface and send messages
  *
- * @see Downlink
  * @see Uplink
+ * @see Downlink
  */
-public class Gates implements Uplink {
+public class Gates implements Tickable, Downlink {
 
 
-    private final BaseStation upload;
-    private final ProtocolMessageListener listener;
+    private final BaseDualConectionStation upload;
+    private final ProtocolMessagesConductor listener;
     private final LinkedList<ProtocolMessage> mesages = new LinkedList<>();
 
     // EVENTS
@@ -43,48 +46,23 @@ public class Gates implements Uplink {
 
     // Filter Scenario
     @Setter
-    List<Function<Protocol, Boolean>> scenario = FilterScenarios.noFilter;
+    Scenario scenario = new ScenarioBuilder().build(Filters.noFilter);
     Function<Protocol, Boolean> filter;
+
+    public Gates(BaseDualConectionStation upload, ProtocolMessagesConductor listener) {
+        this.upload = upload;
+        this.listener = listener;
+        this.upload.setDownlink(this);
+    }
 
     public void start() {
         Logger.getAnonymousLogger().info("Start Gates");
         upload.start();
     }
 
-    public Gates(BaseStation upload, ProtocolMessageListener listener) {
-        this.upload = upload;
-        this.listener = listener;
-        this.upload.setDownlink(this);
-    }
-
     @Override
-    public void onReceiveSocket(ProtocolMessage message) {
-
-        if (isFiltered(message.getProtocolInMessage())) {
-            return;
-        }
-        synchronized (mesages) {
-            mesages.add(message);
-        }
-    }
-
-    private boolean isFiltered(Protocol protocol) {
-        filter = scenario.get(0);
-        if ((!filter.apply(protocol)) && scenario.size() != 1) {
-            scenario.remove(0);
-        }
-        return filter.apply(protocol);
-    }
-
-    @Override
-    public void onNewSocketConnection(SocketCompactData client) {
-        if (onConnectEvent != null) {
-            onConnectEvent.run();
-        }
-    }
-
-    public void tick(long deltaTime) {
-        if (upload.isStopped()) {
+    public void tick(double deltaTime) {
+        if (upload.isDisconnect()) {
             if (onDisconnectEvent != null) {
                 onDisconnectEvent.run();
             }
@@ -100,7 +78,32 @@ public class Gates implements Uplink {
         }
 
         synchronized (mesages) {
-            mesages.removeIf(listener::popMessage);
+            mesages.removeIf(listener::applyMessage);
+        }
+    }
+
+    @Override
+    public void onReceiveSocket(ProtocolMessage message) {
+        if (isFiltered(message.getProtocolInMessage())) {
+            return;
+        }
+        synchronized (mesages) {
+            mesages.add(message);
+        }
+    }
+
+    private boolean isFiltered(Protocol protocol) {
+        filter = scenario.get();
+        if ((!filter.apply(protocol))) {
+            scenario.pop();
+        }
+        return filter.apply(protocol);
+    }
+
+    @Override
+    public void onNewSocketConnection(SocketCompactData client) {
+        if (onConnectEvent != null) {
+            onConnectEvent.run();
         }
     }
 

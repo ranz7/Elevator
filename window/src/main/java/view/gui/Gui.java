@@ -1,18 +1,20 @@
-
 package view.gui;
 
-
 import controller.GuiController;
-import drawable.drawableObjectsConcrete.FlyingText;
+import drawable.concretes.FlyingText;
 import lombok.Getter;
 import model.GuiModel;
-import tools.tools.Vector2D;
+import architecture.tickable.Tickable;
+import tools.Vector2D;
 import view.canvas.GameWindow;
 import view.buttons.ButtonsComponent;
+import view.gui.windowListeners.WindowMouseListener;
+import view.gui.windowListeners.WindowResizeListener;
+import view.gui.windowReacts.ButtonsReact;
+import view.gui.windowReacts.MouseReact;
+import view.gui.windowReacts.ResizeReact;
 
-import java.awt.*;
-
-public class Gui {
+public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     private final GuiController controller;
 
     @Getter
@@ -25,67 +27,71 @@ public class Gui {
     public Gui(GuiController controller) {
         this.controller = controller;
         gameWindow = new GameWindow();
-        buttonsComponent = new ButtonsComponent(this,  gameWindow);
-
-        buttonsComponent.addButtonsListener(this, new ButtonsListener(buttonsComponent));
         gameWindow.addMouseListener(new WindowMouseListener(this));
         gameWindow.addResizeListener(new WindowResizeListener(this));
+
+        buttonsComponent = new ButtonsComponent(gameWindow);
+        buttonsComponent.addButtonListener(this);
     }
-    boolean started = false;
 
     public void start() {
-        if (started) {
-            return;
-        }
-        started = true;
         gameWindow.start();
         buttonsComponent.start();
-        resize();
     }
 
-    public void update() {
-        gameWindow.update();
+    @Override
+    public void tick(double deltaTime) {
+        gameWindow.tick(deltaTime);
     }
 
+    @Override
     public void resize() {
-        buttonsComponent.resize(gameWindow.getSize());
+        if (!guiModel.getCombienedDrawDataBase().initialized()) {
+            return;
+        }
         gameWindow.resize(gameWindow.getSize());
+        buttonsComponent.resize(gameWindow.getSize());
     }
 
+    @Override
     public void rightMouseClicked(Vector2D point) {
         if (gameWindow.zoomedIn()) {
-            guiModel.addMovingDrawable(
-                    new FlyingText("ZoomIn", gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4),
-                            Vector2D.North, 6, 5, 1000, new Color(255, 100, 100)));
+            var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
+            guiModel.addMovingDrawable(FlyingText.FlyingTextUpSlow("ZoomIn", gamePosition));
             gameWindow.zoomIn(point, 1 / 4.);
         } else {
             gameWindow.zoomOut();
         }
     }
 
+    @Override
     public void leftMouseClicked(Vector2D point) {
         controller.clickButton(point);
-        guiModel.addMovingDrawable(
-                new FlyingText("Click", gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4),
-                        Vector2D.North, 6, 15, 300, new Color(255, 217, 13)));
+        var gamePosition = gameWindow.getGameScaler().getFromRealToGameCoordinate(point, 4);
+        guiModel.addMovingDrawable(FlyingText.FlyingTextUpFast("Click", gamePosition));
     }
 
+    @Override
     public void addElevatorButtonClicked() {
         controller.changeElevatorsCount(true);
     }
 
+    @Override
     public void removeElevatorButtonClicked() {
         controller.changeElevatorsCount(false);
     }
 
+    @Override
     public void decreaseGameSpeedButtonClicked() {
         controller.decreaseGameSpeed();
     }
 
+    @Override
     public void increaseGameSpeedButtonClicked() {
         controller.increaseSpeed();
     }
 
+    @Override
     public void clickedStartEndFloorButtonRequest(int start, int end) {
         controller.clickedAddCustomerButtonWithNumber(start, end);
     }

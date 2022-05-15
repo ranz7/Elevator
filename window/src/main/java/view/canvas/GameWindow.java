@@ -1,67 +1,71 @@
 package view.canvas;
 
-import configs.WindowSettings;
-import drawable.drawableBase.creatureWithTexture.Drawable;
+import databases.configs.WindowConfig;
+import drawable.abstracts.DrawableCreature;
 import lombok.Getter;
 import model.GuiModel;
-import tools.tools.Vector2D;
-import view.gui.WindowResizeListener;
-import view.drawTools.GameDrawer;
-import view.drawTools.GameScaler;
+import architecture.tickable.Tickable;
+import tools.Pair;
+import tools.Vector2D;
+import view.FPScounter;
+import view.gui.windowListeners.WindowResizeListener;
+import view.graphics.GameGraphics;
+import view.graphics.GameScaler;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Comparator;
+import java.util.LinkedList;
 
-public class GameWindow extends JPanel {
-    private final JFrame FRAME;
+public class GameWindow extends JPanel implements Tickable {
+    private final JFrame jframe;
     private GuiModel windowModel;
+    private FPScounter counter = new FPScounter("42");
 
     @Getter
-    private GameScaler gameScaler;
-    private GameDrawer gameDrawer;
+    private GameScaler gameScaler = new GameScaler();
+    private GameGraphics gameDrawer = new GameGraphics(gameScaler);
 
     public void setModel(GuiModel model) {
         windowModel = model;
-        setBackground(windowModel.COLOR_SETTINGS.GUI_BACK_GROUND_COLOR);
+        setBackground(windowModel.getCombienedDrawDataBase().backGroundColor());
     }
 
     public GameWindow() {
         setLayout(null);
         setVisible(false);
 
-        setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
+        setSize(WindowConfig.WindowStartSize.width, WindowConfig.WindowStartSize.height);
 
-        FRAME = new JFrame("ELEVATOR SYS");
-        FRAME.setSize(WindowSettings.WindowStartSize.width, WindowSettings.WindowStartSize.height);
-        FRAME.setVisible(true);
-        FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        FRAME.add(this);
+        jframe = new JFrame("ELEVATOR SYS");
+        jframe.setSize(WindowConfig.WindowStartSize.width, WindowConfig.WindowStartSize.height);
+        jframe.setVisible(true);
+        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jframe.add(counter);
+        jframe.add(this);
     }
 
     public void start() {
         setVisible(true);
-        gameScaler = new GameScaler(getSize(), windowModel.getSettings().BUILDING_SIZE);
-        gameDrawer = new GameDrawer(gameScaler);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-        gameScaler.updateSizes(newSize, windowModel.getSettings().BUILDING_SIZE);
+        gameScaler.updateSizes(newSize, windowModel.getCombienedDrawDataBase().buildingSize());
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(gameDrawer==null){
-            return;
-        }
-        gameDrawer.startDraw(g);
+        gameDrawer.prepareDrawer(g);
 
-        var drawableObjets = windowModel.getDrawableOjects();
-        drawableObjets.sort(Comparator.comparingInt(Drawable::GetDrawPrioritet));
-        drawableObjets.forEach(drawable -> drawable.draw(gameDrawer));
+        LinkedList<Pair<Vector2D, DrawableCreature>> objectsAndRelativePositions = windowModel.getDrawableOjects();
+        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().GetDrawPrioritet()));
+        objectsAndRelativePositions.forEach(
+                positionAndObject -> {
+                    positionAndObject.getSecond().draw(positionAndObject.getThirst(), gameDrawer);
+                });
     }
 
     public boolean zoomedIn() {
@@ -76,9 +80,11 @@ public class GameWindow extends JPanel {
         gameScaler.zoomIn(point, zoomScale);
     }
 
-    public void update() {
-        gameScaler.tick();
-        FRAME.repaint();
+    @Override
+    public void tick(double deltaTime) {
+        gameScaler.tick(deltaTime);
+        counter.tick(deltaTime);
+        jframe.repaint();
     }
 
     public void addResizeListener(WindowResizeListener windowResizeListener) {

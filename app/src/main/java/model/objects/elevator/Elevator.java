@@ -1,11 +1,12 @@
 package model.objects.elevator;
 
-import configs.ElevatorSystemSettings;
+import databases.configs.ElevatorSystemConfig;
 import lombok.Getter;
 import lombok.Setter;
-import model.objects.movingObject.MovingObject;
-import tools.tools.Timer;
-import tools.tools.Vector2D;
+import model.objects.movingObject.MovingCreature;
+import model.objects.movingObject.trajectory.Trajectory;
+import tools.Timer;
+import tools.Vector2D;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ import java.util.*;
  * Elevator is storing all requests under and behind his way, the algorithm finds the closest floor by
  * calculating distance to came from floor A to floor B and all intermediate floors.
  */
-public class Elevator extends MovingObject {
+public class Elevator extends MovingCreature {
     public static final int UNEXISTING_FLOOR = 999;
     public final Timer TIMER = new Timer();
 
@@ -37,8 +38,18 @@ public class Elevator extends MovingObject {
     private final TreeSet<Integer> THROW_OUT_TOP = new TreeSet<>();
     private final TreeSet<Integer> THROW_OUT_BOTTOM = new TreeSet<>();
 
+
+    public Elevator(Vector2D position, ElevatorSystemConfig settings) {
+        super(position, settings.elevatorSize,
+                Trajectory.StayOnPlaceWithDefaultConstantSpeed(settings.elevatorSpeed));
+        this.TIME_TO_STOP_ON_FLOOR = settings.elevatorOpenCloseTime * 2 +
+                settings.elevatorAfterCloseAfkTime + settings.elevatorWaitAsOpenedTime;
+        this.MAX_HUMAN_CAPACITY = settings.elevatorMaxHumanCapacity;
+        this.state = ElevatorState.WAIT;
+    }
+
     @Override
-    public void tick(long deltaTime) {
+    public void tick(double deltaTime) {
         super.tick(deltaTime);
         TIMER.tick(deltaTime);
     }
@@ -83,14 +94,6 @@ public class Elevator extends MovingObject {
         return currentCustomersCount <= this.MAX_HUMAN_CAPACITY;
     }
 
-    public Elevator(ElevatorSystemSettings settings) {
-        super(new Vector2D(0, 0), settings.ELEVATOR_SPEED, settings.ELEVATOR_SIZE);
-        this.TIME_TO_STOP_ON_FLOOR = settings.ELEVATOR_OPEN_CLOSE_TIME * 2 +
-                settings.ELEVATOR_AFTER_CLOSE_AFK_TIME + settings.ELEVATOR_WAIT_AS_OPENED_TIME;
-        this.MAX_HUMAN_CAPACITY = settings.ELEVATOR_MAX_HUMAN_CAPACITY;
-        this.state = ElevatorState.WAIT;
-    }
-
 
     public int getCurrentFloor() {
         return (int) Math.round(position.y / wallSize);
@@ -124,7 +127,7 @@ public class Elevator extends MovingObject {
     }
 
     public void setFloorDestination(int bestFloor) {
-        setDestination(new Vector2D(position.x, bestFloor * wallSize));
+        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(new Vector2D(position.x, bestFloor * wallSize)));
     }
 
     public void arrived() {
@@ -195,7 +198,7 @@ public class Elevator extends MovingObject {
     }
 
     private double getTimeToGetTo(int requestFloor) {
-        return Math.abs(getPositionForFloor(requestFloor) - position.y) * SPEED_COEFFICIENT / getSpeed();
+        return Math.abs(getPositionForFloor(requestFloor) - position.y) / getConstSpeed();
     }
 
     public int getBooking() {
@@ -208,6 +211,6 @@ public class Elevator extends MovingObject {
         PICK_UP_BOTTOM.clear();
         THROW_OUT_BOTTOM.clear();
         TIMER.restart(0);
-        destination = position;
+        // >???
     }
 }
