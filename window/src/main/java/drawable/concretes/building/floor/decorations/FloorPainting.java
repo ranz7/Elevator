@@ -1,6 +1,6 @@
 package drawable.concretes.building.floor.decorations;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.Texture;
@@ -10,7 +10,7 @@ import tools.Vector2D;
 import java.util.Random;
 
 public class FloorPainting extends DrawableCreature {
-    public FloorPainting(Vector2D position, CombienedDrawDataBase settings, Random random) {
+    public FloorPainting(Vector2D position, CombienedDrawSettings settings, Random random) {
         super(new Creature(position, new Vector2D(100, 100)), new Texture( "/images/paintings/", random), settings);
     }
 

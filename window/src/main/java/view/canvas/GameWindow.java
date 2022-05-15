@@ -1,6 +1,6 @@
 package view.canvas;
 
-import databases.configs.WindowConfig;
+import settings.configs.WindowConfig;
 import drawable.abstracts.DrawableCreature;
 import lombok.Getter;
 import model.GuiModel;
@@ -28,7 +28,7 @@ public class GameWindow extends JPanel implements Tickable {
 
     public void setModel(GuiModel model) {
         windowModel = model;
-        setBackground(windowModel.getCombienedDrawDataBase().backGroundColor());
+        setBackground(windowModel.getCombienedDrawSettings().backGroundColor());
     }
 
     public GameWindow() {
@@ -52,7 +52,7 @@ public class GameWindow extends JPanel implements Tickable {
     @SuppressWarnings("deprecation")
     @Override
     public void resize(Dimension newSize) {
-        gameScaler.updateSizes(newSize, windowModel.getCombienedDrawDataBase().buildingSize());
+        gameScaler.updateSizes(newSize, windowModel.getCombienedDrawSettings().buildingSize());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class GameWindow extends JPanel implements Tickable {
         objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().GetDrawPrioritet()));
         objectsAndRelativePositions.forEach(
                 positionAndObject -> {
-                    positionAndObject.getSecond().draw(positionAndObject.getThirst(), gameDrawer);
+                    positionAndObject.getSecond().draw(positionAndObject.getFirst(), gameDrawer);
                 });
     }
 

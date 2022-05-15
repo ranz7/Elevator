@@ -8,6 +8,6 @@ import connector.Gates;
  *  Listener of messages. If popMessage returns true, then message would be deleted.
  */
 
-public interface ProtocolMessagesConductor {
+public interface ProtocolMessagesController {
     boolean applyMessage(ProtocolMessage message);
 }

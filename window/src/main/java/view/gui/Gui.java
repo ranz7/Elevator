@@ -46,7 +46,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
 
     @Override
     public void resize() {
-        if (!guiModel.getCombienedDrawDataBase().initialized()) {
+        if (!guiModel.getCombienedDrawSettings().initialized()) {
             return;
         }
         gameWindow.resize(gameWindow.getSize());

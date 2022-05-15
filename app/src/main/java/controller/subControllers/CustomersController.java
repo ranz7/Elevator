@@ -1,8 +1,8 @@
-package controller;
+package controller.subControllers;
 
 import connector.Gates;
-import databases.LocalObjectsDatabase;
-import databases.configs.CustomerConfig;
+import settings.LocalObjectsSettings;
+import settings.configs.CustomerConfig;
 import lombok.Getter;
 import architecture.tickable.Tickable;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +21,9 @@ import tools.Timer;
  * @see CustomerConfig
  */
 @RequiredArgsConstructor
-public class CustomersConductor implements Tickable {
+public class CustomersController implements Tickable {
     @Getter
-    private final LocalObjectsDatabase dataBase;
+    private final LocalObjectsSettings dataBase;
     private final Gates gates;
     private final Timer spawnTimer = new Timer();
     private AppModel appModel;

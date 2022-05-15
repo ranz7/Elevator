@@ -1,7 +1,6 @@
 package configs;
 
 import lombok.AllArgsConstructor;
-import tools.Vector2D;
 
 import java.io.Serializable;
 
@@ -15,14 +14,9 @@ import java.io.Serializable;
 
 @AllArgsConstructor
 public class ConnectionEstalblishConfig implements Serializable {
-    public final Vector2D buildingSize;
-    public final Vector2D elevatorSize;
-    public final Vector2D customerSize;
-    public final long elevatoropenclosetime;
-    public final int elevatorsCount;
-    public final int floorsCount;
+    public final long elevatorOpenCloseTime;
     public final double buttonRelativePosition;
-    public final double GAME_SPEED;
-    public final double VERSION;
+    public final double gameSpeed;
+    public final double version;
 
 }

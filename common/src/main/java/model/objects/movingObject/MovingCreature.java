@@ -9,7 +9,7 @@ import model.objects.Creature;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
 
-public class MovingCreature extends Creature implements Tickable {
+public class MovingCreature extends Creature  {
     private final Trajectory trajecotry;
 
     public MovingCreature(Vector2D position, Vector2D size, Trajectory trajecotry) {
@@ -17,9 +17,6 @@ public class MovingCreature extends Creature implements Tickable {
         this.trajecotry = trajecotry;
     }
 
-    @Getter
-    @Setter
-    protected boolean isDead = false;
 
     @Override
     public void tick(double delta_time) {

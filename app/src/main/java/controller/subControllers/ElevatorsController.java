@@ -1,15 +1,13 @@
-package controller;
+package controller.subControllers;
 
 import connector.Gates;
+import controller.ControllerConnector;
 import lombok.RequiredArgsConstructor;
 import model.objects.elevator.ElevatorRequest;
-import model.objects.elevator.ElevatorState;
-import model.objects.building.Building;
 import model.objects.elevator.Elevator;
-import databases.configs.ElevatorSystemConfig;
+import settings.configs.ElevatorSystemConfig;
 import connector.protocol.Protocol;
 import model.AppModel;
-import lombok.Getter;
 import architecture.tickable.Tickable;
 
 import java.util.stream.Collectors;
@@ -22,36 +20,22 @@ import java.util.LinkedList;
  * @see ElevatorSystemConfig
  */
 @RequiredArgsConstructor
-public class ElevatorsConductor implements Tickable {
-    private final Gates appController;
-    @Getter
-    private final ElevatorSystemConfig settings = new ElevatorSystemConfig();
+public class ElevatorsController implements Tickable {
+    private final Gates gates;
+    private final AppModel appModel;
+    private final ControllerConnector connector;
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
 
-    private AppModel appModel;
-
-    public void setModel(AppModel appModel) {
-        this.appModel = appModel;
-        appModel.Initialize(new Building(settings));
-    }
     @Override
     public void tick(double deltaTime) {
         pendingElevatorRequests.removeIf(this::tryToCallElevator);
-        for (var elevator : appModel.getBuilding().elevators) {
-            if (!elevator.isVisible()) {
-                break;
-            }
-            switch (elevator.getState()) {
-                case WAIT -> processWait(elevator);
-                case IN_MOTION -> processInMotion(elevator);
-                case OPENING, CLOSING -> processOpeningClosing(elevator);
-                case OPENED -> processOpened(elevator);
-            }
+        for (var elevator : appModel.getBuildings().elevators) {
+            elevator.tick(deltaTime);
         }
     }
 
     public void buttonClick(ElevatorRequest request) {
-        appController.Send(Protocol.ELEVATOR_BUTTON_CLICK, request.button_position());
+        gates.send(Protocol.ELEVATOR_BUTTON_CLICK, request.button_position());
         if (!tryToCallElevator(request)) {
             pendingElevatorRequests.add(request);
         }
@@ -70,52 +54,10 @@ public class ElevatorsConductor implements Tickable {
         currentElevator.findBestFloor();
     }
 
-    private void processWait(Elevator elevator) {
-        if (!elevator.TIMER.isReady()) {
-            return;
-        }
-        int bestFloor = elevator.findBestFloor();
-        if (bestFloor != Elevator.UNEXISTING_FLOOR) {
-            elevator.setFloorDestination(bestFloor);
-            elevator.setState(ElevatorState.IN_MOTION);
-        }
-    }
-
-    private void processInMotion(Elevator elevator) {
-        if (elevator.isReachedDestination()) {
-            appController.Send(Protocol.ELEVATOR_OPEN, elevator.getId());
-            elevator.TIMER.restart(settings.elevatorOpenCloseTime);
-            elevator.setState(ElevatorState.OPENING);
-        }
-    }
-
-    private void processOpeningClosing(Elevator elevator) {
-        if (!elevator.TIMER.isReady()) {
-            return;
-        }
-        if (elevator.getState() == ElevatorState.OPENING) {
-            elevator.TIMER.restart(settings.elevatorWaitAsOpenedTime);
-            elevator.setState(ElevatorState.OPENED);
-            elevator.arrived();
-        }
-        if (elevator.getState() == ElevatorState.CLOSING) {
-            elevator.TIMER.restart(settings.elevatorAfterCloseAfkTime);
-            elevator.setState(ElevatorState.WAIT);
-        }
-    }
-
-    private void processOpened(Elevator elevator) {
-        if (!elevator.TIMER.isReady()) {
-            return;
-        }
-        elevator.TIMER.restart(settings.elevatorOpenCloseTime);
-        appController.Send(Protocol.ELEVATOR_CLOSE, elevator.getId());
-        elevator.setState(ElevatorState.CLOSING);
-    }
 
     private boolean tryToCallElevator(ElevatorRequest request) {
         // closest, free, and go the same way / or wait
-        LinkedList<Elevator> elevatorsAvailable = appModel.getBuilding().elevators.stream()
+        LinkedList<Elevator> elevatorsAvailable = appModel.getBuildings().elevators.stream()
                 .filter(Elevator::isAvailable)
                 .collect(Collectors.toCollection(LinkedList::new));
         if (elevatorsAvailable.size() == 0) {
@@ -125,7 +67,7 @@ public class ElevatorsConductor implements Tickable {
         Elevator closestElevator = elevatorsAvailable.stream()
                 .reduce(null, (elevatorA, elevatorB) -> this.closestElevator(request, elevatorA, elevatorB));
 
-        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuilding().getWallSize());
+        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuildings().getWallSize());
         closestElevator.addFloorToPickUp(requestFloor);
         closestElevator.findBestFloor();
         return true;
@@ -139,7 +81,7 @@ public class ElevatorsConductor implements Tickable {
             return elevatorA;
         }
 
-        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuilding().getWallSize());
+        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuildings().getWallSize());
         double timeToBeForElevatorA = elevatorA.getTimeToBeHere(requestFloor);
         double timeToBeForElevatorB = elevatorB.getTimeToBeHere(requestFloor);
         if (timeToBeForElevatorA > timeToBeForElevatorB) {

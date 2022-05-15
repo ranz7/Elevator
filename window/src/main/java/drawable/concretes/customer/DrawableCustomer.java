@@ -1,6 +1,6 @@
 package drawable.concretes.customer;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
@@ -8,12 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 import model.objects.Creature;
 
-public class DrawableCustomerCreature extends DrawableRemoteCreature {
+public class DrawableCustomer extends DrawableRemoteCreature {
     @Getter
     @Setter
     private boolean behindElevator = true;
 
-    public DrawableCustomerCreature(Creature creature, CombienedDrawDataBase settings) {
+    public DrawableCustomer(Creature creature, CombienedDrawSettings settings) {
         super(creature,new Rectangle(settings.getRandomCustomerSkin()), settings);
     }
 

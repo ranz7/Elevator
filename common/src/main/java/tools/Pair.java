@@ -3,18 +3,23 @@ package tools;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Pair<Thirst, Second> {
+public class Pair<First, Second> implements Comparable {
     @Getter
     @Setter
-    Thirst thirst;
+    First first;
 
     @Getter
     @Setter
     Second second;
 
-    public Pair(Thirst thirst, Second second) {
-        this.thirst = thirst;
+    public Pair(First first, Second second) {
+        this.first = first;
         this.second = second;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        Pair<First, Second> pair = (Pair<First, Second>) o;
+        return hashCode() - pair.hashCode();
+    }
 }

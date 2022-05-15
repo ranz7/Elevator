@@ -1,75 +1,32 @@
 package model;
 
-import architecture.tickable.TickableList;
 import configs.ConnectionSettings;
-import databases.configs.CustomerConfig;
-import databases.configs.ElevatorSystemConfig;
+import model.objects.AppGameMap;
+import settings.LocalObjectsSettings;
 import configs.ConnectionEstalblishConfig;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import model.objects.Creature;
-import model.objects.CreaturesData;
-import model.objects.movingObject.MovingCreature;
-import model.objects.building.Building;
-import model.objects.customer.Customer;
-import tools.Vector2D;
+import connector.protocol.GameMapCompactData;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 /*
  * Class to store all objects.
  */
-@NoArgsConstructor
-public class AppModel implements Model {
+
+public class AppModel {
     @Getter
-    @Setter
-    private Building building;
-    public final LinkedList<Customer> customers = new LinkedList<>();
+    private final LocalObjectsSettings localObjectsSettings = new LocalObjectsSettings();
+    AppGameMap appGameMap = new AppGameMap(localObjectsSettings);
 
-    public void Initialize(Building building) {
-        this.building = building;
+    public GameMapCompactData sendMap() {
+        return new GameMapCompactData(appGameMap.getDataBase().toIdAndCreaturesList());
     }
 
-    public void clearDead() {
-        customers.removeIf(MovingCreature::isDead);
-    }
-
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void update() {
-    }
-
-    @Override
-    public TickableList getTickableList() {
-        return new TickableList().add(customers).add(building.getElevators());
-    }
-
-    public CreaturesData getDataToSent() {
-        List<Creature> customersTmp = new LinkedList<>();
-        List<Creature> elevatorsTmp = new LinkedList<>();
-        customers.forEach(customer -> customersTmp.add(new Creature(customer)));
-        building.elevators.forEach(elevator -> elevatorsTmp.add(new Creature(elevator)));
-        return new CreaturesData(customersTmp, elevatorsTmp);
-    }
-
-    public Serializable createMainInitializationSettingsToSend(
-            ElevatorSystemConfig settingsElevator, CustomerConfig settingsCustomer, double gameSpeed) {
+    public Serializable createMainInitializationSettingsToSend(double gameSpeed) {
         return new ConnectionEstalblishConfig(
-                new Vector2D(settingsElevator.buildingSize),
-                settingsElevator.elevatorSize,
-                settingsCustomer.customerSize,
-                settingsElevator.elevatorOpenCloseTime,
-                settingsElevator.getElevatorsCount(),
-                settingsElevator.floorsCount,
-                settingsElevator.buttonRelativePosition,
+                localObjectsSettings.elevatorOpenCloseTime(),
+                localObjectsSettings.buttonRelativePosition(),
                 gameSpeed,
                 ConnectionSettings.VERSION);
     }
-
 }

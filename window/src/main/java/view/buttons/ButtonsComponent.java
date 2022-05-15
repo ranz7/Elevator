@@ -1,6 +1,6 @@
 package view.buttons;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.GuiModel;
@@ -15,7 +15,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ButtonsComponent {
     private final JComponent window;
-    private CombienedDrawDataBase settings;
+    private CombienedDrawSettings settings;
     @Setter
     private ActionListener listenWindow;
     private ButtonsReact react;
@@ -123,6 +123,6 @@ public class ButtonsComponent {
     }
 
     public void setModel(GuiModel model) {
-        settings = model.getCombienedDrawDataBase();
+        settings = model.getCombienedDrawSettings();
     }
 }

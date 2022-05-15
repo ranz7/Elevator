@@ -1,6 +1,6 @@
 package drawable.concretes.building.floor;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
@@ -8,7 +8,7 @@ import model.objects.Creature;
 import tools.Vector2D;
 
 public class Floor extends DrawableCreature {
-    public Floor(int currentFloor, CombienedDrawDataBase settings) {
+    public Floor(int currentFloor, CombienedDrawSettings settings) {
         super(new Creature(
                         new Vector2D(0, currentFloor * settings.floorHeight()),
                         new Vector2D(settings.buildingSize().x, settings.floorHeight())),

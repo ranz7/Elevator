@@ -1,4 +1,4 @@
-package architecture.tickable;
+package architecture;
 
 public interface Startable {
     void start();

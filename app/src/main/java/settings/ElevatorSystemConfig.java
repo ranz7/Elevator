@@ -1,6 +1,6 @@
-package databases.configs;
+package settings;
 
-import controller.ElevatorsConductor;
+import controller.subControllers.ElevatorsController;
 import lombok.Getter;
 import lombok.Setter;
 import tools.Vector2D;
@@ -11,10 +11,10 @@ import java.io.Serializable;
 /**
  * Info be used in elevator creation
  *
- * @see ElevatorsConductor
+ * @see ElevatorsController
  */
 
-public class ElevatorSystemConfig implements Serializable {
+class ElevatorSystemConfig implements Serializable {
     public final Vector2D buildingSize = new Vector2D(800, 896);
     public final long elevatorAfterCloseAfkTime = 500;
     public final long elevatorWaitAsOpenedTime = 3000;
@@ -24,6 +24,7 @@ public class ElevatorSystemConfig implements Serializable {
     public final int elevatorMaxHumanCapacity = 4;
     public final double elevatorSpeed = 150;
     public final int floorsCount = 5;
+    public long picturesGeneratorSeed = 1234;
 
     @Getter
     @Setter

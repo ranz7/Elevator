@@ -4,7 +4,9 @@ import configs.*;
 import connector.*;
 import connector.dualConnectionStation.Server;
 import connector.protocol.*;
-import databases.configs.AppControllerConfig;
+import controller.subControllers.CustomersController;
+import controller.subControllers.ElevatorsController;
+import settings.configs.AppControllerConfig;
 import lombok.RequiredArgsConstructor;
 import model.*;
 
@@ -14,34 +16,30 @@ import java.util.LinkedList;
 /**
  * Main controller .
  *
- * @see CustomersConductor
- * @see ElevatorsConductor
+ * @see CustomersController
+ * @see ElevatorsController
  */
 @RequiredArgsConstructor
-public class AppController extends ControllerEndlessLoop implements ProtocolMessagesConductor {
-
-    public final Gates gates = new Gates(new Server(), this);
-    public AppModel appModel;
-    public final ElevatorsConductor elevatorsConductor = new ElevatorsConductor(gates);
-    private final CustomersConductor customerConductor = new CustomersConductor(gates);
+public class AppController extends ControllerEndlessLoop implements ProtocolMessagesController, ControllerConnector {
+    private final AppModel appModel = new AppModel();
+    private final ElevatorsController elevatorsController = new ElevatorsController(gates, this);
+    private final CustomersController customerConductor = new CustomersController(gates, this);
+    private final Gates gates = new Gates(new Server(), this);
 
 
     public void start() {
         gates.setOnConnectEvent(
                 () -> gates.send(
                         Protocol.APPLICATION_SETTINGS,
-                        appModel.createMainInitializationSettingsToSend(
-                                elevatorsConductor.getSettings(),
-                                customerConductor.getSettings(),
-                                this.getControllerTimeSpeed())));
+                        appModel.createMainInitializationSettingsToSend(this.getControllerTimeSpeed())));
         gates.setSpamEvent(
                 () -> gates.send(
-                        Protocol.UPDATE_DATA, appModel.getDataToSent()),
+                        Protocol.UPDATE_DATA, appModel.sendMap()),
                 (long) (1000. / ConnectionSettings.SSPS));
         gates.start();
 
         addTickable(customerConductor);
-        addTickable(elevatorsConductor);
+        addTickable(elevatorsController);
         addTickable(gates);
         addModel(appModel);
         super.start();
@@ -58,9 +56,9 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
                 customerConductor.CreateCustomer(floors.get(1), floors.get(0));
             }
             case CHANGE_ELEVATORS_COUNT -> {
-                elevatorsConductor.changeElevatorsCount((boolean) data);
+                elevatorsController.changeElevatorsCount((boolean) data);
                 gates.send(Protocol.APPLICATION_SETTINGS, appModel.createMainInitializationSettingsToSend(
-                        elevatorsConductor.getSettings(), customerConductor.getSettings(), this.getControllerTimeSpeed()));
+                        elevatorsController.getSettings(), customerConductor.getSettings(), this.getControllerTimeSpeed()));
             }
             case CHANGE_GAME_SPEED -> {
                 multiplyControllerSpeedBy((double) data);
@@ -68,10 +66,6 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
             }
         }
         return true;
-    }
-
-    public void Send(Protocol protocol, Serializable data) {
-        gates.send(protocol, data);
     }
 
     @Override

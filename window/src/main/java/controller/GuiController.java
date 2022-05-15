@@ -7,10 +7,10 @@ import connector.filtersAndScenarios.Filters;
 import connector.filtersAndScenarios.ScenarioBuilder;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
-import connector.protocol.ProtocolMessagesConductor;
-import databases.configs.GuiControllerConfig;
+import connector.protocol.ProtocolMessagesController;
+import settings.configs.GuiControllerConfig;
 import model.*;
-import model.objects.CreaturesData;
+import model.objects.RemoteAccessedData;
 import tools.Vector2D;
 import view.gui.Gui;
 
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * control window, created with Swing
  */
-public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesConductor {
+public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesController {
     public final Gates gates = new Gates(new Client(), this);
     private final Gui gui = new Gui(this);
 
@@ -35,8 +35,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     public void start() {
         ScenarioBuilder connectedScenario = new ScenarioBuilder()
                 .add(Filters.catchOnlySettings)
-                .add(Filters.catchOnlyUpdate)
-                .setEndFunction(windowModel::update);
+                .add(Filters.catchOnlyUpdate);
         gates.setOnDisconnectEvent(() -> {
             gates.setScenario(connectedScenario.build(Filters.noFilter));
             gates.start();
@@ -59,18 +58,18 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         switch (protocol) {
             case APPLICATION_SETTINGS -> {
                 ConnectionEstalblishConfig settings = (ConnectionEstalblishConfig) data;
-                if (ConnectionSettings.VERSION != settings.VERSION) {
+                if (ConnectionSettings.VERSION != settings.version) {
                     Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
                             " Your version: %s, server version %s%n")
-                            .formatted(ConnectionSettings.VERSION, settings.VERSION));
+                            .formatted(ConnectionSettings.VERSION, settings.version));
                     return true;
                 }
                 windowModel.setRemoteConfig(settings);
-                setControllerTimeSpeed(settings.GAME_SPEED);
+                setControllerTimeSpeed(settings.gameSpeed);
                 setCurrentTime(message.getTimeStumpInMessage());
                 gui.resize();
             }
-            case UPDATE_DATA -> windowModel.updateArivedCreaturesData((CreaturesData) data);
+            case UPDATE_DATA -> windowModel.applyArivedData((RemoteAccessedData) data);
             case ELEVATOR_BUTTON_CLICK -> clickButton((Vector2D) data);
             case ELEVATOR_OPEN -> windowModel.getElevator((long) data).changeDoorsState(false);
             case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).changeDoorsState(true);
@@ -81,7 +80,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
     }
 
     public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
-        startFloorButtonNumber = windowModel.getCombienedDrawDataBase().floorsCount() - startFloorButtonNumber - 1;
+        startFloorButtonNumber = windowModel.getCombienedDrawSettings().floorsCount() - startFloorButtonNumber - 1;
         LinkedList<Integer> data = new LinkedList<>();
         data.push(startFloorButtonNumber);
         data.push(endFloorNumber - 1);

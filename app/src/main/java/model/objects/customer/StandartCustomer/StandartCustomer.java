@@ -1,6 +1,6 @@
 package model.objects.customer.StandartCustomer;
 
-import databases.configs.CustomerConfig;
+import settings.configs.CustomerConfig;
 import connector.protocol.Protocol;
 import lombok.Setter;
 import model.objects.customer.Customer;

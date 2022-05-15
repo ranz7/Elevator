@@ -25,7 +25,6 @@ public class TickableList implements Tickable {
         return this;
     }
 
-
     public TickableList add(List<? extends Tickable> tickableList) {
         tickables.addAll(tickableList);
         return this;

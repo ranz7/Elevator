@@ -1,7 +1,11 @@
 package model.objects.building;
 
-import databases.configs.ElevatorSystemConfig;
+import architecture.tickable.Tickable;
+import model.DataBaseOfCreatures;
+import settings.LocalObjectsSettings;
 import lombok.Getter;
+import model.objects.Creature;
+import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
 import tools.Vector2D;
 
@@ -9,24 +13,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Building {
-    public final ElevatorSystemConfig settings;
-    @Getter
-    public final List<Elevator> elevators = new LinkedList<>();
-    @Getter
-    public double wallSize;
+public class Building extends Creature {
+    private final DataBaseOfCreatures dataBase = new DataBaseOfCreatures(this);
+    public final LocalObjectsSettings settings;
 
-    public Building(ElevatorSystemConfig settings) {
+    public Building(Vector2D position, DataBaseOfCreatures dataBaseOfCreatures, LocalObjectsSettings settings) {
+        super(position, settings.buildingSize());
         this.settings = settings;
-        double distanceBetweenElevators = (settings.buildingSize.x) / (settings.getElevatorsCount() + 1);
+        dataBaseOfCreatures.register(dataBaseOfCreatures);
+        settings.distanceBetweenElevators();
 
-        this.wallSize = (settings.buildingSize.y) / settings.floorsCount;
+        for (int i = 0; i < settings.elevatorsCount(); i++) {
+            dataBase.add(
+                    new Elevator(new Vector2D(settings.distanceBetweenElevators() * (i + 1),
+                            0), settings));
+        }
 
-        for (int i = 0; i < settings.elevatorsCount; i++) {
-            var newElevator = new Elevator(new Vector2D(distanceBetweenElevators * (i + 1), 0),settings);
-            newElevator.setWallSize(wallSize);
-            newElevator.setVisible(true);
-            elevators.add(newElevator);
+        var random = new Random(settings.picturesGeneratorSeed());
+        for(int i = 0; i < settings.floorsCount(); i++){
+            var floor = new Floor(oldFloorsCount++, combienedDrawDataBase);
+            for (var elevator : elevators) {
+                floor.addSubDrawable(
+                        new ElevatorBorder(new Vector2D(elevator.getPosition().x, 0), elevator, combienedDrawDataBase));
+                var decorationPosition = new Vector2D(elevator.getPosition().x + combienedDrawDataBase.distanceBetweenElevators() / 2,
+                        combienedDrawDataBase.floorHeight() / 2);
+                floor.addSubDrawable(
+                        new FloorPainting(decorationPosition, combienedDrawDataBase, random));
+            }
+            var decorationPosition = new Vector2D(combienedDrawDataBase.distanceBetweenElevators() / 2,
+                    combienedDrawDataBase.floorHeight() / 2);
+            floor.addSubDrawable(
+                    new FloorPainting(decorationPosition, combienedDrawDataBase, random));
+            floors.add(floor);
         }
 
     }
@@ -90,6 +108,9 @@ public class Building {
     }
 
 
+    public LinkedList<Customer> getCreaturesList() {
+        return customers;
+    }
 }
 
 

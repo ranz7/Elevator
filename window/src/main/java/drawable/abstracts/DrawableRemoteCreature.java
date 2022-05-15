@@ -1,19 +1,26 @@
 package drawable.abstracts;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.drawTool.DrawTool;
 import model.objects.Creature;
+import tools.Vector2D;
 
 public abstract class DrawableRemoteCreature extends DrawableCreature {
-    public DrawableRemoteCreature(Creature creature, DrawTool tool, CombienedDrawDataBase settings) {
-        super(creature, tool, settings);
+    public DrawableRemoteCreature(Vector2D position, Vector2D size, DrawTool tool, CombienedDrawSettings settings) {
+        super(position, size, tool, settings);
+    }
+
+    @Override
+    public CombienedDrawSettings getSettings() {
+        return (CombienedDrawSettings) super.getSettings();
     }
 
     public long getId() {
-        return super.getId();
+        return id;
     }
 
     public void set(Creature creature) {
-        this.creature.set(creature);
+        set(creature);
     }
+
 }

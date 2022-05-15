@@ -1,6 +1,6 @@
 package drawable.concretes.elevator;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
@@ -14,7 +14,7 @@ public class ElevatorDoor extends DrawableCreature {
     private boolean isClosed = true;
     private Vector2D openedDoorsSize;
 
-    public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, CombienedDrawDataBase settings) {
+    public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, CombienedDrawSettings settings) {
         super(new Creature(position, size),
                 new RectangleWithBorder(settings.doorsColor(), settings.doorsBorder(), 2),
                 settings);
@@ -50,7 +50,7 @@ public class ElevatorDoor extends DrawableCreature {
         if (isClosed == newState) {
             return;
         }
-        doorsTimer.restart(dataBase.elevatorOpenCloseTime() / 2);
+        doorsTimer.restart(settings.elevatorOpenCloseTime() / 2);
         isClosed = !isClosed;
     }
 

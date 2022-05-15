@@ -1,15 +1,15 @@
 package drawable.concretes.building.floor.elevatorSpace;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
-import drawable.concretes.elevator.DrawableElevatorCreature;
+import drawable.concretes.elevator.DrawableElevator;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import model.objects.Creature;
 import tools.Vector2D;
 
 public class ElevatorBorder extends DrawableCreature {
-    public ElevatorBorder(Vector2D position, DrawableElevatorCreature parentElevator, CombienedDrawDataBase settings) {
+    public ElevatorBorder(Vector2D position, DrawableElevator parentElevator, CombienedDrawSettings settings) {
         super(new Creature(position, parentElevator.getSize().getAdded(settings.borderThickness())),
                 new RectangleWithBorder(settings.borderColor(), settings.borderThickness() * 2), settings);
 

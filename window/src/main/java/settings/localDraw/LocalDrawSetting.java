@@ -1,17 +1,13 @@
-package databases;
+package settings.localDraw;
 
-import databases.configs.canvas.ColorConfig;
-import databases.configs.canvas.DrawConfig;
-import lombok.RequiredArgsConstructor;
 import tools.DataBase;
 import tools.Vector2D;
 
 import java.awt.*;
 
-@RequiredArgsConstructor
-public class LocalDrawDataBase implements DataBase {
-    private final ColorConfig colorConfig;
-    private final DrawConfig drawConfig;
+public class LocalDrawSetting implements DataBase {
+    private final ColorConfig colorConfig = new ColorConfig();
+    private final DrawConfig drawConfig = new DrawConfig();
 
     @Override
     public boolean initialized(Class<?>... classes) {

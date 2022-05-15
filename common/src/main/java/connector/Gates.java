@@ -10,13 +10,12 @@ import connector.dualConnectionStation.download.Downlink;
 import connector.filtersAndScenarios.Scenario;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
-import connector.protocol.ProtocolMessagesConductor;
+import connector.protocol.ProtocolMessagesController;
 import connector.dualConnectionStation.upload.Uplink;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -31,7 +30,7 @@ public class Gates implements Tickable, Downlink {
 
 
     private final BaseDualConectionStation upload;
-    private final ProtocolMessagesConductor listener;
+    private final ProtocolMessagesController listener;
     private final LinkedList<ProtocolMessage> mesages = new LinkedList<>();
 
     // EVENTS
@@ -49,7 +48,7 @@ public class Gates implements Tickable, Downlink {
     Scenario scenario = new ScenarioBuilder().build(Filters.noFilter);
     Function<Protocol, Boolean> filter;
 
-    public Gates(BaseDualConectionStation upload, ProtocolMessagesConductor listener) {
+    public Gates(BaseDualConectionStation upload, ProtocolMessagesController listener) {
         this.upload = upload;
         this.listener = listener;
         this.upload.setDownlink(this);

@@ -1,88 +1,23 @@
 package model;
 
 
-import architecture.tickable.TickableList;
-import databases.configs.canvas.ColorConfig;
-import databases.configs.canvas.DrawConfig;
-import databases.CombienedDrawDataBase;
+import connector.protocol.GameMapCompactData;
+import settings.CombienedDrawSettings;
 import configs.ConnectionEstalblishConfig;
-import drawable.abstracts.DrawableCreature;
 import drawable.abstracts.DrawableMovingCreature;
-import drawable.concretes.building.floor.decorations.FloorPainting;
-import drawable.concretes.building.floor.elevatorSpace.ElevatorBorder;
 import model.packageLoader.PackageLoader;
-import drawable.concretes.building.floor.Floor;
 import drawable.concretes.building.floor.elevatorSpace.ElevatorButton;
-import drawable.concretes.customer.DrawableCustomerCreature;
-import drawable.concretes.elevator.DrawableElevatorCreature;
+import drawable.concretes.customer.DrawableCustomer;
+import drawable.concretes.elevator.DrawableElevator;
 import lombok.Getter;
-import model.objects.CreaturesData;
-import tools.Pair;
 import tools.Vector2D;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-
-public class GuiModel implements Model {
+public class GuiModel extends DataBaseOfDrawableCreatures {
     @Getter
-    private final CombienedDrawDataBase combienedDrawDataBase = new CombienedDrawDataBase(new ColorConfig(), new DrawConfig());
-
-    @Getter
-    private final List<DrawableElevatorCreature> elevators = new LinkedList<>();
-    private final List<DrawableCustomerCreature> customers = new LinkedList<>();
-
-    private final List<Floor> floors = new LinkedList<>();
-    private final List<DrawableMovingCreature> autoDieObjects = new LinkedList<>();
-
-    public void start() {
-    }
-
-    public void update() {
-        int oldFloorsCount = floors.size();
-        var random = new Random(combienedDrawDataBase.picturesGeneratorSeed());
-        while (oldFloorsCount < combienedDrawDataBase.floorsCount()) {
-            var floor = new Floor(oldFloorsCount++, combienedDrawDataBase);
-            for (var elevator : elevators) {
-                floor.addSubDrawable(
-                        new ElevatorBorder(new Vector2D(elevator.getPosition().x, 0), elevator, combienedDrawDataBase));
-                var decorationPosition = new Vector2D(elevator.getPosition().x + combienedDrawDataBase.distanceBetweenElevators() / 2,
-                        combienedDrawDataBase.floorHeight() / 2);
-                floor.addSubDrawable(
-                        new FloorPainting(decorationPosition, combienedDrawDataBase, random));
-            }
-            var decorationPosition = new Vector2D(combienedDrawDataBase.distanceBetweenElevators() / 2,
-                    combienedDrawDataBase.floorHeight() / 2);
-            floor.addSubDrawable(
-                    new FloorPainting(decorationPosition, combienedDrawDataBase, random));
-            floors.add(floor);
-        }
-    }
-
-    public LinkedList<Pair<Vector2D, DrawableCreature>> getDrawableOjects() {
-        var startGamePosition = new Vector2D(0, 0);
-        LinkedList<Pair<Vector2D, DrawableCreature>> drawablesAndPositions = new LinkedList<>();
-        autoDieObjects.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
-        customers.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
-        elevators.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
-        floors.forEach(drawable -> drawablesAndPositions.addAll(drawable.getDrawablesAndAbsoluteDrawPositions(startGamePosition)));
-        return drawablesAndPositions;
-    }
-
-    public TickableList getTickableList() {
-        return new TickableList(getDrawableOjects().stream().map(Pair::getSecond).collect(Collectors.toList()));
-    }
+    private final CombienedDrawSettings combienedDrawSettings = new CombienedDrawSettings();
 
     public void addMovingDrawable(DrawableMovingCreature text) {
-        autoDieObjects.add(text);
-    }
-
-    @Override
-    public void clearDead() {
-        autoDieObjects.removeIf(DrawableMovingCreature::isDead);
+        add(text);
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {
@@ -102,36 +37,33 @@ public class GuiModel implements Model {
                 });
     }
 
-    private <T extends DrawableCreature> Stream<T> streamOf(Class<T> classToFind) {
-        return (Stream<T>) getDrawableOjects().stream()
-                .filter(object -> object.getClass().equals(classToFind)).map(Pair::getSecond);
-    }
-
-    public DrawableCustomerCreature getCustomer(long id) {
+    public DrawableCustomer getCustomer(long id) {
         var ref = new Object() {
-            DrawableCustomerCreature customer;
+            DrawableCustomer customer = null;
         };
-        customers.stream().filter(elevator -> elevator.getId() == id).findFirst().ifPresent(
-                customer -> ref.customer = customer);
+        streamOf(DrawableCustomer.class).filter(elevator -> elevator.getId() == id)
+                .findFirst().ifPresentOrElse(customer -> ref.customer = customer, () -> {
+                    throw new RuntimeException("Customer not fond.");
+                });
         return ref.customer;
     }
 
-    public DrawableElevatorCreature getElevator(long id) {
+    public DrawableElevator getElevator(long id) {
         var ref = new Object() {
-            DrawableElevatorCreature foundDrawableElevator;
+            DrawableElevator foundDrawableElevator;
         };
-        elevators.stream().filter(elevator -> elevator.getId() == id).findFirst().ifPresent(
-                drawableElevator -> ref.foundDrawableElevator = drawableElevator);
+        streamOf(DrawableElevator.class).filter(elevator -> elevator.getId() == id)
+                .findFirst().ifPresentOrElse(drawableElevator -> ref.foundDrawableElevator = drawableElevator, () -> {
+                    throw new RuntimeException("Elevator not found");
+                });
         return ref.foundDrawableElevator;
     }
 
     public void setRemoteConfig(ConnectionEstalblishConfig connectionEstalblishConfig) {
-        combienedDrawDataBase.setConnectionEstalblishConfig(connectionEstalblishConfig);
+        combienedDrawSettings.setConnectionEstalblishConfig(connectionEstalblishConfig);
     }
 
-    public void updateArivedCreaturesData(CreaturesData data) {
-        PackageLoader.ApplyCustomers(data.CUSTOMERS, customers, combienedDrawDataBase);
-        PackageLoader.ApplyElevators(data.ELEVATORS, elevators, combienedDrawDataBase);
+    public void applyArivedData(GameMapCompactData data) {
+        PackageLoader.applyArivedData(data, this, combienedDrawSettings);
     }
-
 }

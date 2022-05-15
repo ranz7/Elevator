@@ -1,6 +1,6 @@
 package drawable.concretes.building.floor.elevatorSpace;
 
-import databases.CombienedDrawDataBase;
+import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
@@ -14,7 +14,7 @@ import tools.Vector2D;
 public class ElevatorButton extends DrawableCreature {
     private final Timer buttonOnTimer = new Timer();
 
-    public ElevatorButton(Vector2D position, CombienedDrawDataBase settings) {
+    public ElevatorButton(Vector2D position, CombienedDrawSettings settings) {
         super(new Creature(position, settings.elevatorButtonSize()), new Rectangle(settings.buttonColorOff()), settings);
     }
 
