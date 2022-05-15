@@ -25,10 +25,6 @@ public class Creature implements Serializable {
     protected Vector2D position;
 
     @Getter
-    @Setter
-    protected boolean isDead = false;
-
-    @Getter
     private long id;
 
     public Creature(Creature creatureA) {

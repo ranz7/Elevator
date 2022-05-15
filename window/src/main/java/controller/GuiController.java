@@ -8,6 +8,7 @@ import connector.filtersAndScenarios.ScenarioBuilder;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
 import connector.protocol.ProtocolMessagesConductor;
+import databases.configs.GuiControllerConfig;
 import model.*;
 import model.objects.CreaturesData;
 import tools.Vector2D;
@@ -59,9 +60,9 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
             case APPLICATION_SETTINGS -> {
                 ConnectionEstalblishConfig settings = (ConnectionEstalblishConfig) data;
                 if (ConnectionSettings.VERSION != settings.VERSION) {
-                    Logger.getLogger(GuiController.class.getName())
-                            .warning("You have different versions with sever. Your version: %s, server version %s%n"
-                                    .formatted(ConnectionSettings.VERSION, settings.VERSION));
+                    Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
+                            " Your version: %s, server version %s%n")
+                            .formatted(ConnectionSettings.VERSION, settings.VERSION));
                     return true;
                 }
                 windowModel.setRemoteConfig(settings);
@@ -69,15 +70,11 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
                 setCurrentTime(message.getTimeStumpInMessage());
                 gui.resize();
             }
-            case UPDATE_DATA -> {
-                windowModel.updateArivedCreaturesData((CreaturesData) data);
-            }
-            case ELEVATOR_BUTTON_CLICK -> {
-                clickButton((Vector2D) data);
-            }
+            case UPDATE_DATA -> windowModel.updateArivedCreaturesData((CreaturesData) data);
+            case ELEVATOR_BUTTON_CLICK -> clickButton((Vector2D) data);
             case ELEVATOR_OPEN -> windowModel.getElevator((long) data).changeDoorsState(false);
             case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).changeDoorsState(true);
-            case CUSTOMER_GET_IN_OUT -> windowModel.changeBehindElevatorForCustomer((long) data);
+            case CUSTOMER_GET_IN_OUT -> windowModel.getCustomer((long) data).changeBehindElevator();
             case CHANGE_GAME_SPEED -> setControllerTimeSpeed((double) data);
         }
         return true;

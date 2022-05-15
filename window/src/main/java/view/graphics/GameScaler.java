@@ -1,6 +1,6 @@
 package view.graphics;
 
-import configs.GameScalerConfig;
+import databases.configs.GameScalerConfig;
 import lombok.Getter;
 import architecture.tickable.Tickable;
 import tools.Vector2D;

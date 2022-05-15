@@ -1,7 +1,7 @@
 package view.canvas;
 
-import configs.WindowConfig;
-import drawable.abstracts.Drawable;
+import databases.configs.WindowConfig;
+import drawable.abstracts.DrawableCreature;
 import lombok.Getter;
 import model.GuiModel;
 import architecture.tickable.Tickable;
@@ -60,7 +60,7 @@ public class GameWindow extends JPanel implements Tickable {
         super.paintComponent(g);
         gameDrawer.prepareDrawer(g);
 
-        LinkedList<Pair<Vector2D, Drawable>> objectsAndRelativePositions = windowModel.getDrawableOjects();
+        LinkedList<Pair<Vector2D, DrawableCreature>> objectsAndRelativePositions = windowModel.getDrawableOjects();
         objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().GetDrawPrioritet()));
         objectsAndRelativePositions.forEach(
                 positionAndObject -> {

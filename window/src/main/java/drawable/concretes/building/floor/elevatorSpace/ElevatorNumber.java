@@ -1,16 +1,16 @@
 package drawable.concretes.building.floor.elevatorSpace;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
-import drawable.concretes.elevator.DrawableCreatureElevator;
+import drawable.concretes.elevator.DrawableElevatorCreature;
 import drawable.drawTool.text.Text;
 import model.objects.Creature;
 import tools.Vector2D;
 
 public class ElevatorNumber extends DrawableCreature {
-    private final DrawableCreatureElevator parentElevator;
-    protected ElevatorNumber(Vector2D position, DrawableCreatureElevator parentElevator, CombienedDrawDataBase settings) {
+    private final DrawableElevatorCreature parentElevator;
+    protected ElevatorNumber(Vector2D position, DrawableElevatorCreature parentElevator, CombienedDrawDataBase settings) {
         super(new Creature(position, new Vector2D(100, 15)), new Text("-", settings.colorOfNumber()), settings);
         this.parentElevator = parentElevator;
     }

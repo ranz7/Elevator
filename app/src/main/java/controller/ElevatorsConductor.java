@@ -1,10 +1,12 @@
 package controller;
 
+import connector.Gates;
+import lombok.RequiredArgsConstructor;
 import model.objects.elevator.ElevatorRequest;
 import model.objects.elevator.ElevatorState;
 import model.objects.building.Building;
 import model.objects.elevator.Elevator;
-import configs.ElevatorSystemConfig;
+import databases.configs.ElevatorSystemConfig;
 import connector.protocol.Protocol;
 import model.AppModel;
 import lombok.Getter;
@@ -19,23 +21,20 @@ import java.util.LinkedList;
  *
  * @see ElevatorSystemConfig
  */
+@RequiredArgsConstructor
 public class ElevatorsConductor implements Tickable {
+    private final Gates appController;
     @Getter
     private final ElevatorSystemConfig settings = new ElevatorSystemConfig();
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
-    private final AppController appController;
 
     private AppModel appModel;
-
-    public ElevatorsConductor(AppController appController) {
-        this.appController = appController;
-    }
 
     public void setModel(AppModel appModel) {
         this.appModel = appModel;
         appModel.Initialize(new Building(settings));
     }
-
+    @Override
     public void tick(double deltaTime) {
         pendingElevatorRequests.removeIf(this::tryToCallElevator);
         for (var elevator : appModel.getBuilding().elevators) {
@@ -158,15 +157,12 @@ public class ElevatorsConductor implements Tickable {
 
     public void changeElevatorsCount(boolean data) {
         if (data) {
-            if (settings.getElevatorsCount() < settings.maxElevatorsCount) {
-                settings.setElevatorsCount(settings.getElevatorsCount() + 1);
-             //   appModel.getBuilding().updateElevatorsPosition();
-                return;
-            }
-        }
-        if (settings.getElevatorsCount() > 0) {
+            settings.setElevatorsCount(settings.getElevatorsCount() + 1);
+
+        } else {
             settings.setElevatorsCount(settings.getElevatorsCount() - 1);
-         //   appModel.getBuilding().updateElevatorsPosition();
         }
+        //           appModel.getBuilding().updateElevatorsPosition();
+
     }
 }

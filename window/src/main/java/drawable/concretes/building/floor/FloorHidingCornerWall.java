@@ -1,6 +1,6 @@
 package drawable.concretes.building.floor;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.Rectangle;

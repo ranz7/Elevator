@@ -1,19 +1,19 @@
 package drawable.concretes.elevator;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import drawable.abstracts.DrawCenter;
-import drawable.abstracts.DrawableCreatureRemote;
+import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
 import model.objects.Creature;
 import tools.Vector2D;
 import lombok.Getter;
 
 @Getter
-public class DrawableCreatureElevator extends DrawableCreatureRemote {
+public class DrawableElevatorCreature extends DrawableRemoteCreature {
     ElevatorDoor leftDoor;
     ElevatorDoor rightDoor;
 
-    public DrawableCreatureElevator(Creature creature, CombienedDrawDataBase settings) {
+    public DrawableElevatorCreature(Creature creature, CombienedDrawDataBase settings) {
         super(creature, new Rectangle(settings.elevatorBackGroundColor()), settings);
         leftDoor = new ElevatorDoor(
                 new Vector2D(0, 0), this.getSize().getDividedX(2), true, settings);

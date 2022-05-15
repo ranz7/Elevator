@@ -1,4 +1,4 @@
-package configs;
+package databases.configs;
 
 import controller.CustomersConductor;
 import tools.Vector2D;
@@ -17,6 +17,6 @@ public class CustomerConfig implements Serializable {
     public final double fastSpeedMultiply = 1.5;
     public final double customerSpeed = 100;
     public final long timeToWalk = 3000;
-    public final int maxCustomers = 2;
+    public final int maxCustomers = 1;
     public final long spawnRate = 500;
 }

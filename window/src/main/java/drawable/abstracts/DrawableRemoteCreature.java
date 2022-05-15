@@ -1,11 +1,11 @@
 package drawable.abstracts;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import drawable.drawTool.DrawTool;
 import model.objects.Creature;
 
-public abstract class DrawableCreatureRemote extends DrawableCreature {
-    public DrawableCreatureRemote(Creature creature, DrawTool tool, CombienedDrawDataBase settings) {
+public abstract class DrawableRemoteCreature extends DrawableCreature {
+    public DrawableRemoteCreature(Creature creature, DrawTool tool, CombienedDrawDataBase settings) {
         super(creature, tool, settings);
     }
 
@@ -14,6 +14,6 @@ public abstract class DrawableCreatureRemote extends DrawableCreature {
     }
 
     public void set(Creature creature) {
-        creature.set(creature);
+        this.creature.set(creature);
     }
 }

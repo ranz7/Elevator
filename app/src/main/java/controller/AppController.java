@@ -4,6 +4,7 @@ import configs.*;
 import connector.*;
 import connector.dualConnectionStation.Server;
 import connector.protocol.*;
+import databases.configs.AppControllerConfig;
 import lombok.RequiredArgsConstructor;
 import model.*;
 
@@ -18,18 +19,12 @@ import java.util.LinkedList;
  */
 @RequiredArgsConstructor
 public class AppController extends ControllerEndlessLoop implements ProtocolMessagesConductor {
-    public final ElevatorsConductor elevatorsConductor = new ElevatorsConductor(this);
-    private final CustomersConductor customerConductor = new CustomersConductor(this);
 
     public final Gates gates = new Gates(new Server(), this);
-
     public AppModel appModel;
+    public final ElevatorsConductor elevatorsConductor = new ElevatorsConductor(gates);
+    private final CustomersConductor customerConductor = new CustomersConductor(gates);
 
-    public void setAppModel(AppModel appModel) {
-        this.appModel = appModel;
-        customerConductor.setModel(appModel);
-        elevatorsConductor.setModel(appModel);
-    }
 
     public void start() {
         gates.setOnConnectEvent(

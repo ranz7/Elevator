@@ -1,7 +1,7 @@
-package configs.tools;
+package databases;
 
-import configs.canvas.ColorConfig;
-import configs.canvas.DrawConfig;
+import databases.configs.canvas.ColorConfig;
+import databases.configs.canvas.DrawConfig;
 import lombok.RequiredArgsConstructor;
 import tools.DataBase;
 import tools.Vector2D;

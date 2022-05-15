@@ -2,15 +2,15 @@ package model;
 
 import architecture.tickable.TickableList;
 import configs.ConnectionSettings;
-import configs.CustomerConfig;
-import configs.ElevatorSystemConfig;
+import databases.configs.CustomerConfig;
+import databases.configs.ElevatorSystemConfig;
 import configs.ConnectionEstalblishConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import model.objects.Creature;
 import model.objects.CreaturesData;
-import model.objects.movingObject.MovingObject;
+import model.objects.movingObject.MovingCreature;
 import model.objects.building.Building;
 import model.objects.customer.Customer;
 import tools.Vector2D;
@@ -34,17 +34,16 @@ public class AppModel implements Model {
     }
 
     public void clearDead() {
-        customers.removeIf(MovingObject::isDead);
+        customers.removeIf(MovingCreature::isDead);
     }
 
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     @Override
     public void update() {
-
     }
-
 
     @Override
     public TickableList getTickableList() {

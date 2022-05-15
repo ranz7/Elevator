@@ -1,6 +1,6 @@
 package drawable.concretes.building.floor.decorations;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.Texture;
@@ -16,7 +16,7 @@ public class FloorPainting extends DrawableCreature {
 
     @Override
     public int GetDrawPrioritet() {
-        return 2;
+        return 9;
     }
 
     @Override

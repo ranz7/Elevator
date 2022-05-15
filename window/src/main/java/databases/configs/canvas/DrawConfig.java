@@ -1,4 +1,4 @@
-package configs.canvas;
+package databases.configs.canvas;
 
 import tools.Vector2D;
 

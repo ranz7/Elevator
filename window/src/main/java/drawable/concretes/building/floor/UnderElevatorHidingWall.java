@@ -1,6 +1,6 @@
 package drawable.concretes.building.floor;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
@@ -24,7 +24,6 @@ public class UnderElevatorHidingWall extends DrawableCreature {
     public int GetDrawPrioritet() {
         return 8;
     }
-
 }
 
 

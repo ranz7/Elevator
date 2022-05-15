@@ -1,8 +1,8 @@
-package configs.tools;
+package databases;
 
 import configs.ConnectionEstalblishConfig;
-import configs.canvas.ColorConfig;
-import configs.canvas.DrawConfig;
+import databases.configs.canvas.ColorConfig;
+import databases.configs.canvas.DrawConfig;
 import lombok.Setter;
 import tools.Vector2D;
 

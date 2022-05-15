@@ -16,8 +16,8 @@ import java.util.function.Function;
 @AllArgsConstructor
 public class Scenario {
     private final List<Function<Protocol, Boolean>> filterSequence;
-    private Runnable onEnd;
     private Runnable onStart;
+    private Runnable onEnd;
 
     public void pop() {
         if (onStart != null) {

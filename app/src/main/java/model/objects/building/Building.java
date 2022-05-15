@@ -1,6 +1,6 @@
 package model.objects.building;
 
-import configs.ElevatorSystemConfig;
+import databases.configs.ElevatorSystemConfig;
 import lombok.Getter;
 import model.objects.elevator.Elevator;
 import tools.Vector2D;
@@ -22,10 +22,10 @@ public class Building {
 
         this.wallSize = (settings.buildingSize.y) / settings.floorsCount;
 
-        for (int i = 0; i < settings.maxElevatorsCount; i++) {
+        for (int i = 0; i < settings.elevatorsCount; i++) {
             var newElevator = new Elevator(new Vector2D(distanceBetweenElevators * (i + 1), 0),settings);
             newElevator.setWallSize(wallSize);
-            newElevator.setVisible(false);
+            newElevator.setVisible(true);
             elevators.add(newElevator);
         }
 

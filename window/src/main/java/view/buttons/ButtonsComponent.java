@@ -1,6 +1,6 @@
 package view.buttons;
 
-import configs.tools.CombienedDrawDataBase;
+import databases.CombienedDrawDataBase;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.GuiModel;

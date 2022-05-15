@@ -1,9 +1,9 @@
 package model.objects.elevator;
 
-import configs.ElevatorSystemConfig;
+import databases.configs.ElevatorSystemConfig;
 import lombok.Getter;
 import lombok.Setter;
-import model.objects.movingObject.MovingObject;
+import model.objects.movingObject.MovingCreature;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Timer;
 import tools.Vector2D;
@@ -14,7 +14,7 @@ import java.util.*;
  * Elevator is storing all requests under and behind his way, the algorithm finds the closest floor by
  * calculating distance to came from floor A to floor B and all intermediate floors.
  */
-public class Elevator extends MovingObject {
+public class Elevator extends MovingCreature {
     public static final int UNEXISTING_FLOOR = 999;
     public final Timer TIMER = new Timer();
 

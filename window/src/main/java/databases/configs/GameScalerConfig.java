@@ -1,4 +1,4 @@
-package configs;
+package databases.configs;
 
 import tools.Vector2D;
 

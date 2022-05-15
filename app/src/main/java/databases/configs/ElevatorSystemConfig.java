@@ -1,4 +1,4 @@
-package configs;
+package databases.configs;
 
 import controller.ElevatorsConductor;
 import lombok.Getter;
@@ -22,7 +22,6 @@ public class ElevatorSystemConfig implements Serializable {
     public final double buttonRelativePosition = elevatorSize.x / 2. + 7;
     public final long elevatorOpenCloseTime = 1000;
     public final int elevatorMaxHumanCapacity = 4;
-    public final int maxElevatorsCount = 16;
     public final double elevatorSpeed = 150;
     public final int floorsCount = 5;
 

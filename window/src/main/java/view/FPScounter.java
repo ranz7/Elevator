@@ -1,7 +1,7 @@
 package view;
 
 import architecture.tickable.Tickable;
-import configs.GuiControllerConfig;
+import databases.configs.GuiControllerConfig;
 
 import java.awt.Color;
 import java.util.List;

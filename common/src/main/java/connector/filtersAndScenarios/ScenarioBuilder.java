@@ -30,6 +30,6 @@ public class ScenarioBuilder {
 
     public Scenario build(Function<Protocol, Boolean> filterToRepeatAtTheEnd) {
         filterSequence.add(filterToRepeatAtTheEnd);
-        return new Scenario(filterSequence, onEnd, onStart);
+        return new Scenario(filterSequence, onStart,onEnd);
     }
 }
