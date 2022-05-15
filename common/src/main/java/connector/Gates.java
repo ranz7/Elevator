@@ -7,13 +7,17 @@ import connector.baseStation.download.Uplink;
 import connector.filtersAndScenarios.FilterScenarios;
 import connector.protocol.Protocol;
 import connector.protocol.ProtocolMessage;
+<<<<<<< Updated upstream
 import connector.protocol.ProtocolMessageListener;
 import connector.baseStation.Downlink;
+=======
+import connector.protocol.ProtocolMessagesController;
+import connector.dualConnectionStation.upload.Uplink;
+>>>>>>> Stashed changes
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -27,8 +31,13 @@ import java.util.logging.Logger;
 public class Gates implements Uplink {
 
 
+<<<<<<< Updated upstream
     private final BaseStation upload;
     private final ProtocolMessageListener listener;
+=======
+    private final BaseDualConectionStation upload;
+    private final ProtocolMessagesController listener;
+>>>>>>> Stashed changes
     private final LinkedList<ProtocolMessage> mesages = new LinkedList<>();
 
     // EVENTS
@@ -46,6 +55,15 @@ public class Gates implements Uplink {
     List<Function<Protocol, Boolean>> scenario = FilterScenarios.noFilter;
     Function<Protocol, Boolean> filter;
 
+<<<<<<< Updated upstream
+=======
+    public Gates(BaseDualConectionStation upload, ProtocolMessagesController listener) {
+        this.upload = upload;
+        this.listener = listener;
+        this.upload.setDownlink(this);
+    }
+
+>>>>>>> Stashed changes
     public void start() {
         Logger.getAnonymousLogger().info("Start Gates");
         upload.start();

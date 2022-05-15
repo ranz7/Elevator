@@ -1,5 +1,10 @@
 package view.buttons;
 
+<<<<<<< Updated upstream
+=======
+import settings.CombienedDrawSettings;
+import lombok.RequiredArgsConstructor;
+>>>>>>> Stashed changes
 import lombok.Setter;
 import model.GuiModel;
 import view.gui.ButtonsListener;
@@ -14,9 +19,14 @@ import java.util.List;
 import view.gui.Gui;
 
 public class ButtonsComponent {
+<<<<<<< Updated upstream
     private Gui gui;
     private GuiModel guiModel;
     private final GameWindow gameWindow;
+=======
+    private final JComponent window;
+    private CombienedDrawSettings settings;
+>>>>>>> Stashed changes
     @Setter
     private ActionListener buttonListener;
 
@@ -137,6 +147,10 @@ public class ButtonsComponent {
     }
 
     public void setModel(GuiModel model) {
+<<<<<<< Updated upstream
         this.guiModel = model;
+=======
+        settings = model.getCombienedDrawSettings();
+>>>>>>> Stashed changes
     }
 }

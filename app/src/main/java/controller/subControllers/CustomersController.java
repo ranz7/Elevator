@@ -1,6 +1,12 @@
-package controller;
+package controller.subControllers;
 
+<<<<<<< Updated upstream:app/src/main/java/controller/CustomersConductor.java
 import configs.CustomerSettings;
+=======
+import connector.Gates;
+import settings.LocalObjectsSettings;
+import settings.configs.CustomerConfig;
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/CustomersController.java
 import lombok.Getter;
 import tools.tools.Vector2D;
 import model.AppModel;
@@ -18,10 +24,18 @@ import tools.tools.Timer;
  *
  * @see CustomerSettings
  */
+<<<<<<< Updated upstream:app/src/main/java/controller/CustomersConductor.java
 public class CustomersConductor {
     @Getter
     private final CustomerSettings settings = new CustomerSettings();
     private final ElevatorsConductor ELEVATOR_SYSTEM_CONTROLLER;
+=======
+@RequiredArgsConstructor
+public class CustomersController implements Tickable {
+    @Getter
+    private final LocalObjectsSettings dataBase;
+    private final Gates gates;
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/CustomersController.java
     private final Timer spawnTimer = new Timer();
     private final AppController AppCONTROLLER;
     AppModel appModel;

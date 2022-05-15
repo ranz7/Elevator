@@ -1,13 +1,24 @@
-package controller;
+package controller.subControllers;
 
+<<<<<<< Updated upstream:app/src/main/java/controller/ElevatorsConductor.java
+=======
+import connector.Gates;
+import controller.ControllerConnector;
+import lombok.RequiredArgsConstructor;
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/ElevatorsController.java
 import model.objects.elevator.ElevatorRequest;
-import model.objects.elevator.ElevatorState;
-import model.objects.building.Building;
 import model.objects.elevator.Elevator;
+<<<<<<< Updated upstream:app/src/main/java/controller/ElevatorsConductor.java
 import configs.ElevatorSystemSettings;
 import connector.protocol.Protocol;
 import model.AppModel;
 import lombok.Getter;
+=======
+import settings.configs.ElevatorSystemConfig;
+import connector.protocol.Protocol;
+import model.AppModel;
+import architecture.tickable.Tickable;
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/ElevatorsController.java
 
 import java.util.stream.Collectors;
 import java.util.LinkedList;
@@ -17,12 +28,21 @@ import java.util.LinkedList;
  * Manipulate all elevators in game.
  * @see ElevatorSystemSettings
  */
+<<<<<<< Updated upstream:app/src/main/java/controller/ElevatorsConductor.java
 public class ElevatorsConductor {
     @Getter
     private final ElevatorSystemSettings settings = new ElevatorSystemSettings();
+=======
+@RequiredArgsConstructor
+public class ElevatorsController implements Tickable {
+    private final Gates gates;
+    private final AppModel appModel;
+    private final ControllerConnector connector;
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/ElevatorsController.java
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
     private final AppController appController;
 
+<<<<<<< Updated upstream:app/src/main/java/controller/ElevatorsConductor.java
     private AppModel appModel;
 
     public ElevatorsConductor(AppController appController) {
@@ -44,12 +64,18 @@ public class ElevatorsConductor {
                 case OPENING, CLOSING -> processOpeningClosing(elevator);
                 case OPENED -> processOpened(elevator);
             }
+=======
+    @Override
+    public void tick(double deltaTime) {
+        pendingElevatorRequests.removeIf(this::tryToCallElevator);
+        for (var elevator : appModel.getBuildings().elevators) {
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/ElevatorsController.java
             elevator.tick(deltaTime);
         }
     }
 
     public void buttonClick(ElevatorRequest request) {
-        appController.Send(Protocol.ELEVATOR_BUTTON_CLICK, request.button_position());
+        gates.send(Protocol.ELEVATOR_BUTTON_CLICK, request.button_position());
         if (!tryToCallElevator(request)) {
             pendingElevatorRequests.add(request);
         }
@@ -68,6 +94,7 @@ public class ElevatorsConductor {
         currentElevator.findBestFloor();
     }
 
+<<<<<<< Updated upstream:app/src/main/java/controller/ElevatorsConductor.java
     private void processWait(Elevator elevator) {
         if (!elevator.TIMER.isReady()) {
             return;
@@ -114,6 +141,12 @@ public class ElevatorsConductor {
     private boolean tryToCallElevator(ElevatorRequest request) {
         // closest, free, and go the same way / or wait
         LinkedList<Elevator> elevatorsAvailable = appModel.getBuilding().ELEVATORS.stream()
+=======
+
+    private boolean tryToCallElevator(ElevatorRequest request) {
+        // closest, free, and go the same way / or wait
+        LinkedList<Elevator> elevatorsAvailable = appModel.getBuildings().elevators.stream()
+>>>>>>> Stashed changes:app/src/main/java/controller/subControllers/ElevatorsController.java
                 .filter(Elevator::isAvailable)
                 .collect(Collectors.toCollection(LinkedList::new));
         if (elevatorsAvailable.size() == 0) {
@@ -123,7 +156,7 @@ public class ElevatorsConductor {
         Elevator closestElevator = elevatorsAvailable.stream()
                 .reduce(null, (elevatorA, elevatorB) -> this.closestElevator(request, elevatorA, elevatorB));
 
-        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuilding().getWallSize());
+        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuildings().getWallSize());
         closestElevator.addFloorToPickUp(requestFloor);
         closestElevator.findBestFloor();
         return true;
@@ -137,7 +170,7 @@ public class ElevatorsConductor {
             return elevatorA;
         }
 
-        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuilding().getWallSize());
+        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuildings().getWallSize());
         double timeToBeForElevatorA = elevatorA.getTimeToBeHere(requestFloor);
         double timeToBeForElevatorB = elevatorB.getTimeToBeHere(requestFloor);
         if (timeToBeForElevatorA > timeToBeForElevatorB) {

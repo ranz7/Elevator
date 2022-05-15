@@ -1,5 +1,9 @@
 package view.drawTools;
 
+<<<<<<< Updated upstream:window/src/main/java/view/drawTools/GameScaler.java
+=======
+import settings.configs.GameScalerConfig;
+>>>>>>> Stashed changes:window/src/main/java/view/graphics/GameScaler.java
 import lombok.Getter;
 import tools.tools.Vector2D;
 

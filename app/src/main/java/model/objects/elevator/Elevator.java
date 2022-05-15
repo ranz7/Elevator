@@ -1,6 +1,12 @@
 package model.objects.elevator;
 
+<<<<<<< Updated upstream
 import configs.ElevatorSystemSettings;
+=======
+import connector.protocol.Protocol;
+import settings.LocalObjectsSettings;
+import settings.configs.ElevatorSystemConfig;
+>>>>>>> Stashed changes
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.movingObject.MovingObject;
@@ -37,10 +43,71 @@ public class Elevator extends MovingObject {
     private final TreeSet<Integer> THROW_OUT_TOP = new TreeSet<>();
     private final TreeSet<Integer> THROW_OUT_BOTTOM = new TreeSet<>();
 
+<<<<<<< Updated upstream
+=======
+
+    public Elevator(Vector2D position, LocalObjectsSettings settings) {
+        super(position, settings.elevatorSize,
+                Trajectory.StayOnPlaceWithDefaultConstantSpeed(settings.elevatorSpeed));
+        this.TIME_TO_STOP_ON_FLOOR = settings.elevatorOpenCloseTime * 2 +
+                settings.elevatorAfterCloseAfkTime + settings.elevatorWaitAsOpenedTime;
+        this.MAX_HUMAN_CAPACITY = settings.elevatorMaxHumanCapacity;
+        this.state = ElevatorState.WAIT;
+    }
+
+>>>>>>> Stashed changes
     @Override
     public void tick(long deltaTime) {
         super.tick(deltaTime);
         TIMER.tick(deltaTime);
+        switch (elevator.getState()) {
+            case WAIT -> processWait(elevator);
+            case IN_MOTION -> processInMotion(elevator);
+            case OPENING, CLOSING -> processOpeningClosing(elevator);
+            case OPENED -> processOpened(elevator);
+        }
+    }
+
+    private void processInMotion(Elevator elevator) {
+        if (elevator.isReachedDestination()) {
+            gates.Send(Protocol.ELEVATOR_OPEN, elevator.getId());
+            elevator.TIMER.restart(settings.elevatorOpenCloseTime);
+            elevator.setState(ElevatorState.OPENING);
+        }
+    }
+    private void processWait(Elevator elevator) {
+        if (!elevator.TIMER.isReady()) {
+            return;
+        }
+        int bestFloor = elevator.findBestFloor();
+        if (bestFloor != Elevator.UNEXISTING_FLOOR) {
+            elevator.setFloorDestination(bestFloor);
+            elevator.setState(ElevatorState.IN_MOTION);
+        }
+    }
+
+    private void processOpeningClosing(Elevator elevator) {
+        if (!elevator.TIMER.isReady()) {
+            return;
+        }
+        if (elevator.getState() == ElevatorState.OPENING) {
+            elevator.TIMER.restart(settings.elevatorWaitAsOpenedTime);
+            elevator.setState(ElevatorState.OPENED);
+            elevator.arrived();
+        }
+        if (elevator.getState() == ElevatorState.CLOSING) {
+            elevator.TIMER.restart(settings.elevatorAfterCloseAfkTime);
+            elevator.setState(ElevatorState.WAIT);
+        }
+    }
+
+    private void processOpened(Elevator elevator) {
+        if (!elevator.TIMER.isReady()) {
+            return;
+        }
+        elevator.TIMER.restart(settings.elevatorOpenCloseTime);
+        gates.Send(Protocol.ELEVATOR_CLOSE, elevator.getId());
+        elevator.setState(ElevatorState.CLOSING);
     }
 
     public int findBestFloor() {

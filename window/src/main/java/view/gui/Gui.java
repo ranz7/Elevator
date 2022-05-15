@@ -48,6 +48,13 @@ public class Gui {
     }
 
     public void resize() {
+<<<<<<< Updated upstream
+=======
+        if (!guiModel.getCombienedDrawSettings().initialized()) {
+            return;
+        }
+        gameWindow.resize(gameWindow.getSize());
+>>>>>>> Stashed changes
         buttonsComponent.resize(gameWindow.getSize());
         gameWindow.resize(gameWindow.getSize());
     }

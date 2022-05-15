@@ -1,6 +1,7 @@
 package model;
 
 
+<<<<<<< Updated upstream
 import configs.MainInitializationSettings;
 import configs.ColorSettings;
 import configs.DrawSettings;
@@ -71,6 +72,25 @@ public class GuiModel {
 
     public void clearDead() {
         flyingTexts.removeIf(MovingObject::isDead);
+=======
+import connector.protocol.GameMapCompactData;
+import settings.CombienedDrawSettings;
+import configs.ConnectionEstalblishConfig;
+import drawable.abstracts.DrawableMovingCreature;
+import model.packageLoader.PackageLoader;
+import drawable.concretes.building.floor.elevatorSpace.ElevatorButton;
+import drawable.concretes.customer.DrawableCustomer;
+import drawable.concretes.elevator.DrawableElevator;
+import lombok.Getter;
+import tools.Vector2D;
+
+public class GuiModel extends DataBaseOfDrawableCreatures {
+    @Getter
+    private final CombienedDrawSettings combienedDrawSettings = new CombienedDrawSettings();
+
+    public void addMovingDrawable(DrawableMovingCreature text) {
+        add(text);
+>>>>>>> Stashed changes
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {
@@ -94,15 +114,32 @@ public class GuiModel {
                 });
     }
 
+<<<<<<< Updated upstream
+=======
+    public DrawableCustomer getCustomer(long id) {
+        var ref = new Object() {
+            DrawableCustomer customer = null;
+        };
+        streamOf(DrawableCustomer.class).filter(elevator -> elevator.getId() == id)
+                .findFirst().ifPresentOrElse(customer -> ref.customer = customer, () -> {
+                    throw new RuntimeException("Customer not fond.");
+                });
+        return ref.customer;
+    }
+
+>>>>>>> Stashed changes
     public DrawableElevator getElevator(long id) {
         var ref = new Object() {
             DrawableElevator foundDrawableElevator;
         };
-        elevators.stream().filter(elevator -> elevator.getId() == id).findFirst().ifPresent(
-                drawableElevator -> ref.foundDrawableElevator = drawableElevator);
+        streamOf(DrawableElevator.class).filter(elevator -> elevator.getId() == id)
+                .findFirst().ifPresentOrElse(drawableElevator -> ref.foundDrawableElevator = drawableElevator, () -> {
+                    throw new RuntimeException("Elevator not found");
+                });
         return ref.foundDrawableElevator;
     }
 
+<<<<<<< Updated upstream
     public void setSettings(MainInitializationSettings settings) {
         this.settings = settings;
     }
@@ -166,6 +203,13 @@ public class GuiModel {
         if (isNeedToInitialise()) {
             initialiseFirstData();
         }
+=======
+    public void setRemoteConfig(ConnectionEstalblishConfig connectionEstalblishConfig) {
+        combienedDrawSettings.setConnectionEstalblishConfig(connectionEstalblishConfig);
     }
 
+    public void applyArivedData(GameMapCompactData data) {
+        PackageLoader.applyArivedData(data, this, combienedDrawSettings);
+>>>>>>> Stashed changes
+    }
 }

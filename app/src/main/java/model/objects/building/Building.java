@@ -1,13 +1,22 @@
 package model.objects.building;
 
+<<<<<<< Updated upstream
 import configs.ElevatorSystemSettings;
+=======
+import architecture.tickable.Tickable;
+import model.DataBaseOfCreatures;
+import settings.LocalObjectsSettings;
+>>>>>>> Stashed changes
 import lombok.Getter;
+import model.objects.Creature;
+import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
 import tools.tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.Random;
 
+<<<<<<< Updated upstream
 public class Building {
     public final LinkedList<Elevator> ELEVATORS = new LinkedList<>();
     public final ElevatorSystemSettings SETTINGS;
@@ -43,6 +52,40 @@ public class Building {
             } else {
                 elevator.setVisible(false);
             }
+=======
+public class Building extends Creature {
+    private final DataBaseOfCreatures dataBase = new DataBaseOfCreatures(this);
+    public final LocalObjectsSettings settings;
+
+    public Building(Vector2D position, DataBaseOfCreatures dataBaseOfCreatures, LocalObjectsSettings settings) {
+        super(position, settings.buildingSize());
+        this.settings = settings;
+        dataBaseOfCreatures.register(dataBaseOfCreatures);
+        settings.distanceBetweenElevators();
+
+        for (int i = 0; i < settings.elevatorsCount(); i++) {
+            dataBase.add(
+                    new Elevator(new Vector2D(settings.distanceBetweenElevators() * (i + 1),
+                            0), settings));
+        }
+
+        var random = new Random(settings.picturesGeneratorSeed());
+        for(int i = 0; i < settings.floorsCount(); i++){
+            var floor = new Floor(oldFloorsCount++, combienedDrawDataBase);
+            for (var elevator : elevators) {
+                floor.addSubDrawable(
+                        new ElevatorBorder(new Vector2D(elevator.getPosition().x, 0), elevator, combienedDrawDataBase));
+                var decorationPosition = new Vector2D(elevator.getPosition().x + combienedDrawDataBase.distanceBetweenElevators() / 2,
+                        combienedDrawDataBase.floorHeight() / 2);
+                floor.addSubDrawable(
+                        new FloorPainting(decorationPosition, combienedDrawDataBase, random));
+            }
+            var decorationPosition = new Vector2D(combienedDrawDataBase.distanceBetweenElevators() / 2,
+                    combienedDrawDataBase.floorHeight() / 2);
+            floor.addSubDrawable(
+                    new FloorPainting(decorationPosition, combienedDrawDataBase, random));
+            floors.add(floor);
+>>>>>>> Stashed changes
         }
 
     }
@@ -104,6 +147,14 @@ public class Building {
                 && elevator.isFree()
                 && elevator.isVisible());
     }
+<<<<<<< Updated upstream
+=======
+
+
+    public LinkedList<Customer> getCreaturesList() {
+        return customers;
+    }
+>>>>>>> Stashed changes
 }
 
 

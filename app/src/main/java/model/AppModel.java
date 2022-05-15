@@ -1,6 +1,7 @@
 package model;
 
 import configs.ConnectionSettings;
+<<<<<<< Updated upstream
 import configs.CustomerSettings;
 import configs.ElevatorSystemSettings;
 import configs.MainInitializationSettings;
@@ -13,14 +14,20 @@ import model.objects.movingObject.MovingObject;
 import model.objects.building.Building;
 import model.objects.customer.Customer;
 import tools.tools.Vector2D;
+=======
+import model.objects.AppGameMap;
+import settings.LocalObjectsSettings;
+import configs.ConnectionEstalblishConfig;
+import lombok.Getter;
+import connector.protocol.GameMapCompactData;
+>>>>>>> Stashed changes
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 /*
  * Class to store all objects.
  */
+<<<<<<< Updated upstream
 @NoArgsConstructor
 public class AppModel {
     @Getter
@@ -54,8 +61,23 @@ public class AppModel {
                 settingsElevator.getElevatorsCount(),
                 settingsElevator.FLOORS_COUNT,
                 settingsElevator.BUTTON_RELATIVE_POSITION,
+=======
+
+public class AppModel {
+    @Getter
+    private final LocalObjectsSettings localObjectsSettings = new LocalObjectsSettings();
+    AppGameMap appGameMap = new AppGameMap(localObjectsSettings);
+
+    public GameMapCompactData sendMap() {
+        return new GameMapCompactData(appGameMap.getDataBase().toIdAndCreaturesList());
+    }
+
+    public Serializable createMainInitializationSettingsToSend(double gameSpeed) {
+        return new ConnectionEstalblishConfig(
+                localObjectsSettings.elevatorOpenCloseTime(),
+                localObjectsSettings.buttonRelativePosition(),
+>>>>>>> Stashed changes
                 gameSpeed,
                 ConnectionSettings.VERSION);
     }
-
 }
