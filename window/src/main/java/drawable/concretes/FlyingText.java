@@ -24,7 +24,7 @@ public class FlyingText extends DrawableMovingCreature {
     }
 
     public FlyingText(String text, Vector2D position, Trajectory trajecotry, int colorSize, Color color) { // uups :)
-        super(new MovingCreature(position, new Vector2D(100, colorSize), trajecotry), new Text(text, color), null);
+        super( position, new Vector2D(100, colorSize), trajecotry, new Text(text, color), null);
     }
 
 

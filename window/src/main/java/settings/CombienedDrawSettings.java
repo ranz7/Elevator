@@ -1,66 +1,46 @@
 package settings;
 
-import configs.ConnectionEstalblishConfig;
-import settings.localDraw.LocalDrawSetting;
+import configs.RoomPrepareCompactData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
 import java.util.Random;
 
-
+@AllArgsConstructor
 public class CombienedDrawSettings extends LocalDrawSetting {
+    @Getter
     @Setter
-    private ConnectionEstalblishConfig connectionEstalblishConfig;
+    private RoomPrepareCompactData.RoomData roomPrepareCompactData;
 
     public boolean initialized() {
-        if (connectionEstalblishConfig == null) {
+        if (roomPrepareCompactData == null) {
             return false;
         }
-        return super.initialized(connectionEstalblishConfig.getClass());
+        return super.initialized(roomPrepareCompactData.getClass());
     }
-
-    public int floorsCount() {
-        return connectionEstalblishConfig.floorsCount;
-    }
-
 
     public long elevatorOpenCloseTime() {
-        return connectionEstalblishConfig.elevatorOpenCloseTime;
+        return roomPrepareCompactData.elevatorOpenCloseTime();
     }
 
-
-    public int elevatorsCount() {
-        return connectionEstalblishConfig.elevatorsCount;
-    }
-
-
-    public double floorHeight() {
-        return buildingSize().y / floorsCount();
-    }
-
-    public Vector2D buildingSize() {
-        return connectionEstalblishConfig.buildingSize;
-    }
-
-    public Vector2D customerSize() {
-        return connectionEstalblishConfig.customerSize;
-    }
-
-    public Vector2D elevatorSize() {
-        return connectionEstalblishConfig.elevatorSize;
-    }
-
-    public double buttonRelativePosition() {
-        return connectionEstalblishConfig.buttonRelativePosition;
-    }
-
-    public double distanceBetweenElevators() {
-        return buildingSize().x / (elevatorsCount() + 1);
+    public int roomId() {
+        return roomPrepareCompactData.roomId();
     }
 
     public Color getRandomCustomerSkin() {
-        var colors =  customerSkins();
-        return colors[(int) ((Math.abs( new Random().nextInt())) % colors.length)];
+        var colors = customerSkins();
+        return colors[(int) ((Math.abs(new Random().nextInt())) % colors.length)];
+    }
+
+    public Vector2D customerSize() {
+        return roomPrepareCompactData.customerSize();
+    }
+
+    public double gameSpeed() {
+        return roomPrepareCompactData.gameSpeed();
     }
 }

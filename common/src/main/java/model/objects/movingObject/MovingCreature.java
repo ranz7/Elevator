@@ -1,10 +1,6 @@
 package model.objects.movingObject;
 
 
-import architecture.tickable.Tickable;
-import lombok.Getter;
-import lombok.Setter;
-
 import model.objects.Creature;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Vector2D;
@@ -17,6 +13,9 @@ public class MovingCreature extends Creature  {
         this.trajecotry = trajecotry;
     }
 
+    protected void setSpeedCoefficient(Double coefficient) {
+        trajecotry.setSpeedCoefficient(coefficient);
+    }
 
     @Override
     public void tick(double delta_time) {
@@ -27,8 +26,8 @@ public class MovingCreature extends Creature  {
         return trajecotry.reached(getPosition());
     }
 
-    public double getConstSpeed() {
-        return trajecotry.getConstSpeed();
+    public double getSpeed() {
+        return trajecotry.getSpeed();
     }
 
     public void setMoveTrajectory(Trajectory trajectory) {

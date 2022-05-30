@@ -2,5 +2,5 @@ package model.objects.elevator;
 
 import tools.Vector2D;
 
-public record ElevatorRequest(Vector2D button_position, boolean is_go_up) {
+public record ElevatorRequest(Integer floorNum, Vector2D buttonPosition, boolean isGoUp) {
 }

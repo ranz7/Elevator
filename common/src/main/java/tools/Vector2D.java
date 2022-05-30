@@ -32,94 +32,98 @@ public class Vector2D extends Point2D.Double {
         this(point.x, point.y);
     }
 
-    public double distanceTo(Point2D.Double positionA) {
+    public Vector2D(Dimension size) {
+        this(size.width, size.height);
+    }
+
+    public double distance(Point2D.Double positionA) {
         return Math.sqrt(Math.pow(positionA.x - x, 2) + Math.pow(positionA.y - y, 2));
     }
 
-    public Vector2D getVectorTo(Point2D.Double destination) {
+    public Vector2D getTo(Vector2D destination) {
         return new Vector2D(destination.x - x, destination.y - y);
     }
 
-    public double getLength() {
+    public double length() {
         return Math.sqrt(x * x + y * y);
     }
 
-    public Vector2D getDivided(double length) {
+    public Vector2D divide(double length) {
         return new Vector2D(x / length, y / length);
     }
 
-    public Vector2D getMultiplied(double length) {
+    public Vector2D multiply(double length) {
         return new Vector2D(x * length, y * length);
     }
 
-    public Vector2D getAdded(Vector2D second) {
+    public Vector2D add(Vector2D second) {
         return new Vector2D(x + second.x, y + second.y);
     }
 
-    public Vector2D getAdded(double add) {
+    public Vector2D add(double add) {
         return new Vector2D(x + add, y + add);
     }
 
-    public Vector2D getSubbed(Vector2D vectorB) {
+    public Vector2D sub(Vector2D vectorB) {
         return new Vector2D(x - vectorB.x, y - vectorB.y);
     }
 
     public Vector2D getNearest(Vector2D vectorA, Vector2D vectorB) {
-        return distanceTo(vectorA) < distanceTo(vectorB) ? vectorA : vectorB;
+        return distance(vectorA) < distance(vectorB) ? vectorA : vectorB;
     }
 
     public Vector2D getShiftedByDistance(Vector2D destination, double distance) {
-        Vector2D moveDirection = getVectorTo(destination);
+        Vector2D moveDirection = getTo(destination);
 
-        if (moveDirection.getLength() > EPSILON) {
+        if (moveDirection.length() > EPSILON) {
             moveDirection = moveDirection.changeLength(distance);
         }
 
-        var vectorToDestinationAfterShift = getAdded(moveDirection).getVectorTo(destination);
-        var vectorToDestination = getVectorTo(destination);
+        var vectorToDestinationAfterShift = add(moveDirection).getTo(destination);
+        var vectorToDestination = getTo(destination);
 
         if (vectorToDestinationAfterShift.x * vectorToDestination.x <= EPSILON &&
                 vectorToDestinationAfterShift.y * vectorToDestination.y <= EPSILON) {
             return destination;
         } else {
-            return getAdded(moveDirection);
+            return add(moveDirection);
         }
     }
 
     private Vector2D changeLength(double length) {
-        return makeUnit().getMultiplied(length);
+        return makeUnit().multiply(length);
     }
 
     private Vector2D makeUnit() {
-        return getDivided(getLength());
+        return divide(length());
     }
 
     public Point toPoint() {
         return new Point((int) x, (int) y);
     }
 
-    public Vector2D getMultiplied(Vector2D multiply) {
+    public Vector2D multiply(Vector2D multiply) {
         return new Vector2D(x * multiply.x, y * multiply.y);
     }
 
-    public Vector2D getDivided(Vector2D division) {
+    public Vector2D divide(Vector2D division) {
         return new Vector2D(x / division.x, y / division.y);
     }
 
-    public double getMaxOfTwo() {
+    public double maxOfXY() {
         return Math.max(x, y);
     }
 
-    public Vector2D getAddedX(double x) {
+    public Vector2D addByX(double x) {
         return new Vector2D(this.x + x, y);
     }
 
-    public Vector2D getAddedY(double y) {
+    public Vector2D addByY(double y) {
         return new Vector2D(x, this.y + y);
     }
 
-    public Vector2D getDividedX(double x) {
-        return new Vector2D(this.x/x, this.y);
+    public Vector2D divideByX(double x) {
+        return new Vector2D(this.x / x, this.y);
     }
 
     @Override
@@ -135,9 +139,28 @@ public class Vector2D extends Point2D.Double {
         return Math.abs(x - vector2D.x) < EPSILON && Math.abs(y - vector2D.y) < EPSILON;
     }
 
-    public void set(Vector2D position) {
+    public Vector2D set(Vector2D position) {
         this.x = position.x;
         this.y = position.y;
+        return this;
     }
 
+    public Vector2D onlyX(double newX) {
+        this.x = newX;
+        return this;
+    }
+
+
+    public Vector2D onlyY(double newY) {
+        this.y = newY;
+        return this;
+    }
+
+    public boolean isZero() {
+        return this.equals(new Vector2D(0, 0));
+    }
+
+    public Vector2D multiplyY(long multiplyBy) {
+        return new Vector2D(x, y * multiplyBy);
+    }
 }

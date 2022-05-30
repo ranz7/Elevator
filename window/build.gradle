@@ -19,6 +19,8 @@ dependencies {
     compileOnly 'org.json:json:20171018'
     implementation project(':common')
     compileOnly project(':common')
+    implementation project(':connector')
+    compileOnly project(':connector')
 }
 
 repositories {

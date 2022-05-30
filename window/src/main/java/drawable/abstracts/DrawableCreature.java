@@ -1,6 +1,5 @@
 package drawable.abstracts;
 
-import architecture.tickable.Tickable;
 import lombok.Setter;
 import settings.localDraw.LocalDrawSetting;
 import drawable.drawTool.DrawTool;

@@ -1,14 +1,13 @@
 package controller.subControllers;
 
-import connector.Gates;
-import controller.ControllerConnector;
 import lombok.RequiredArgsConstructor;
+import model.objects.GameMap;
+import model.objects.floor.FloorStructure;
 import model.objects.elevator.ElevatorRequest;
 import model.objects.elevator.Elevator;
-import settings.configs.ElevatorSystemConfig;
-import connector.protocol.Protocol;
-import model.AppModel;
-import architecture.tickable.Tickable;
+import protocol.Protocol;
+import controller.Tickable;
+import tools.Vector2D;
 
 import java.util.stream.Collectors;
 import java.util.LinkedList;
@@ -21,43 +20,33 @@ import java.util.LinkedList;
  */
 @RequiredArgsConstructor
 public class ElevatorsController implements Tickable {
-    private final Gates gates;
-    private final AppModel appModel;
-    private final ControllerConnector connector;
+    private final GameMap gameMap;
+    private final FloorStructure baseFloorStructure;
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
 
     @Override
     public void tick(double deltaTime) {
         pendingElevatorRequests.removeIf(this::tryToCallElevator);
-        for (var elevator : appModel.getBuildings().elevators) {
-            elevator.tick(deltaTime);
-        }
     }
 
-    public void buttonClick(ElevatorRequest request) {
-        gates.send(Protocol.ELEVATOR_BUTTON_CLICK, request.button_position());
-        if (!tryToCallElevator(request)) {
-            pendingElevatorRequests.add(request);
-        }
+    public void buttonClick(Integer floorNum, Vector2D buttonPosition, boolean goUp) {
+        gameMap.send(Protocol.ELEVATOR_BUTTON_CLICK, buttonPosition);
+        var request = new ElevatorRequest(floorNum, buttonPosition, goUp);
+        pendingElevatorRequests.add(request);
     }
 
-    public void getCustomerIntoElevator(Elevator nearestOpenedElevator) {
-        nearestOpenedElevator.put();
+
+    public void addCustomer(Elevator nearestOpenedElevator) {
+        nearestOpenedElevator.addCustomer();
     }
 
-    public void getOutFromElevator(Elevator currentElevator) {
-        currentElevator.remove();
+    public void removeCustomer(Elevator currentElevator) {
+        currentElevator.removeCustomer();
     }
-
-    public void setFloorToReach(Elevator currentElevator, int floorEnd) {
-        currentElevator.addFloorToThrowOut(floorEnd);
-        currentElevator.findBestFloor();
-    }
-
 
     private boolean tryToCallElevator(ElevatorRequest request) {
         // closest, free, and go the same way / or wait
-        LinkedList<Elevator> elevatorsAvailable = appModel.getBuildings().elevators.stream()
+        LinkedList<Elevator> elevatorsAvailable = gameMap.getLocalDataBase().streamOf(Elevator.class)
                 .filter(Elevator::isAvailable)
                 .collect(Collectors.toCollection(LinkedList::new));
         if (elevatorsAvailable.size() == 0) {
@@ -67,9 +56,7 @@ public class ElevatorsController implements Tickable {
         Elevator closestElevator = elevatorsAvailable.stream()
                 .reduce(null, (elevatorA, elevatorB) -> this.closestElevator(request, elevatorA, elevatorB));
 
-        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuildings().getWallSize());
-        closestElevator.addFloorToPickUp(requestFloor);
-        closestElevator.findBestFloor();
+        closestElevator.addFloorToPickUp(request.floorNum());
         return true;
     }
 
@@ -81,7 +68,7 @@ public class ElevatorsController implements Tickable {
             return elevatorA;
         }
 
-        var requestFloor = (int) Math.round(request.button_position().y / appModel.getBuildings().getWallSize());
+        var requestFloor = request.floorNum();
         double timeToBeForElevatorA = elevatorA.getTimeToBeHere(requestFloor);
         double timeToBeForElevatorB = elevatorB.getTimeToBeHere(requestFloor);
         if (timeToBeForElevatorA > timeToBeForElevatorB) {
@@ -90,7 +77,7 @@ public class ElevatorsController implements Tickable {
         if (timeToBeForElevatorA < timeToBeForElevatorB) {
             return elevatorA;
         }
-        if (request.button_position().getNearest(elevatorA.getPosition(), elevatorB.getPosition())
+        if (request.buttonPosition().getNearest(elevatorA.getPosition(), elevatorB.getPosition())
                 .equals(elevatorA.getPosition())) {
             return elevatorA;
         }
@@ -99,12 +86,18 @@ public class ElevatorsController implements Tickable {
 
     public void changeElevatorsCount(boolean data) {
         if (data) {
-            settings.setElevatorsCount(settings.getElevatorsCount() + 1);
-
+//            baseFloorStructure.addButton(42);
         } else {
-            settings.setElevatorsCount(settings.getElevatorsCount() - 1);
+//            baseFloorStructure.removeElevator()
         }
         //           appModel.getBuilding().updateElevatorsPosition();
+    }
 
+    public void elevatorDoorsOpen(long elevatoId) {
+        gameMap.send(Protocol.ELEVATOR_OPEN, elevatoId);
+    }
+
+    public void elevatorDoorsClose(long elevatorId) {
+        gameMap.send(Protocol.ELEVATOR_CLOSE, elevatorId);
     }
 }

@@ -2,7 +2,7 @@ package drawable.drawTool.figuresComponent;
 
 import drawable.drawTool.DrawTool;
 import tools.Vector2D;
-import view.graphics.GameGraphics;
+import model.planes.graphics.Painter;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ public class FiguresComponent extends DrawTool {
     }
 
     @Override
-    public void draw(Vector2D position, Vector2D size, GameGraphics drawer) {
+    public void draw(Vector2D position, Vector2D size, Painter drawer) {
 
     }
 

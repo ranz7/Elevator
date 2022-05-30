@@ -1,6 +1,6 @@
 package model.objects;
 
-import architecture.tickable.Tickable;
+import controller.TickableList;
 import lombok.Getter;
 import lombok.Setter;
 import tools.Vector2D;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Basic object of all objects in project
  */
 
-public abstract class Creature implements Serializable, Tickable {
+public abstract class Creature implements Serializable, CreatureInterface {
     // used in sent data
     private static int next_id = 0;
 
@@ -30,7 +30,7 @@ public abstract class Creature implements Serializable, Tickable {
     @Getter
     protected Vector2D position;
     @Getter
-    protected long id;
+    protected int id;
 
     public Creature(Creature creatureA) {
         position = new Vector2D(creatureA.position);
@@ -51,5 +51,21 @@ public abstract class Creature implements Serializable, Tickable {
         this.position.set(creature.position);
         this.size.set(creature.size);
         this.isVisible = creature.isVisible;
+    }
+
+    @Override
+    public void applyDelta(Vector2D deltaInParentPositions) {
+        position = getPosition().sub(deltaInParentPositions);
+    }
+
+    @Override
+    public void tick(double deltaTime) {
+    }
+
+    @Override
+    public TickableList getTickableList() {
+        var tickableList = new TickableList();
+        tickableList.add(this);
+        return tickableList;
     }
 }

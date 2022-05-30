@@ -20,4 +20,5 @@ import java.io.Serializable;
     public final long timeToWalk = 3000;
     public final int maxCustomers = 1;
     public final long spawnRate = 500;
+   public double customerSpeedCoefficient = 3;
 }

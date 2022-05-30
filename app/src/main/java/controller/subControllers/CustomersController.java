@@ -1,78 +1,74 @@
 package controller.subControllers;
 
-import connector.Gates;
-import settings.LocalObjectsSettings;
-import settings.configs.CustomerConfig;
-import lombok.Getter;
-import architecture.tickable.Tickable;
+import controller.Tickable;
+import protocol.Protocol;
 import lombok.RequiredArgsConstructor;
+import model.objects.GameMap;
+import model.objects.floor.FloorStructure;
+import model.objects.customer.Customer;
 import model.objects.customer.StandartCustomer.StandartCustomer;
-import tools.Vector2D;
-import model.AppModel;
-import model.objects.customer.StandartCustomer.StandartCustomerState;
 
 import java.util.Random;
 
+import model.objects.elevator.Elevator;
 import tools.Timer;
 
 /**
  * Manipulate all customers in game.
- *
- * @see CustomerConfig
  */
 @RequiredArgsConstructor
 public class CustomersController implements Tickable {
-    @Getter
-    private final LocalObjectsSettings dataBase;
-    private final Gates gates;
-    private final Timer spawnTimer = new Timer();
-    private AppModel appModel;
+    private final GameMap gameMap;
 
+    private final Timer spawnTimer = new Timer();
 
     @Override
     public void tick(double deltaTime) {
         spawnTimer.tick(deltaTime);
+        spawn();
+    }
 
-        if (spawnTimer.isReady() && gates.appModel.customers.size() < settings.maxCustomers) {
-            var maxFloor = ELEVATOR_SYSTEM_CONTROLLER.getSettings().floorsCount;
-            var randomStartFloor = new Random().nextInt(0, maxFloor);
-            var randomEndFloor = new Random().nextInt(0, maxFloor);
-            randomEndFloor = (maxFloor + randomStartFloor + randomEndFloor - 1) % maxFloor;
-            CreateCustomer(randomStartFloor, randomEndFloor);
+    private void spawn() {
+        var dataBase = gameMap.getLocalDataBase();
+        var localCreaturesSettings = gameMap.getLocalCreaturesSettings();
 
-            spawnTimer.restart(settings.spawnRate);
-        }
+        if (spawnTimer.isReady() && dataBase.countOf(Customer.class) < localCreaturesSettings.maxCustomers()) {
 
-        for (var customer : gates.appModel.customers) {
-            customer.tick(deltaTime);
+            var listOfBottomFloors = dataBase.streamOf(FloorStructure.class).filter(FloorStructure::isBottomFloor).toList();
+            var randBottomFloor = listOfBottomFloors.get(new Random().nextInt(listOfBottomFloors.size()));
+
+            var maxFloor = randBottomFloor.getHieght();
+
+            var randomStartFloorNum = new Random().nextInt(0, maxFloor);
+            var randomEndFloorNum = new Random().nextInt(0, maxFloor);
+            randomEndFloorNum = (maxFloor + randomStartFloorNum + randomEndFloorNum - 1) % maxFloor;
+            CreateCustomer(randBottomFloor.getUpperFloor(randomStartFloorNum), randBottomFloor.getUpperFloor(randomEndFloorNum));
+
+            spawnTimer.restart(localCreaturesSettings.spawnTime());
         }
     }
 
-    public void CreateCustomer(int floorStart, int floorEnd) {
-        double speed = new Random().nextDouble(
-                settings.customerSpeed
-                        - settings.customerSpeed / 3,
-                settings.customerSpeed
-                        + settings.customerSpeed / 3);
-        var startPosition = getStartPositionForCustomer(floorStart);
-        var customer = new StandartCustomer(floorStart, floorEnd, startPosition, speed, settings.customerSize);
-
-        customer.setState(StandartCustomerState.GO_TO_BUTTON);
-        gates.appModel.customers.add(customer);
-    }
-
-    private Vector2D getStartPositionForCustomer(int floorStart) {
-        Vector2D startPosition = gates.appModel.getBuilding().getStartPositionAfterBuilding(floorStart);
+    public void CreateCustomer(FloorStructure startFloor, FloorStructure endFloor) {
+        double startPosition = startFloor.getStartPositionAfterBuilding();
         // So u can't see customer when he spawns
-        if (startPosition.x == 0) {
-            startPosition.x -= settings.customerSize.x * 2;
+        if (startPosition == 0) {
+            startPosition -= gameMap.getLocalCreaturesSettings().customerMaxSize() * 2;
         } else {
-            startPosition.x += settings.customerSize.x * 2;
+            startPosition += gameMap.getLocalCreaturesSettings().customerMaxSize() * 2;
         }
-        return startPosition;
+
+        var customer = new StandartCustomer(endFloor, startPosition, this, gameMap.getLocalCreaturesSettings());
+        startFloor.addCustomer(customer);
     }
 
-    public void setModel(AppModel appModel) {
-        this.appModel = appModel;
+    public void customerGetIntoElevator(StandartCustomer standartCustomer, Elevator closestOpenedElevator) {
+        gameMap.moveCreatureInto(standartCustomer.getId(), closestOpenedElevator);
+        gameMap.send(Protocol.CUSTOMER_GET_IN_OUT, standartCustomer.getId());
+    }
+
+    public void customerGetOutFromElevator(StandartCustomer standartCustomer, Elevator elevator) {
+        elevator.removeCustomer();
+        gameMap.moveCreatureInto(standartCustomer.getId(), elevator.getCurrentFloor());
+        gameMap.send(Protocol.CUSTOMER_GET_IN_OUT, standartCustomer.getId());
     }
 }

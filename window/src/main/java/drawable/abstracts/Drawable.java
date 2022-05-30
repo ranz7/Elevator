@@ -1,33 +1,35 @@
 package drawable.abstracts;
 
+import controller.Tickable;
 import drawable.drawTool.DrawTool;
+import model.objects.CreatureInterface;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
-import view.graphics.GameGraphics;
+import model.planes.graphics.Painter;
 
-public interface Drawable {
+public interface Drawable extends CreatureInterface, Tickable {
 
-    default void draw(Vector2D realDrawPosition, GameGraphics gameDrawer) {
+    default void draw(Vector2D realDrawPosition, Painter gameDrawer) {
         if (!isVisible()) {
             return;
         }
 
         Vector2D positionOfTheCreature = getDrawCenter().getShiftDrawPosition(getPosition(), getSize());
         setRealDrawPosition(positionOfTheCreature); // TODO check if works
-        getTool().draw(positionOfTheCreature.getAdded(realDrawPosition), getSize(), gameDrawer);
+        getTool().draw(positionOfTheCreature.add(realDrawPosition), getSize(), gameDrawer);
     }
 
     DrawTool getTool();
 
     LocalDrawSetting getSettings();
 
+    void setRealDrawPosition(Vector2D realDrawPosition);
+
     boolean isVisible();
 
     Vector2D getPosition();
 
     Vector2D getSize();
-
-    void setRealDrawPosition(Vector2D realDrawPosition);
 
     DrawCenter getDrawCenter();
 

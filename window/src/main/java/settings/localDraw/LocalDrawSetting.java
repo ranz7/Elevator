@@ -6,8 +6,8 @@ import tools.Vector2D;
 import java.awt.*;
 
 public class LocalDrawSetting implements DataBase {
-    private final ColorConfig colorConfig = new ColorConfig();
     private final DrawConfig drawConfig = new DrawConfig();
+    private final ColorConfig colorConfig = new ColorConfig();
 
     @Override
     public boolean initialized(Class<?>... classes) {
@@ -31,7 +31,6 @@ public class LocalDrawSetting implements DataBase {
     }
 
     public Color doorsColor() {
-
         return colorConfig.elevatorDoor;
     }
 
@@ -56,7 +55,6 @@ public class LocalDrawSetting implements DataBase {
     }
 
     public double borderThickness() {
-
         return drawConfig.elevatorBorderThickness;
     }
 
@@ -76,7 +74,4 @@ public class LocalDrawSetting implements DataBase {
         return colorConfig.jButtonsColor;
     }
 
-    public long picturesGeneratorSeed() {
-        return drawConfig.picturesGeneratorSeed;
-    }
 }

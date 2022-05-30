@@ -1,69 +1,88 @@
 package model;
 
+import configs.RoomPrepareCompactData;
+import controller.Tickable;
 
-import connector.protocol.GameMapCompactData;
-import settings.CombienedDrawSettings;
-import configs.ConnectionEstalblishConfig;
-import drawable.abstracts.DrawableMovingCreature;
-import model.packageLoader.PackageLoader;
-import drawable.concretes.building.floor.elevatorSpace.ElevatorButton;
-import drawable.concretes.customer.DrawableCustomer;
-import drawable.concretes.elevator.DrawableElevator;
+import controller.TickableList;
 import lombok.Getter;
-import tools.Vector2D;
+import model.planes.MenuPlane;
+import protocol.special.GameMapCompactData;
+import protocol.special.SubscribeRequest;
+import settings.CombienedDrawSettings;
+import settings.localDraw.LocalDrawSetting;
+import model.planes.GamePlane;
+import model.planes.Plane;
 
-public class GuiModel extends DataBaseOfDrawableCreatures {
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class GuiModel implements Tickable {
     @Getter
-    private final CombienedDrawSettings combienedDrawSettings = new CombienedDrawSettings();
+    private final List<Plane> planes = new LinkedList<>();
+    @Getter
+    private final LocalDrawSetting localDrawSetting = new LocalDrawSetting();
 
-    public void addMovingDrawable(DrawableMovingCreature text) {
-        add(text);
+    public GuiModel() {
+        planes.add(new MenuPlane(localDrawSetting));
     }
 
-    public ElevatorButton getNearestButton(Vector2D data) {
-        return streamOf(ElevatorButton.class)
-                .reduce(null, (elevatorButtonA, elevatorButtonB) -> {
-                    if (elevatorButtonA == null) {
-                        return elevatorButtonB;
-                    }
-                    if (elevatorButtonB == null) {
-                        return elevatorButtonA;
-                    }
-                    if (data.getNearest(elevatorButtonA.getPosition(), elevatorButtonB.getPosition())
-                            .equals(elevatorButtonA.getPosition())) {
-                        return elevatorButtonA;
-                    }
-                    return elevatorButtonB;
-                });
+    public void updateRemoteSettings(RoomPrepareCompactData.RoomData roomPrepareCompactData) {
+        planes.stream().
+                filter(plane -> plane instanceof GamePlane).
+                filter(plane -> ((GamePlane) plane).getCombienedSettings().roomId() == roomPrepareCompactData.roomId()).
+                findFirst().
+                ifPresentOrElse(
+                        plane -> ((GamePlane) plane).getCombienedSettings().setRoomPrepareCompactData(roomPrepareCompactData),
+                        () -> planes.add(new GamePlane(new CombienedDrawSettings(roomPrepareCompactData)))
+                );
     }
 
-    public DrawableCustomer getCustomer(long id) {
+    @Override
+    public void tick(double deltaTime) {
+        new TickableList(planes).tick(deltaTime);
+    }
+
+    public GameMap getMap(int roomId) {
+        var plane = getGamePlane(roomId);
+        return plane.getGameMap();
+    }
+
+    public Stream<GamePlane> streamOfGamePlanes() {
+        return planes.stream().
+                filter(plane -> plane instanceof GamePlane).map(plane -> (GamePlane) plane);
+    }
+
+    public GamePlane getGamePlane(int roomId) {
         var ref = new Object() {
-            DrawableCustomer customer = null;
+            GamePlane found;
         };
-        streamOf(DrawableCustomer.class).filter(elevator -> elevator.getId() == id)
-                .findFirst().ifPresentOrElse(customer -> ref.customer = customer, () -> {
-                    throw new RuntimeException("Customer not fond.");
+        streamOfGamePlanes().filter(gamePlane -> gamePlane.getCombienedSettings().roomId() == roomId).
+                findFirst().ifPresentOrElse(plane -> ref.found = (GamePlane) plane, () -> {
+                    throw new RuntimeException("Not found");
                 });
-        return ref.customer;
+        return ref.found;
     }
 
-    public DrawableElevator getElevator(long id) {
-        var ref = new Object() {
-            DrawableElevator foundDrawableElevator;
-        };
-        streamOf(DrawableElevator.class).filter(elevator -> elevator.getId() == id)
-                .findFirst().ifPresentOrElse(drawableElevator -> ref.foundDrawableElevator = drawableElevator, () -> {
-                    throw new RuntimeException("Elevator not found");
-                });
-        return ref.foundDrawableElevator;
+    public Runnable createWorld(GameMapCompactData data) {
+        return null;
     }
 
-    public void setRemoteConfig(ConnectionEstalblishConfig connectionEstalblishConfig) {
-        combienedDrawSettings.setConnectionEstalblishConfig(connectionEstalblishConfig);
+    public Plane getActivePlane() {
+        return planes.stream().filter(Plane::isActive).findFirst().get();
     }
 
-    public void applyArivedData(GameMapCompactData data) {
-        PackageLoader.applyArivedData(data, this, combienedDrawSettings);
+    public void updateMap(int mapId, GameMapCompactData data) {
+
+    }
+
+    public SubscribeRequest getPlanesToSubscribeFor() {
+        return new SubscribeRequest(
+                streamOfGamePlanes()
+                        .map(gamePlane ->   gamePlane.getCombienedSettings().roomId())
+                        .collect(Collectors.toList())
+        );
+
     }
 }

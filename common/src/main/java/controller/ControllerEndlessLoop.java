@@ -1,9 +1,7 @@
 package controller;
 
-import architecture.tickable.TickableList;
 import lombok.Getter;
 import lombok.Setter;
-import architecture.tickable.Tickable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,13 +13,9 @@ public abstract class ControllerEndlessLoop {
     long currentTime;
 
     private final TickableList objectsToTick = new TickableList();
-    private CollectionOfDeadObjects model = null;
 
     void start(Runnable additionalMetodToRun) {
         currentTime = System.currentTimeMillis();
-        if (model != null) {
-            model.start();
-        }
 
         while (true) {
             long deltaTime = System.currentTimeMillis() - currentTime;
@@ -30,10 +24,6 @@ public abstract class ControllerEndlessLoop {
 
             additionalMetodToRun.run();
 
-            if (model != null) {
-                new TickableList().add(model.getTickableList()).tick(deltaTime * controllerTimeSpeed);
-                model.clearDead();
-            }
             try {
                 TimeUnit.MILLISECONDS.sleep(Math.round(1000. / getTickPerSecond()));
             } catch (InterruptedException ignore) {
@@ -43,10 +33,6 @@ public abstract class ControllerEndlessLoop {
 
     protected void multiplyControllerSpeedBy(double multiply) {
         controllerTimeSpeed *= multiply;
-    }
-
-    protected void addModel(CollectionOfDeadObjects model) {
-        this.model = model;
     }
 
     protected void addTickable(Tickable tickable) {

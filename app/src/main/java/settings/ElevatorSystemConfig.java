@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 
 class ElevatorSystemConfig implements Serializable {
-    public final Vector2D buildingSize = new Vector2D(800, 896);
+    public final Vector2D floorSize = new Vector2D(800,  160);
     public final long elevatorAfterCloseAfkTime = 500;
     public final long elevatorWaitAsOpenedTime = 3000;
     public final Vector2D elevatorSize = new Vector2D(50, 80);
@@ -25,6 +25,7 @@ class ElevatorSystemConfig implements Serializable {
     public final double elevatorSpeed = 150;
     public final int floorsCount = 5;
     public long picturesGeneratorSeed = 1234;
+    public Vector2D buttonSize = new Vector2D(5,5);
 
     @Getter
     @Setter

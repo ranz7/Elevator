@@ -3,7 +3,9 @@ package tools;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Pair<First, Second> implements Comparable {
+import java.io.Serializable;
+
+public class Pair<First, Second> implements Comparable, Serializable {
     @Getter
     @Setter
     First first;

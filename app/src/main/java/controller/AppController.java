@@ -1,11 +1,11 @@
 package controller;
 
-import configs.*;
-import connector.*;
-import connector.dualConnectionStation.Server;
-import connector.protocol.*;
-import controller.subControllers.CustomersController;
-import controller.subControllers.ElevatorsController;
+import controller.subControllers.*;
+import dualConnectionStation.Server;
+import gates.Gates;
+import gates.SendFilters;
+import protocol.*;
+import protocol.special.SubscribeRequest;
 import settings.configs.AppControllerConfig;
 import lombok.RequiredArgsConstructor;
 import model.*;
@@ -20,49 +20,50 @@ import java.util.LinkedList;
  * @see ElevatorsController
  */
 @RequiredArgsConstructor
-public class AppController extends ControllerEndlessLoop implements ProtocolMessagesController, ControllerConnector {
-    private final AppModel appModel = new AppModel();
-    private final ElevatorsController elevatorsController = new ElevatorsController(gates, this);
-    private final CustomersController customerConductor = new CustomersController(gates, this);
+public class AppController extends ControllerEndlessLoop implements ProtocolMessagesController {
     private final Gates gates = new Gates(new Server(), this);
-
+    private final AppModel appModel = new AppModel();
 
     public void start() {
         gates.setOnConnectEvent(
-                () -> gates.send(
-                        Protocol.APPLICATION_SETTINGS,
-                        appModel.createMainInitializationSettingsToSend(this.getControllerTimeSpeed())));
-        gates.setSpamEvent(
-                () -> gates.send(
-                        Protocol.UPDATE_DATA, appModel.sendMap()),
-                (long) (1000. / ConnectionSettings.SSPS));
-        gates.start();
+                () ->gates.sendWithoutCheck(Protocol.HELLO_MESSAGE, -1, null));
+//                () -> gates.send(
+//                        Protocol.WORLD_PREPARE_SETTINGS,
+//                        appModel.createMainInitializationSettingsToSend(this.getControllerTimeSpeed())));
+//        gates.setSpamEvent(
+//                () -> gates.send(
+//                        Protocol.UPDATE_DATA, appModel.sendMap()),
+//                (long) (1000. / ConnectionSettings.SSPS));
+        gates.connect();
 
-        addTickable(customerConductor);
-        addTickable(elevatorsController);
         addTickable(gates);
-        addModel(appModel);
+        addTickable(appModel);
         super.start();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean applyMessage(ProtocolMessage message) {
-        Protocol protocol = message.getProtocolInMessage();
-        Serializable data = message.getDataInMessage();
+        Protocol protocol = message.getProtocol();
+        Serializable data = message.getData();
         switch (protocol) {
+            case SUBSCRIBE_FOR -> {
+                gates.setSendFilter(message.getOwner(), SendFilters.sendOnlyIfSubscribed((SubscribeRequest) data));
+                var subscribes = ((SubscribeRequest) data).roomsToSubscribeFor();
+                appModel.createIfNotExist(subscribes, gates);
+                gates.sendWithoutCheck(Protocol.WORLDS_PREPARE_SETTINGS,-1,
+                        appModel.createRoomPrepareCompactData(subscribes));
+            }
             case CREATE_CUSTOMER -> {
-                LinkedList<Integer> floors = (LinkedList<Integer>) data;
-                customerConductor.CreateCustomer(floors.get(1), floors.get(0));
+                LinkedList<Integer> floorsStartEnd = (LinkedList<Integer>) data;
+//                appModel.getMap(message.getWorldId()).CreateCustomer(floorsStartEnd.get(1), floorsStartEnd.get(0));
             }
             case CHANGE_ELEVATORS_COUNT -> {
-                elevatorsController.changeElevatorsCount((boolean) data);
-                gates.send(Protocol.APPLICATION_SETTINGS, appModel.createMainInitializationSettingsToSend(
-                        elevatorsController.getSettings(), customerConductor.getSettings(), this.getControllerTimeSpeed()));
+                //              appModel.getMap(message.getWorldId()).changeElevatorsCount((boolean) data);
             }
             case CHANGE_GAME_SPEED -> {
                 multiplyControllerSpeedBy((double) data);
-                gates.send(Protocol.CHANGE_GAME_SPEED, this.getControllerTimeSpeed());
+//                gates.send(Protocol.CHANGE_GAME_SPEED, this.getControllerTimeSpeed());
             }
         }
         return true;

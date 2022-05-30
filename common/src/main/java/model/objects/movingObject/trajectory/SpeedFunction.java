@@ -1,18 +1,18 @@
 package model.objects.movingObject.trajectory;
 
+import lombok.Setter;
+import tools.Vector2D;
+
+import java.util.function.Supplier;
+
 public abstract class SpeedFunction {
 
-    public static SpeedFunction WithConstantSpeed(double speed) {
+    public static SpeedFunction WithConstantSpeed(Supplier<Double> speed) {
         return new SpeedFunction() {
 
             @Override
-            public boolean isConstFunction() {
-                return true;
-            }
-
-            @Override
             public double tickAndGet(double deltaTime) {
-                return speed;
+                return speed.get() * speedCoefficient;
             }
         };
     }
@@ -21,19 +21,14 @@ public abstract class SpeedFunction {
         return new SpeedFunction() {
 
             @Override
-            public boolean isConstFunction() {
-                return true;
-            }
-
-            @Override
             public double tickAndGet(double deltaTime) {
                 return 9999;
             }
         };
     }
 
-
-    public abstract boolean isConstFunction();
+    @Setter
+    double speedCoefficient = 1;
 
     public abstract double tickAndGet(double deltaTime);
 }
