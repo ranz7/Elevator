@@ -1,8 +1,7 @@
 package drawable.drawTool.figuresComponent;
 
-import drawable.abstracts.Drawable;
 import tools.Vector2D;
-import view.graphics.GameGraphics;
+import model.planes.graphics.Painter;
 
 import java.awt.*;
 
@@ -16,7 +15,7 @@ public class Rectangle extends Figure {
     }
 
     @Override
-    public void draw(Vector2D position, Vector2D size, GameGraphics drawer) {
+    public void draw(Vector2D position, Vector2D size, Painter drawer) {
         drawer.drawFilledRect(position, size, mainColor, mainColor, 0);
     }
 }

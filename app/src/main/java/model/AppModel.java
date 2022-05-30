@@ -1,75 +1,58 @@
 package model;
 
-import architecture.tickable.TickableList;
+import configs.RoomPrepareCompactData;
 import configs.ConnectionSettings;
-import databases.configs.CustomerConfig;
-import databases.configs.ElevatorSystemConfig;
-import configs.ConnectionEstalblishConfig;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import controller.Tickable;
+import controller.TickableList;
+import gates.Gates;
 import model.objects.Creature;
-import model.objects.CreaturesData;
-import model.objects.movingObject.MovingCreature;
-import model.objects.building.Building;
-import model.objects.customer.Customer;
-import tools.Vector2D;
+import model.objects.GameMap;
+import protocol.special.GameMapCompactData;
+import settings.LocalCreaturesSettings;
+import lombok.Getter;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 /*
  * Class to store all objects.
  */
-@NoArgsConstructor
-public class AppModel implements Model {
+
+public class AppModel implements Tickable {
     @Getter
-    @Setter
-    private Building building;
-    public final LinkedList<Customer> customers = new LinkedList<>();
+    private final LocalCreaturesSettings localCreaturesSettings = new LocalCreaturesSettings();
 
-    public void Initialize(Building building) {
-        this.building = building;
-    }
+    @Getter
+    LinkedList<GameMap> gameMaps = new LinkedList<>();
 
-    public void clearDead() {
-        customers.removeIf(MovingCreature::isDead);
+    public GameMapCompactData sendMap() {
+        return new GameMapCompactData(gameMaps.get(0).getLocalDataBase().toIdAndCreaturesList());
     }
 
     @Override
-    public void start() {
+    public void tick(double deltaTime) {
+        new TickableList(gameMaps).tick(deltaTime);
+        gameMaps.removeIf(Creature::isDead);
     }
 
-    @Override
-    public void update() {
+    public RoomPrepareCompactData createRoomPrepareCompactData(List<Integer> subscribes) {
+        List<RoomPrepareCompactData.RoomData> roomsData = new LinkedList<>();
+        subscribes.forEach(roomId -> roomsData.add(getMap(roomId).toRoomData()));
+        return new RoomPrepareCompactData(ConnectionSettings.VERSION, roomsData);
     }
 
-    @Override
-    public TickableList getTickableList() {
-        return new TickableList().add(customers).add(building.getElevators());
+    public GameMap getMap(long roomId) {
+        return gameMaps.stream().filter(gameMap -> gameMap.getRoomId() == roomId).findFirst().get();
     }
 
-    public CreaturesData getDataToSent() {
-        List<Creature> customersTmp = new LinkedList<>();
-        List<Creature> elevatorsTmp = new LinkedList<>();
-        customers.forEach(customer -> customersTmp.add(new Creature(customer)));
-        building.elevators.forEach(elevator -> elevatorsTmp.add(new Creature(elevator)));
-        return new CreaturesData(customersTmp, elevatorsTmp);
+    public void createIfNotExist(List<Integer> roomsToSubscribeFor, Gates controllerGates) {
+        roomsToSubscribeFor.forEach(
+                roomId -> {
+                    var map = gameMaps.stream().filter(gameMap -> gameMap.getRoomId() == roomId).findFirst();
+                    if (map.isEmpty()) {
+                        gameMaps.add(new GameMap(controllerGates, roomId, localCreaturesSettings));
+                    }
+                }
+        );
     }
-
-    public Serializable createMainInitializationSettingsToSend(
-            ElevatorSystemConfig settingsElevator, CustomerConfig settingsCustomer, double gameSpeed) {
-        return new ConnectionEstalblishConfig(
-                new Vector2D(settingsElevator.buildingSize),
-                settingsElevator.elevatorSize,
-                settingsCustomer.customerSize,
-                settingsElevator.elevatorOpenCloseTime,
-                settingsElevator.getElevatorsCount(),
-                settingsElevator.floorsCount,
-                settingsElevator.buttonRelativePosition,
-                gameSpeed,
-                ConnectionSettings.VERSION);
-    }
-
 }

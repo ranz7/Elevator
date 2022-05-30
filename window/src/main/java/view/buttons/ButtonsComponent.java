@@ -1,9 +1,8 @@
 package view.buttons;
 
-import databases.CombienedDrawDataBase;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import model.GuiModel;
+import settings.localDraw.LocalDrawSetting;
 import view.gui.windowListeners.ButtonsListener;
 import view.gui.windowReacts.ButtonsReact;
 
@@ -15,7 +14,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ButtonsComponent {
     private final JComponent window;
-    private CombienedDrawDataBase settings;
+    private LocalDrawSetting settings;
     @Setter
     private ActionListener listenWindow;
     private ButtonsReact react;
@@ -51,7 +50,7 @@ public class ButtonsComponent {
         return startButton;
     }
 
-    public void resize(Dimension size) {
+    public void resize(Dimension size) {/*
         Iterator<JButton> addCustomerButtonIt = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> selectFloorButtonIt = SELECT_FLOOR_BUTTONS.iterator();
         double heightOfButton = (size.height - 100.) / settings.floorsCount();
@@ -81,23 +80,23 @@ public class ButtonsComponent {
                     new Rectangle(50, 50 + i * 100, 50, 50));
             CHANGE_SPEED_BUTTONS.get(i).setBounds(
                     new Rectangle(50 + i * 50, 100, 50, 50));
-        }
+        }*/
     }
 
     public void buttonClicked(JButton source) {
-        if (ADD_REDUCE_ELEVATORS_BUTTONS.get(0) == source) {
-            react.addElevatorButtonClicked();
-        }
-        if (ADD_REDUCE_ELEVATORS_BUTTONS.get(1) == source) {
-            react.removeElevatorButtonClicked();
-        }
-
-        if (CHANGE_SPEED_BUTTONS.get(0) == source) {
-            react.decreaseGameSpeedButtonClicked();
-        }
-        if (CHANGE_SPEED_BUTTONS.get(1) == source) {
-            react.increaseGameSpeedButtonClicked();
-        }
+//        if (ADD_REDUCE_ELEVATORS_BUTTONS.get(0) == source) {
+//            react.addElevatorButtonClicked();
+//        }
+//        if (ADD_REDUCE_ELEVATORS_BUTTONS.get(1) == source) {
+//            react.removeElevatorButtonClicked();
+//        }
+//
+//        if (CHANGE_SPEED_BUTTONS.get(0) == source) {
+//            react.decreaseGameSpeedButtonClicked();
+//        }
+//        if (CHANGE_SPEED_BUTTONS.get(1) == source) {
+//            react.increaseGameSpeedButtonClicked();
+//        }
 
         Iterator<JButton> buttonIterator = ADD_CUSTOMER_BUTTONS.iterator();
         Iterator<JButton> newFloorButtonIterator = SELECT_FLOOR_BUTTONS.iterator();
@@ -111,7 +110,7 @@ public class ButtonsComponent {
                 return;
             }
             if (currentButton == source) {
-                react.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
+         //       react.clickedStartEndFloorButtonRequest(i, Integer.parseInt(newFloorButton.getText()));
                 return;
             }
         }
@@ -120,9 +119,5 @@ public class ButtonsComponent {
     public void addButtonListener(ButtonsReact react) {
         this.listenWindow = new ButtonsListener(this);
         this.react = react;
-    }
-
-    public void setModel(GuiModel model) {
-        settings = model.getCombienedDrawDataBase();
     }
 }

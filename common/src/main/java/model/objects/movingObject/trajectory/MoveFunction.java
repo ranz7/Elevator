@@ -3,6 +3,8 @@ package model.objects.movingObject.trajectory;
 import tools.Timer;
 import tools.Vector2D;
 
+import java.util.function.Supplier;
+
 public abstract class MoveFunction {
 
 
@@ -19,7 +21,7 @@ public abstract class MoveFunction {
 
             public Vector2D tickAndGet(double deltaTime, double speed, Vector2D startPosition) {
                 timer.tick(deltaTime);
-                return startPosition.getAdded(direction.getMultiplied(deltaTime * speed));
+                return startPosition.add(direction.multiply(deltaTime * speed));
             }
 
             @Override
@@ -42,23 +44,22 @@ public abstract class MoveFunction {
             }
         };
     }
-        // TODO change to function getter
-    public static MoveFunction GetToDestination(Vector2D destination) {
+
+    public static MoveFunction GetToDestination(Supplier<Vector2D> destination) {
         return new MoveFunction() {
-            final Vector2D destinationCopy = destination;
 
             @Override
             public boolean isReached(Vector2D position) {
-                return position.equals(destinationCopy);
+                return position.equals(destination.get());
             }
 
             @Override
             public Vector2D tickAndGet(double deltaTime, double speed, Vector2D position) {
-                return position.getShiftedByDistance(destinationCopy, deltaTime * speed);
+                return position.getShiftedByDistance(destination.get(), deltaTime * speed);
             }
 
             public void parentPositionWasChangedBy(Vector2D diference) {
-                destinationCopy.getAdded(diference);
+                destination.get().add(diference);
             }
         };
     }
@@ -76,4 +77,24 @@ public abstract class MoveFunction {
             }
         };
     }
+
+    public static MoveFunction MoveByVector(Vector2D differenceVector) {
+        return new MoveFunction() {
+            private final Vector2D vector = differenceVector;
+
+            @Override
+            public boolean isReached(Vector2D position) {
+                return vector.isZero();
+            }
+
+            @Override
+            public Vector2D tickAndGet(double deltaTime, double speed, Vector2D position) {
+                var newPosition = position.getShiftedByDistance(position.add(vector), deltaTime * speed);
+
+                differenceVector.sub(newPosition.sub(newPosition));
+                return newPosition;
+            }
+        };
+    }
+
 }

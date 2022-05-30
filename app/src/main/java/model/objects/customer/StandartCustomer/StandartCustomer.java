@@ -1,177 +1,155 @@
 package model.objects.customer.StandartCustomer;
 
-import databases.configs.CustomerConfig;
-import connector.protocol.Protocol;
-import lombok.Setter;
-import model.objects.customer.Customer;
+import controller.subControllers.CustomersController;
+import lombok.Getter;
+import model.Transport;
+import model.Transportable;
+import model.objects.floor.FloorStructure;
 import model.objects.elevator.Elevator;
-import model.objects.elevator.ElevatorRequest;
-import model.objects.movingObject.trajectory.SpeedFunction;
+import model.objects.movingObject.MovingCreature;
+import settings.LocalCreaturesSettings;
+import lombok.Setter;
 import model.objects.movingObject.trajectory.Trajectory;
 import tools.Timer;
 import tools.Vector2D;
 
 import java.util.Random;
 
-import static model.objects.customer.StandartCustomer.StandartCustomerState.GO_TO_BUTTON;
+import static model.objects.customer.StandartCustomer.StandartCustomerState.goToButton;
 
-public class StandartCustomer extends Customer {
-    private final int FLOOR_TO_END;
+
+public class StandartCustomer extends MovingCreature implements Transportable {
     @Setter
-    private int currentFlor;
-
-    private double lastCurrentElevatorXPosition;
-    private Elevator currentElevator;
-    public Timer MAIN_TIMER = new Timer();
+    @Getter
+    private Transport transport;
+    private final FloorStructure floorToGetOut;
+    private final LocalCreaturesSettings settings;
+    private final Timer mainTimer = new Timer();
+    private final CustomersController controller;
 
     @Setter
-    private StandartCustomerState state = GO_TO_BUTTON;
+    private StandartCustomerState state = goToButton;
 
-
-    public StandartCustomer(int currentFlor, int floorEnd, Vector2D position, CustomerConfig settings) {
-        super(position, size, speed);
-        currentFlor = currentFlor;
-        FLOOR_TO_END = floorEnd;
-    }
-
-    public Customer(int currentFlor, int floorEnd, Vector2D position, double speed, Vector2D size) {
-        super(position, size, new Trajectory().add(SpeedFunction.WithConstantSpeed(speed)));
-        this.FLOOR_TO_END = floorEnd;
-        this.currentFlor = currentFlor;
+    public StandartCustomer(FloorStructure floorToGetOut, Double position, CustomersController controller, LocalCreaturesSettings settings) {
+        super(new Vector2D(position, 0),
+                settings.customerSize(),
+                Trajectory.StayOnPlaceWithConstSpeed(settings.customerRandomSpeed()));
+        this.floorToGetOut = floorToGetOut;
+        this.settings = settings;
+        this.controller = controller;
     }
 
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
         switch (state) {
-            case GO_TO_BUTTON -> processGoToButton(customer);
-            case WAIT_UNTIL_ARRIVED -> processWaitUntilArrived(customer);
-            case GET_IN -> processGetIn(customer);
-            case STAY_IN -> processStayIn(customer);
-            case GET_OUT -> processGetOut(customer);
+            case goToButton -> processGoToButton();
+            case waitUntilArrived -> processWaitUntilArrived();
+            case getIn -> processGetIn();
+            case stayIn -> processStayIn();
+            case getOut -> processGetOut();
         }
 
-        MAIN_TIMER.tick(deltaTime);
-        if (currentElevator != null) {
-            position.y = currentElevator.getPosition().y;
-            if (lastCurrentElevatorXPosition != currentElevator.getPosition().x) {
-                position.x -= (lastCurrentElevatorXPosition - currentElevator.getPosition().x);
-                lastCurrentElevatorXPosition = currentElevator.getPosition().x;
-            }
-            if (currentElevator.isInMotion()) {
-                setCurrentFlor(currentElevator.getCurrentFloor());
-                setVisible(false);
-            } else {
-                setVisible(true);
-            }
-            if (!currentElevator.isVisible()) {
-                isDead = true;
-            }
-            return;
-        }
-
-        setVisible(true);
+        mainTimer.tick(deltaTime);
     }
 
-    public void setCurrentElevator(Elevator currentElevator) {
-        this.currentElevator = currentElevator;
-        if (currentElevator != null) {
-            lastCurrentElevatorXPosition = currentElevator.getPosition().x;
-        }
-    }
 
     public boolean wantsGoUp() {
-        return currentFlor < FLOOR_TO_END;
+        assertTransport(FloorStructure.class);
+        return ((FloorStructure) transport).getCurrentFloorNum() < floorToGetOut.getCurrentFloorNum();
     }
 
-    private void processGoToButton(Customer customer) {
-        var buttonPosition = appController.appModel.getBuilding()
-                .getClosestButtonOnFloor(customer.getPosition());
-        customer.setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(buttonPosition));
-        if (customer.isReachedDestination()) {
-            ELEVATOR_SYSTEM_CONTROLLER.buttonClick(new ElevatorRequest(customer.getPosition(), customer.wantsGoUp()));
-            customer.MAIN_TIMER.restart(settings.timeToWaitAfterButtonClick);
-            customer.setState(StandartCustomerState.WAIT_UNTIL_ARRIVED);
+    private void processGoToButton() {
+        assertTransport(FloorStructure.class);
+        var button = ((FloorStructure) transport).getClosestButtonOnFloor(getPosition());
+        if(button==null){
+            return;
+        }
+        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().onlyY(0)));
+        if (isReachedDestination()) {
+            button.click(wantsGoUp());
+            mainTimer.restart(settings.customerWaitAfterClick());
+            setState(StandartCustomerState.waitUntilArrived);
         }
     }
 
-    private void processWaitUntilArrived(Customer customer) {
-        var nearestOpenedElevatorOnFloor = appController.appModel.getBuilding()
-                .getClosestOpenedElevatorOnFloor(customer.getPosition(), customer.getCurrentFlor());
+    private void processWaitUntilArrived() {
+        var nearestOpenedElevatorOnFloor =
+                ((FloorStructure) transport).getClosestOpenedElevatorOnFloor(getPosition());
         if (nearestOpenedElevatorOnFloor != null) {
-            customer.setMoveTrajectory(Trajectory.ToTheDestination(
-                    customer.getConstSpeed(), // settings.FAST_SPEED_MULTIPLY
-                    nearestOpenedElevatorOnFloor.getPosition()));
-            customer.setState(StandartCustomerState.GET_IN);
+            setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(
+                    nearestOpenedElevatorOnFloor::getPosition));
+            setState(StandartCustomerState.getIn);
             return;
         }
-        if (customer.getMAIN_TIMER().isReady()) {
-            var getPositionToWalk = new Vector2D(
-                    new Random().nextInt(0, (int) ELEVATOR_SYSTEM_CONTROLLER.getSettings().buildingSize.x),
-                    customer.getPosition().y);
-            customer.setMoveTrajectory(Trajectory.ToTheDestination(
-                    customer.getConstSpeed(), // * settings.SLOW_SPEED_MULTIPLY
-                    getPositionToWalk));
-            customer.getMAIN_TIMER().restart(settings.timeToWalk);
+        if (mainTimer.isReady()) {
+            var getPositionToWalk = new Vector2D(new Random().nextInt(0, (int) settings.floorSize().x), 0);
+            setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> getPositionToWalk));
+            setSpeedCoefficient(settings.slowSpeedCustomerMultiply());
+            mainTimer.restart(settings.customerTimeToWalk());
 
         }
     }
 
-    private void processGetIn(Customer customer) {
-        var closestOpenedElevator = appController.appModel.getBuilding()
-                .getClosestOpenedElevatorOnFloor(customer.getPosition(), customer.getCurrentFlor());
+
+    private void processGetIn() {
+        var closestOpenedElevator = ((FloorStructure) transport).getClosestOpenedElevatorOnFloor(getPosition());
         if (closestOpenedElevator == null) {
-            customer.setState(GO_TO_BUTTON);
-            customer.setMoveTrajectory(
-                    new Trajectory().WithNewConstSpeedToOldDestination(customer.getConstSpeed()));
+            setState(goToButton);
+            setMoveTrajectory(new Trajectory().WithNewConstSpeedToOldDestination(getSpeed()));
             return;
         }
 
-        if (customer.isReachedDestination()) {
-            ELEVATOR_SYSTEM_CONTROLLER.getCustomerIntoElevator(closestOpenedElevator);
-            appController.Send(Protocol.CUSTOMER_GET_IN_OUT, customer.getId());
-            customer.setCurrentElevator(closestOpenedElevator);
+        if (isReachedDestination()) {
+            controller.customerGetIntoElevator(this, closestOpenedElevator);
 
-            var makeSpaceInElevator = ELEVATOR_SYSTEM_CONTROLLER.getSettings().elevatorSize.x / 2;
+            var makeSpaceInElevator = closestOpenedElevator.getSize().x / 2;
             var newDestination = new Vector2D(
                     new Random().nextDouble(
                             -makeSpaceInElevator,
-                            makeSpaceInElevator - customer.getSize().x), 0);
-            ELEVATOR_SYSTEM_CONTROLLER.setFloorToReach(customer.getCurrentElevator(), customer.getFLOOR_TO_END());
-            var shiftToMakeSpaceInElevator = customer.getPosition().getAdded(newDestination);
-            customer.setMoveTrajectory(Trajectory.ToTheDestination(
-                    customer.getConstSpeed(), // * 1
-                    shiftToMakeSpaceInElevator));
-            customer.setState(StandartCustomerState.STAY_IN);
+                            makeSpaceInElevator - getSize().x), 0);
+
+            closestOpenedElevator.addFloorToThrowOut(floorToGetOut.getCurrentFloorNum());
+            var shiftToMakeSpaceInElevator = getPosition().add(newDestination);
+            setMoveTrajectory(Trajectory.ToTheDestination(
+                    getSpeed(),
+                    () -> shiftToMakeSpaceInElevator));
+            setState(StandartCustomerState.stayIn);
         }
     }
 
-    private void processStayIn(Customer customer) {
-        if (customer.getCurrentElevator().isOpened()) {
-            if (customer.getCurrentFlor() == customer.getFLOOR_TO_END()) {
-                ELEVATOR_SYSTEM_CONTROLLER.getOutFromElevator(customer.getCurrentElevator());
-                customer.setMoveTrajectory(
-                        Trajectory.WithOldSpeedToTheDestination(
-                                customer.getCurrentElevator().getPosition()));
-                customer.setState(StandartCustomerState.GET_OUT);
-                customer.setCurrentElevator(null);
+    private void processStayIn() {
+        Elevator elevator = (Elevator) transport;
+        if (elevator.isOpened()) {
+            if (elevator.getCurrentFloorNum() == floorToGetOut.getCurrentFloorNum()) {
+                setSpeedCoefficient(1.);
+                setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(elevator::getPosition));
+                controller.customerGetOutFromElevator(this, elevator);
+                setState(StandartCustomerState.getOut);
             }
+        } else {
+            setSpeedCoefficient(999.);
         }
     }
 
-    private void processGetOut(Customer customer) {
-        if (!customer.isReachedDestination()) {
+    private void processGetOut() {
+        if (!isReachedDestination()) {
             return;
         }
-        if (customer.getPosition().x > ELEVATOR_SYSTEM_CONTROLLER.getSettings().buildingSize.x + customer.getSize().x ||
-                customer.getPosition().x < -customer.getSize().x) {
-            customer.setDead(true);
+        if (getPosition().x > ((FloorStructure) transport).getSize().x + getSize().x || getPosition().x < -getSize().x) {
+            setDead(true);
             return;
         }
-        customer.setMoveTrajectory(
+        setMoveTrajectory(
                 Trajectory.WithOldSpeedToTheDestination(
-                        getStartPositionForCustomer(customer.getCurrentFlor())));
-        appController.Send(Protocol.CUSTOMER_GET_IN_OUT, customer.getId());
+                        () -> new Vector2D(((FloorStructure) transport).getStartPositionAfterBuilding(), 0)
+                ));
+    }
+
+    private void assertTransport(Class<?> classToCheck) {
+        if (!(transport.getClass().isAssignableFrom(classToCheck))) {
+            throw new RuntimeException("The transport is badly set.");
+        }
     }
 
 }

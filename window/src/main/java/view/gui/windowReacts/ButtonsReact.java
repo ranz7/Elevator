@@ -1,14 +1,14 @@
 package view.gui.windowReacts;
 
 public interface ButtonsReact {
-     void addElevatorButtonClicked();
+//     void addElevatorButtonClicked();
 
-     void removeElevatorButtonClicked();
+//     void removeElevatorButtonClicked();
 
-     void decreaseGameSpeedButtonClicked();
+//     void decreaseGameSpeedButtonClicked();
 
-     void increaseGameSpeedButtonClicked();
+//     void increaseGameSpeedButtonClicked();
 
-     void clickedStartEndFloorButtonRequest(int start, int end);
+//     void clickedStartEndFloorButtonRequest(int start, int end);
 
 }

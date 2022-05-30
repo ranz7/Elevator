@@ -1,118 +1,119 @@
 package controller;
 
-import configs.*;
-import connector.*;
-import connector.dualConnectionStation.Client;
-import connector.filtersAndScenarios.Filters;
-import connector.filtersAndScenarios.ScenarioBuilder;
-import connector.protocol.Protocol;
-import connector.protocol.ProtocolMessage;
-import connector.protocol.ProtocolMessagesConductor;
-import databases.configs.GuiControllerConfig;
+import configs.RoomPrepareCompactData;
+import configs.ConnectionSettings;
+import dualConnectionStation.Client;
+import gates.ReciveFilters;
+import gates.Gates;
+import gates.ScenarioBuilder;
+import protocol.special.GameMapCompactData;
+import protocol.Protocol;
+import protocol.ProtocolMessage;
+import protocol.ProtocolMessagesController;
+import settings.configs.GuiControllerConfig;
 import model.*;
-import model.objects.CreaturesData;
 import tools.Vector2D;
 import view.gui.Gui;
+import model.planes.Plane;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * control window, created with Swing
  */
-public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesConductor {
+public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesController {
+    private final GuiModel windowModel = new GuiModel();
+    private final Gui gui = new Gui(this, windowModel.getLocalDrawSetting());
     public final Gates gates = new Gates(new Client(), this);
-    private final Gui gui = new Gui(this);
-
-    private GuiModel windowModel;
-
-    public void setModel(GuiModel model) {
-        windowModel = model;
-        gui.setModel(model);
-    }
 
     public void start() {
         ScenarioBuilder connectedScenario = new ScenarioBuilder()
-                .add(Filters.catchOnlySettings)
-                .add(Filters.catchOnlyUpdate)
-                .setEndFunction(windowModel::update);
-        gates.setOnDisconnectEvent(() -> {
-            gates.setScenario(connectedScenario.build(Filters.noFilter));
-            gates.start();
-            windowModel.clearDead();
+                .add(ReciveFilters.catchOnlyHello())
+                .add(ReciveFilters.catchOnlySettings())
+                .add(ReciveFilters.catchOnlyUpdate());
+        gates.setOnGatesCloseEvent(() -> {
+            gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
+            gates.connect();
         });
-        gates.setScenario(connectedScenario.build(Filters.noFilter));
-        gates.start();
+        gates.setOnConnectEvent(() -> {
+            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, windowModel.getPlanesToSubscribeFor());
+        });
+        gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
+        gates.connect();
 
         gui.start();
         addTickable(gates);
         addTickable(gui);
-        addModel(windowModel);
+        addTickable(windowModel);
         super.start();
     }
 
     @Override
     public boolean applyMessage(ProtocolMessage message) {
-        Protocol protocol = message.getProtocolInMessage();
-        Serializable data = message.getDataInMessage();
+        Protocol protocol = message.getProtocol();
+        Serializable data = message.getData();
+        int roomId = message.getRoomId();
         switch (protocol) {
-            case APPLICATION_SETTINGS -> {
-                ConnectionEstalblishConfig settings = (ConnectionEstalblishConfig) data;
-                if (ConnectionSettings.VERSION != settings.VERSION) {
+            case HELLO_MESSAGE -> {
+                Logger.getAnonymousLogger().info("Controller says Hello!!");
+
+            }
+            case WORLDS_PREPARE_SETTINGS -> {
+                RoomPrepareCompactData settings = (RoomPrepareCompactData) data;
+                if (ConnectionSettings.VERSION != settings.version()) {
                     Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
                             " Your version: %s, server version %s%n")
-                            .formatted(ConnectionSettings.VERSION, settings.VERSION));
+                            .formatted(ConnectionSettings.VERSION, settings.version()));
                     return true;
                 }
-                windowModel.setRemoteConfig(settings);
-                setControllerTimeSpeed(settings.GAME_SPEED);
-                setCurrentTime(message.getTimeStumpInMessage());
+                settings.roomData().forEach(windowModel::updateRemoteSettings);
+                setCurrentTime(message.getTimeStump());
                 gui.resize();
             }
-            case UPDATE_DATA -> windowModel.updateArivedCreaturesData((CreaturesData) data);
-            case ELEVATOR_BUTTON_CLICK -> clickButton((Vector2D) data);
-            case ELEVATOR_OPEN -> windowModel.getElevator((long) data).changeDoorsState(false);
-            case ELEVATOR_CLOSE -> windowModel.getElevator((long) data).changeDoorsState(true);
-            case CUSTOMER_GET_IN_OUT -> windowModel.getCustomer((long) data).changeBehindElevator();
-            case CHANGE_GAME_SPEED -> setControllerTimeSpeed((double) data);
+
+            case UPDATE_DATA -> {
+                windowModel.updateMap(roomId, (GameMapCompactData) data);
+            }
+            case ELEVATOR_OPEN -> windowModel.getMap(roomId).getElevator((int) data).changeDoorsState(false);
+            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).getElevator((int) data).changeDoorsState(true);
+            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).getCustomer((int) data).changeBehindElevator();
+            case ELEVATOR_BUTTON_CLICK -> windowModel.getGamePlane(roomId).leftMouseClicked((Vector2D) data);
         }
         return true;
     }
-
-    public void clickedAddCustomerButtonWithNumber(int startFloorButtonNumber, int endFloorNumber) {
-        startFloorButtonNumber = windowModel.getCombienedDrawDataBase().floorsCount() - startFloorButtonNumber - 1;
-        LinkedList<Integer> data = new LinkedList<>();
-        data.push(startFloorButtonNumber);
-        data.push(endFloorNumber - 1);
-        gates.send(new ProtocolMessage(Protocol.CREATE_CUSTOMER, data));
-    }
-
-    public void changeElevatorsCount(boolean isAdding) {
-        gates.send(new ProtocolMessage(Protocol.CHANGE_ELEVATORS_COUNT, isAdding));
-    }
-
-    public void increaseSpeed() {
-        gates.send(new ProtocolMessage(Protocol.CHANGE_GAME_SPEED, 1.5));
-    }
-
-    public void decreaseGameSpeed() {
-        gates.send(new ProtocolMessage(Protocol.CHANGE_GAME_SPEED, 1 / 1.5));
-    }
-
-    public void clickButton(Vector2D point) {
-        var pointInGame = gui.getGameWindow().getGameScaler().getFromRealToGameCoordinate(point, 0);
-        var button = windowModel.getNearestButton(pointInGame);
-        if (button == null) {
-            return;
-        }
-        if (button.getPosition().distanceTo(pointInGame) < 20) {
-            button.buttonClick();
-        }
-    }
+//
+//    public void addCustomer(int startFloorButtonId, int endFloorId) {
+//        LinkedList<Integer> data = new LinkedList<>();
+//        data.push(startFloorButtonId);
+//        data.push(endFloorId);
+//        // TODO ID ID
+//        gates.send(new ProtocolMessage(Protocol.CREATE_CUSTOMER, data));
+//    }
+//
+//    public void changeElevatorsCount(boolean isAdding) {
+//        gates.send(new ProtocolMessage(Protocol.CHANGE_ELEVATORS_COUNT, isAdding));
+//    }
+//
+//    public void increaseSpeed() {
+//        gates.send(new ProtocolMessage(Protocol.CHANGE_GAME_SPEED, 1.5));
+//    }
+//
+//    public void decreaseGameSpeed() {
+//        gates.send(new ProtocolMessage(Protocol.CHANGE_GAME_SPEED, 1 / 1.5));
+//    }
 
     @Override
     protected int getTickPerSecond() {
         return GuiControllerConfig.TPS;
+    }
+
+    public Plane getActivePlane() {
+        return windowModel.getActivePlane();
+    }
+
+    public List<Plane> getAllPlanes() {
+        return windowModel.getPlanes();
     }
 }

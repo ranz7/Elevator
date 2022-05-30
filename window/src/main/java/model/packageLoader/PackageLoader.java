@@ -1,55 +1,40 @@
 package model.packageLoader;
 
-import databases.CombienedDrawDataBase;
+import drawable.abstracts.Drawable;
+import protocol.special.GameMapCompactData;
+import model.DatabaseOf;
 import drawable.abstracts.DrawableRemoteCreature;
-import drawable.concretes.customer.DrawableCustomerCreature;
-import drawable.concretes.elevator.DrawableElevatorCreature;
 import model.objects.Creature;
+import tools.Pair;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PackageLoader {
-    public static void ApplyCustomers(
-            List<Creature> customers, List<DrawableCustomerCreature> drawableCustomers, CombienedDrawDataBase settings) {
-        applyArrivedData(customers, drawableCustomers);
-        customers.forEach(
-                creatureA -> {
-                    if (drawableCustomers.stream()
-                            .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
-                        drawableCustomers.add(new DrawableCustomerCreature(creatureA, settings));
-                    }
-                }
-        );
-    }
+    public static void applyArivedData(GameMapCompactData arivedData, DatabaseOf<Drawable> localModel) {
+        // idOfCreature , <ParentId, creature >
+        Map<Integer, Pair<Integer, Creature>> idToCreature = arivedData.parentIdAndObjects.stream()
+                .collect(Collectors.toMap(
+                        idOfParentAndCreature -> idOfParentAndCreature.getSecond().getId(),
+                        idOfParentAndCreature -> idOfParentAndCreature
+                ));
 
-    public static void ApplyElevators(
-            List<Creature> elevators, List<DrawableElevatorCreature> drawableElevators, CombienedDrawDataBase settings) {
-        applyArrivedData(elevators, drawableElevators);
-        // Add
-        elevators.forEach(
-                creatureA -> {
-                    if (drawableElevators.stream()
-                            .noneMatch(creatureB -> creatureA.getId() == creatureB.getId())) {
-                        drawableElevators.add(
-                                new DrawableElevatorCreature(creatureA, settings));
-                    }
-                }
-        );
-    }
-
-    private static void applyArrivedData(List<Creature> creaturesThatRemotlyCame,
-                                         List<? extends DrawableRemoteCreature> creaturesToApplyData) {
         // erase
-        creaturesToApplyData.removeIf(creatureA -> creaturesThatRemotlyCame.stream().noneMatch(
-                creatureB -> creatureA.getId() == creatureB.getId()));
-        // update
-        creaturesToApplyData.forEach(creatureA -> {
-                    creatureA.set(
-                            creaturesThatRemotlyCame.stream().filter(
-                                    creatureB -> creatureA.getId() == creatureB.getId()
-                            ).findFirst().get());
-                }
-        );
+        localModel.streamOf(DrawableRemoteCreature.class).forEach(
+                drawableRemoteCreature -> {
+                    Integer id = drawableRemoteCreature.getId();
+                    boolean containsKey = idToCreature.containsKey(id);
+                    if (!containsKey) {
+                        drawableRemoteCreature.setDead(true);
+                    } else {
+                        drawableRemoteCreature.set(idToCreature.get(id).getSecond());
+                        idToCreature.remove(id);
+                    }
+                });
+        idToCreature.forEach((id, parentIdAndCreature) -> {
+            (localModel.get(parentIdAndCreature.getFirst())).getLocalDataBase().add(parentIdAndCreature.getSecond());
+        });
     }
+
 
 }

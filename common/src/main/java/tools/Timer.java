@@ -1,14 +1,14 @@
 package tools;
 
-import architecture.tickable.Tickable;
+import controller.Tickable;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Timer implements Tickable {
-    private long currentTimeInMillisec;
-    private long startTimeInMillisec;
+    private double currentTimeInMillisec;
+    private double startTimeInMillisec;
 
-    public Timer(long startTimerTime) {
+    public Timer(double startTimerTime) {
         restart(startTimerTime);
     }
 
@@ -21,7 +21,7 @@ public class Timer implements Tickable {
         return currentTimeInMillisec <= 0;
     }
 
-    public void restart(long startTime) {
+    public void restart(double startTime) {
         currentTimeInMillisec = startTime;
         startTimeInMillisec = startTime;
     }
