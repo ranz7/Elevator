@@ -34,7 +34,7 @@ public class FlyingText extends DrawableMovingCreature {
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 20;
     }
 }

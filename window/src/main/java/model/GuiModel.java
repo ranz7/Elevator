@@ -8,7 +8,7 @@ import lombok.Getter;
 import model.planes.MenuPlane;
 import protocol.special.GameMapCompactData;
 import protocol.special.SubscribeRequest;
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
 import model.planes.GamePlane;
 import model.planes.Plane;
@@ -31,11 +31,15 @@ public class GuiModel implements Tickable {
     public void updateRemoteSettings(RoomPrepareCompactData.RoomData roomPrepareCompactData) {
         planes.stream().
                 filter(plane -> plane instanceof GamePlane).
-                filter(plane -> ((GamePlane) plane).getCombienedSettings().roomId() == roomPrepareCompactData.roomId()).
+                filter(plane -> ((GamePlane) plane).getRoomRemoteSettings().roomId() == roomPrepareCompactData.roomId()).
                 findFirst().
                 ifPresentOrElse(
-                        plane -> ((GamePlane) plane).getCombienedSettings().setRoomPrepareCompactData(roomPrepareCompactData),
-                        () -> planes.add(new GamePlane(new CombienedDrawSettings(roomPrepareCompactData)))
+                        plane -> ((GamePlane) plane).setRoomRemoteSettings(new RoomRemoteSettings(roomPrepareCompactData)),
+                        () -> planes.add(
+                                new GamePlane(
+                                        new RoomRemoteSettings(roomPrepareCompactData), localDrawSetting
+                                )
+                        )
                 );
     }
 
@@ -58,7 +62,7 @@ public class GuiModel implements Tickable {
         var ref = new Object() {
             GamePlane found;
         };
-        streamOfGamePlanes().filter(gamePlane -> gamePlane.getCombienedSettings().roomId() == roomId).
+        streamOfGamePlanes().filter(gamePlane -> gamePlane.getRoomRemoteSettings().roomId() == roomId).
                 findFirst().ifPresentOrElse(plane -> ref.found = (GamePlane) plane, () -> {
                     throw new RuntimeException("Not found");
                 });
@@ -80,7 +84,7 @@ public class GuiModel implements Tickable {
     public SubscribeRequest getPlanesToSubscribeFor() {
         return new SubscribeRequest(
                 streamOfGamePlanes()
-                        .map(gamePlane ->   gamePlane.getCombienedSettings().roomId())
+                        .map(gamePlane -> gamePlane.getRoomRemoteSettings().roomId())
                         .collect(Collectors.toList())
         );
 

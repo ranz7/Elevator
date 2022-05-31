@@ -160,7 +160,11 @@ public class Vector2D extends Point2D.Double {
         return this.equals(new Vector2D(0, 0));
     }
 
-    public Vector2D multiplyY(long multiplyBy) {
+    public Vector2D multiplyY(double multiplyBy) {
         return new Vector2D(x, y * multiplyBy);
+    }
+
+    public Vector2D multiplyX(double multiplyBy) {
+        return new Vector2D(x * multiplyBy, y);
     }
 }

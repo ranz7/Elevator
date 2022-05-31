@@ -2,16 +2,21 @@ package model.planes;
 
 import controller.Tickable;
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableCreature;
+import drawable.buttons.ClickableButton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import model.DatabaseOf;
+import model.Transport;
+import model.planes.graphics.Scaler;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import view.gui.windowReacts.MouseReact;
 import model.planes.graphics.Painter;
-import model.planes.graphics.Scaler;
 
 import java.awt.*;
+import java.util.Comparator;
 
 @RequiredArgsConstructor
 public abstract class Plane implements Tickable, MouseReact {
@@ -22,36 +27,50 @@ public abstract class Plane implements Tickable, MouseReact {
 
     @Getter
     protected final LocalDrawSetting settings;
+    private final Painter painter;
 
-    @Getter
-    private final Scaler scaler = new Scaler();
-    private final Painter drawer = new Painter(scaler);
+    Scaler getScaler() {
+        return painter.getScaler();
+    }
 
     public boolean zoomedIn() {
-        return scaler.getAdditionalZoomFinishValue() == 1.;
+        return painter.getScaler().getAdditionalZoomFinishValue() == 1.;
     }
 
     public void zoomOut() {
-        scaler.zoomOut();
+        painter.getScaler().zoomOut();
     }
 
     public void zoomIn(Vector2D point, double zoomScale) {
-        scaler.zoomIn(point, zoomScale);
+        painter.getScaler().zoomIn(point, zoomScale);
     }
 
     @Override
     public void tick(double deltaTime) {
-        scaler.tick(deltaTime);
+        painter.getScaler().tick(deltaTime);
+        getLocalDataBase().tick(deltaTime);
     }
 
     public void draw(Graphics g) {
-        drawer.prepareDrawer(g);
-        getDrawable().draw(new Vector2D(0, 0), drawer);
+        painter.prepareDrawer(g);
+        var objectsAndRelativePositions = getLocalDataBase().toAbsolutePositionAndObjects();
+        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().getDrawPrioritet()));
+        objectsAndRelativePositions.forEach(
+                positionAndObject -> {
+                    positionAndObject.getSecond().draw(positionAndObject.getFirst(), painter);
+                });
     }
 
-    protected abstract Drawable getDrawable();
+    protected abstract DatabaseOf<Drawable> getLocalDataBase();
 
     public abstract int getId();
 
     public abstract void resize(Dimension size);
+
+    public void mousePositionUpdate(Point mouseLocation) {
+        var gamePosition = getScaler().getFromRealToGameCoordinate(new Vector2D(mouseLocation), 0);
+        getLocalDataBase().streamOf(ClickableButton.class).forEach(
+                clickableButton -> clickableButton.mousePositionUpdate(gamePosition
+                ));
+    }
 }

@@ -4,11 +4,16 @@ import tools.DataBase;
 import tools.Vector2D;
 
 import java.awt.*;
+import java.util.Random;
 
 public class LocalDrawSetting implements DataBase {
     private final DrawConfig drawConfig = new DrawConfig();
     private final ColorConfig colorConfig = new ColorConfig();
 
+    public Color getRandomCustomerSkin() {
+        var colors = customerSkins();
+        return colors[(int) ((Math.abs(new Random().nextInt())) % colors.length)];
+    }
     @Override
     public boolean initialized(Class<?>... classes) {
         return true;
@@ -74,4 +79,15 @@ public class LocalDrawSetting implements DataBase {
         return colorConfig.jButtonsColor;
     }
 
+    public double customerWidth() {
+        return 40;
+    }
+
+    public Vector2D getMenuButtonSize() {
+        return drawConfig.menuButtonSize;
+    }
+
+    public Color getMenuButtonColor() {
+        return colorConfig.menuButtonColor;
+    }
 }

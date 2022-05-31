@@ -6,10 +6,10 @@ import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
 import model.Transportable;
-import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import lombok.Getter;
 
@@ -25,16 +25,14 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
     private final ElevatorDoor rightDoor;
 
 
-    public DrawableElevator(CombienedDrawSettings settings) {
+    public DrawableElevator(double OpenCloseTime, LocalDrawSetting settings) {
         super(new Rectangle(settings.elevatorBackGroundColor()), settings);
         leftDoor = new ElevatorDoor(
-                new Vector2D(0, 0), this.getSize().divideByX(2),
-                true, settings,
-                getSettings().elevatorOpenCloseTime());
+                new Vector2D(0, 0), this.getSize(),
+                true, settings, OpenCloseTime);
         rightDoor = new ElevatorDoor(
-                new Vector2D(this.getSize().x / 2, 0), this.getSize().divideByX(2),
-                false, settings,
-                getSettings().elevatorOpenCloseTime());
+                new Vector2D(this.getSize().x / 2, 0), this.getSize(),
+                false, settings, OpenCloseTime);
 
         localDataBase.add(leftDoor);
         localDataBase.add(rightDoor);
@@ -46,7 +44,7 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 4;
     }
 

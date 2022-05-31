@@ -7,12 +7,10 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 
 public record MouseListener(MouseReact react) implements java.awt.event.MouseListener {
-
     @Override
     public void mouseClicked(MouseEvent e) {
 
     }
-
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
@@ -33,5 +31,7 @@ public record MouseListener(MouseReact react) implements java.awt.event.MouseLis
 
     @Override
     public void mouseExited(MouseEvent e) {
+
     }
+
 }

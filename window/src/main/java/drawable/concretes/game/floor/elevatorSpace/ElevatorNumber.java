@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import model.Transport;
 import model.Transportable;
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.text.Text;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 public class ElevatorNumber extends DrawableCreature implements Transportable {
@@ -15,7 +16,7 @@ public class ElevatorNumber extends DrawableCreature implements Transportable {
     @Setter
     Transport transport;
 
-    protected ElevatorNumber(Vector2D position, CombienedDrawSettings settings) {
+    protected ElevatorNumber(Vector2D position, LocalDrawSetting settings) {
         super(position, new Vector2D(100, 15), new Text("-", settings.colorOfNumber()), settings);
     }
 
@@ -25,7 +26,7 @@ public class ElevatorNumber extends DrawableCreature implements Transportable {
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 14;
     }
 

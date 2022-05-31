@@ -125,6 +125,5 @@ public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
 
     public List<Pair<Vector2D, T>> toAbsolutePositionAndObjects() {
         return stream().collect(Collectors.toList());
-
     }
 }

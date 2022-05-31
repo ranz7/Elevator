@@ -27,4 +27,5 @@ import java.awt.*;
 
     public final Color backGroundColor = new Color(0, 0, 0);
     public final Color jButtonsColor = new Color(30, 57, 98);
-}
+    public Color menuButtonColor = new Color(104, 218, 97, 102);
+  }
