@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
@@ -30,9 +31,13 @@ public class Client extends BaseDualConectionStation {
     private SocketStreamReader socketStreamReader;
     @Setter
     private String host = ConnectionSettings.HOST;
+    AtomicBoolean tryToConnect = new AtomicBoolean(false);
 
     @Override
     public boolean isDisconnect() {
+        if (tryToConnect.get()) {
+            return false;
+        }
         if (serversSocket == null) {
             return true;
         }
@@ -45,26 +50,24 @@ public class Client extends BaseDualConectionStation {
 
     @Override
     public void start() {
-        isDisconnect.set(false);
-        new Thread() {
-            @Override
-            public synchronized void start() {
-                int attempts = ConnectionSettings.attempts;
-                while (serversSocket == null) {
-                    serversSocket = connectToServer();
-                    attempts--;
-                    if (attempts == 0) {
-                        isDisconnect.set(true);
-                        return;
-                    }
-                    Logger.getAnonymousLogger().info("ATTEMPT: " + attempts);
+        tryToConnect.set(true);
+        new Thread(() -> {
+            int attempts = ConnectionSettings.attempts;
+            while (serversSocket == null) {
+                serversSocket = connectToServer();
+                attempts--;
+                if (attempts == 0) {
+                    tryToConnect.set(false);
+                    return;
                 }
-                socketStreamReader = new SocketStreamReader(serversSocket, downlink);
-                socketStreamReader.start();
-                downlink.onNewSocketConnection(new Reader(objectOutputStream, serversSocket));
-                Logger.getAnonymousLogger().info("Connected +");
+                Logger.getAnonymousLogger().info("ATTEMPT: " + attempts);
             }
-        }.start();
+            socketStreamReader = new SocketStreamReader(serversSocket, downlink);
+            socketStreamReader.start();
+            downlink.onNewSocketConnection(new Reader(objectOutputStream, serversSocket));
+            Logger.getAnonymousLogger().info("Connected +");
+            tryToConnect.set(false);
+        }).start();
     }
 
     private Socket connectToServer() {

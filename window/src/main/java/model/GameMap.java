@@ -12,7 +12,7 @@ import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import lombok.Getter;
 import model.packageLoader.PackageLoader;
 import protocol.special.GameMapCompactData;
-import settings.CombienedDrawSettings;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import model.planes.graphics.Painter;
 
@@ -24,7 +24,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     @Getter
     private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
 
-    public GameMap(CombienedDrawSettings settings) {
+    public GameMap(LocalDrawSetting settings) {
         super(new RectangleWithBorder(new Color(222, 222, 222), 7), settings);
     }
 
@@ -84,7 +84,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 0;
     }
 
@@ -94,8 +94,9 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
 
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
+        super.draw(realDrawPosition, gameDrawer);
         var objectsAndRelativePositions = localDataBase.toAbsolutePositionAndObjects();
-        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().GetDrawPrioritet()));
+        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().getDrawPrioritet()));
         objectsAndRelativePositions.forEach(
                 positionAndObject -> {
                     positionAndObject.getSecond().draw(positionAndObject.getFirst(), gameDrawer);
@@ -104,7 +105,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
 
     public Vector2D getBuildingSize() {
         var randomFloor = localDataBase.streamOf(DrawableFloorStructure.class).findFirst().get();
-        var numberOfFloors = localDataBase.countOf(DrawableFloorStructure.class);
+        var numberOfFloors = (double) localDataBase.countOf(DrawableFloorStructure.class);
         return new Vector2D(randomFloor.getSize()).multiplyY(numberOfFloors);
     }
 }

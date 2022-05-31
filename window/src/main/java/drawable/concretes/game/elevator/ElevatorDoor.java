@@ -1,10 +1,9 @@
 package drawable.concretes.game.elevator;
 
-import settings.CombienedDrawSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
-import model.objects.Creature;
+import settings.localDraw.LocalDrawSetting;
 import tools.Timer;
 import tools.Vector2D;
 
@@ -15,7 +14,7 @@ public class ElevatorDoor extends DrawableCreature {
     private final Vector2D openedDoorsSize;
     private final double openCloseTime;
 
-    public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, CombienedDrawSettings settings,
+    public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, LocalDrawSetting settings,
                         double openCloseTime) {
         super(position, size,
                 new RectangleWithBorder(settings.doorsColor(), settings.doorsBorder(), 2),
@@ -45,7 +44,7 @@ public class ElevatorDoor extends DrawableCreature {
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 14;
     }
 

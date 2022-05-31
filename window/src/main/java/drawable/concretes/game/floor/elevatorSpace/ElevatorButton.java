@@ -1,11 +1,10 @@
 package drawable.concretes.game.floor.elevatorSpace;
 
 import drawable.abstracts.DrawableRemoteCreature;
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
-import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
-import model.objects.Creature;
+import settings.localDraw.LocalDrawSetting;
 import tools.Timer;
 import tools.Vector2D;
 
@@ -15,7 +14,7 @@ import tools.Vector2D;
 public class ElevatorButton extends DrawableRemoteCreature {
     private final Timer buttonOnTimer = new Timer();
 
-    public ElevatorButton(Vector2D position, CombienedDrawSettings settings) {
+    public ElevatorButton(LocalDrawSetting settings) {
         super(new Rectangle(settings.buttonColorOff()), settings);
     }
 
@@ -39,7 +38,7 @@ public class ElevatorButton extends DrawableRemoteCreature {
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 10;
     }
 }

@@ -33,6 +33,8 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void tick(double deltaTime) {
         swingWindow.tick(deltaTime);
+        var mouseLocation = MouseInfo.getPointerInfo().getLocation();
+        controller.getActivePlane().mousePositionUpdate(mouseLocation);
     }
 
     @Override

@@ -33,5 +33,5 @@ public interface Drawable extends CreatureInterface, Tickable {
 
     DrawCenter getDrawCenter();
 
-    int GetDrawPrioritet();
+    int getDrawPrioritet();
 }

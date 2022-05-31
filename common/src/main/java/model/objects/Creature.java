@@ -51,6 +51,7 @@ public abstract class Creature implements Serializable, CreatureInterface {
         this.position.set(creature.position);
         this.size.set(creature.size);
         this.isVisible = creature.isVisible;
+        this.isDead = creature.isDead;
     }
 
     @Override

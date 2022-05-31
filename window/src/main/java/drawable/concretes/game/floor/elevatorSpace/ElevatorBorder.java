@@ -5,10 +5,11 @@ import drawable.concretes.game.elevator.DrawableElevator;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.Transport;
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 public class ElevatorBorder extends DrawableCreature implements Transport {
@@ -16,7 +17,7 @@ public class ElevatorBorder extends DrawableCreature implements Transport {
     private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
     private final DrawableElevator parentElevator;
 
-    public ElevatorBorder(Vector2D position, DrawableElevator parentElevator, CombienedDrawSettings settings) {
+    public ElevatorBorder(Vector2D position, DrawableElevator parentElevator, LocalDrawSetting settings) {
         super(position, parentElevator.getSize().add(settings.borderThickness()),
                 new RectangleWithBorder(settings.borderColor(), settings.borderThickness() * 2), settings);
         this.parentElevator = parentElevator;
@@ -30,7 +31,7 @@ public class ElevatorBorder extends DrawableCreature implements Transport {
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 9;
     }
 

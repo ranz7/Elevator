@@ -1,9 +1,11 @@
 package model.planes.graphics;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import tools.Vector2D;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /*
  * this class transform game coordinates to normal coordinates and viceversa , so u can change
@@ -12,7 +14,8 @@ import java.awt.*;
 @RequiredArgsConstructor
 public class Painter {
     // The ratio of game coordinates to real
-    protected final Scaler scaler;
+    @Getter
+    private final Scaler scaler;
     protected Graphics2D graphics2D;
 
     public void setColor(Color red) {
@@ -28,6 +31,7 @@ public class Painter {
                 (int) scaler.getFromGameToRealLength(size.x),
                 (int) scaler.getFromGameToRealLength(size.y)
         );
+
     }
 
     public void drawFilledRect(Vector2D position, Vector2D size,
@@ -76,5 +80,26 @@ public class Painter {
 
     public void prepareDrawer(Graphics g) {
         graphics2D = (Graphics2D) g;
+    }
+
+    public void drawFilledEllipse(Vector2D position, Vector2D size, Color fillColor,
+                                  Color borderColor, int thickness) {
+        fillEllipse(position, size, fillColor);
+        drawOnlyBorderEllipse(position, size, borderColor, thickness);
+    }
+
+    private void drawOnlyBorderEllipse(Vector2D position, Vector2D size, Color borderColor, int thickness) {
+
+    }
+
+    private void fillEllipse(Vector2D position, Vector2D size, Color fillColor) {
+        graphics2D.setColor(fillColor);
+        var realPosition = scaler.getFromGameToRealCoordinate(position, size.y);
+        graphics2D.fillOval(
+                (int) realPosition.x,
+                (int) realPosition.y,
+                (int) scaler.getFromGameToRealLength(size.x),
+                (int) scaler.getFromGameToRealLength(size.y)
+        );
     }
 }

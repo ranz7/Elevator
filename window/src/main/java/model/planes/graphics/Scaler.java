@@ -1,14 +1,15 @@
 package model.planes.graphics;
 
-import settings.configs.GameScalerConfig;
 import lombok.Getter;
 import controller.Tickable;
+import lombok.RequiredArgsConstructor;
 import tools.Vector2D;
 
 import java.awt.*;
 
+@RequiredArgsConstructor
 public class Scaler implements Tickable {
-    private final Vector2D blackZone = GameScalerConfig.blackZone;
+    private final Vector2D blackZone;
 
     private Vector2D screenSizeAfterShift;
     private Vector2D drawOffset = new Vector2D(0, 0);
@@ -17,7 +18,7 @@ public class Scaler implements Tickable {
     // ZOOM DATA
     @Getter
     private double additionalZoomFinishValue = 1.;
-    private double additionalZoomCurrentValue = GameScalerConfig.zoomStartValue;
+    private double additionalZoomCurrentValue;
 
     private Vector2D additionalMoveFinishValue = new Vector2D(0, 0);
     private Vector2D additionalMove = new Vector2D(0, 0);
@@ -25,7 +26,9 @@ public class Scaler implements Tickable {
     Vector2D clickedPoint = new Vector2D(0, 0);
     double zoomScale = 1;
 
-    public Scaler() {
+    public Scaler(Vector2D blackZone, Double zoomStartValue) {
+        this.blackZone = blackZone;
+        this.additionalZoomCurrentValue = zoomStartValue;
         updateSizes(new Dimension(100, 100), new Vector2D(100, 100));
     }
 
@@ -61,7 +64,10 @@ public class Scaler implements Tickable {
                         - heigthOfTheObject);
     }
 
+    private Dimension screenSizeSave;
+
     public void updateSizes(Dimension screenSize, Vector2D gameSize) {
+        this.screenSizeSave = screenSize;
         clickedPoint = clickedPoint.sub(drawOffset).divide(scalingCoefficient); // NEED TO BE FIXED
 
         screenSizeAfterShift = new Vector2D(screenSize.width - blackZone.x, screenSize.height - blackZone.y);
@@ -73,6 +79,10 @@ public class Scaler implements Tickable {
         if (zoomScale != 1) {
             updateZoomVector();
         }
+    }
+
+    public void updateGameSizes(Vector2D gameSize) {
+        updateSizes(screenSizeSave, gameSize);
     }
 
     private void updateZoomVector() {

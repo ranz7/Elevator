@@ -7,9 +7,10 @@ import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
 import model.Transportable;
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 public class DrawableFloorStructure extends DrawableRemoteCreature implements Transport, Transportable {
@@ -19,10 +20,9 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
     @Getter
     private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
 
-    public DrawableFloorStructure(CombienedDrawSettings settings) {
+    public DrawableFloorStructure(LocalDrawSetting settings) {
         super(new RectangleWithBorder(settings.florBetonColor(), 7), settings);
 
-        var customerSize = settings.customerSize();
 
         localDataBase.add(new FloorHidingCornerWall(
                 new Vector2D(0 - getSize().x * 4., -2),
@@ -31,7 +31,7 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
         ));
         localDataBase.add(new FloorHidingCornerWall(
                 new Vector2D(getSize().x, -2),
-                new Vector2D(customerSize.x * 4, getSize().y + 2),
+                new Vector2D(settings.customerWidth() * 4, getSize().y + 2),
                 settings
         ));
     }
@@ -42,7 +42,7 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 14;
     }
 

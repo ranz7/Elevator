@@ -42,7 +42,6 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
-
         gui.start();
         addTickable(gates);
         addTickable(gui);

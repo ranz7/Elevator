@@ -1,25 +1,33 @@
 package model.planes;
 
+import configs.RoomPrepareCompactData;
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableCreature;
 import drawable.concretes.FlyingText;
-import drawable.concretes.game.elevator.DrawableElevator;
 import lombok.Getter;
+import lombok.Setter;
+import model.DatabaseOf;
 import model.GameMap;
-import settings.CombienedDrawSettings;
+import model.planes.graphics.Painter;
+import model.planes.graphics.Scaler;
+import settings.RoomRemoteSettings;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
-import java.util.LinkedList;
-import java.util.List;
 
 
 public class GamePlane extends Plane {
     @Getter
     private final GameMap gameMap;
+    @Getter
+    @Setter
+    private RoomRemoteSettings roomRemoteSettings;
 
-    public GamePlane(CombienedDrawSettings combienedDrawSettings) {
-        super(combienedDrawSettings);
-        this.gameMap = new GameMap(combienedDrawSettings);
+    public GamePlane(RoomRemoteSettings roomRemoteSettings, LocalDrawSetting localDrawSettings) {
+        super(localDrawSettings, new Painter(new Scaler(new Vector2D(50, 50), 0.2)));
+        this.gameMap = new GameMap(localDrawSettings);
+        this.roomRemoteSettings = roomRemoteSettings;
     }
 
     @Override
@@ -33,10 +41,6 @@ public class GamePlane extends Plane {
         }
     }
 
-    @Override
-    protected Drawable getDrawable() {
-        return gameMap;
-    }
 
     @Override
     public void leftMouseClicked(Vector2D point) {
@@ -54,7 +58,12 @@ public class GamePlane extends Plane {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        gameMap.tick(deltaTime * getCombienedSettings().gameSpeed());
+        gameMap.tick(deltaTime * roomRemoteSettings.gameSpeed());
+    }
+
+    @Override
+    protected DatabaseOf<Drawable> getLocalDataBase() {
+        return gameMap.getLocalDataBase();
     }
 
     @Override
@@ -62,12 +71,9 @@ public class GamePlane extends Plane {
         return gameMap.getId();
     }
 
-    public CombienedDrawSettings getCombienedSettings() {
-        return (CombienedDrawSettings) settings;
-    }
-
     @Override
     public void resize(Dimension size) {
         getScaler().updateSizes(size, gameMap.getBuildingSize());
     }
+
 }

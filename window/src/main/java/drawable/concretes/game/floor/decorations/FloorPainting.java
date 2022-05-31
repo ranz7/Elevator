@@ -1,21 +1,21 @@
 package drawable.concretes.game.floor.decorations;
 
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.texture.Texture;
-import model.objects.Creature;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.util.Random;
 
 public class FloorPainting extends DrawableCreature {
-    public FloorPainting(Vector2D position, CombienedDrawSettings settings, Random random) {
+    public FloorPainting(Vector2D position, LocalDrawSetting settings, Random random) {
         super( position, new Vector2D(100, 100), new Texture( "/images/paintings/", random), settings);
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         return 9;
     }
 

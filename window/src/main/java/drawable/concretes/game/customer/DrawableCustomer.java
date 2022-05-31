@@ -1,20 +1,19 @@
 package drawable.concretes.game.customer;
 
-import settings.CombienedDrawSettings;
+import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
-import model.objects.Creature;
-import tools.Vector2D;
+import settings.localDraw.LocalDrawSetting;
 
 public class DrawableCustomer extends DrawableRemoteCreature {
     @Getter
     @Setter
     private boolean behindElevator = true;
 
-    public DrawableCustomer(CombienedDrawSettings settings) {
+    public DrawableCustomer(LocalDrawSetting settings) {
         super(new Rectangle(settings.getRandomCustomerSkin()), settings);
     }
 
@@ -24,7 +23,7 @@ public class DrawableCustomer extends DrawableRemoteCreature {
     }
 
     @Override
-    public int GetDrawPrioritet() {
+    public int getDrawPrioritet() {
         if (behindElevator) {
             return 12;
         }
