@@ -96,17 +96,6 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         localDataBase.addCreature(drawable);
     }
 
-    @Override
-    public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
-        super.draw(realDrawPosition, gameDrawer);
-        var objectsAndRelativePositions = localDataBase.toAbsolutePositionAndObjects();
-        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().getDrawPrioritet()));
-        objectsAndRelativePositions.forEach(
-                positionAndObject -> {
-                    positionAndObject.getSecond().draw(positionAndObject.getFirst(), gameDrawer);
-                });
-    }
-
     public Vector2D getBuildingSize() {
         var randomFloor = localDataBase.streamOf(DrawableFloorStructure.class).findFirst().get();
         var numberOfFloors = (double) localDataBase.countOf(DrawableFloorStructure.class);

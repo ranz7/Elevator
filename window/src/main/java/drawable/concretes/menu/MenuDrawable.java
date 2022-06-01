@@ -41,11 +41,6 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
     }
 
     @Override
-    public void tick(double deltaTime) {
-        System.out.println("EHO");
-    }
-
-    @Override
     public DrawCenter getDrawCenter() {
         return DrawCenter.bottomLeft;
     }

@@ -2,13 +2,11 @@ package model.planes;
 
 import controller.Tickable;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.DrawableCreature;
 import drawable.buttons.ClickableButton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.DatabaseOf;
-import model.Transport;
 import model.planes.graphics.Scaler;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
@@ -62,8 +60,6 @@ public abstract class Plane implements Tickable, MouseReact {
     }
 
     protected abstract DatabaseOf<Drawable> getLocalDataBase();
-
-    public abstract int getId();
 
     public abstract void resize(Dimension size);
 

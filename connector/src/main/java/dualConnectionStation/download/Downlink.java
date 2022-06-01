@@ -10,7 +10,7 @@ import java.net.Socket;
 public interface Downlink {
     void onReceiveMessage(ProtocolMessage message);
 
-    void onNewSocketConnection(Reader message);
+    void onNewSocketConnection(Socket socket);
 
     void onLostSocketConnection(Socket socket);
 }

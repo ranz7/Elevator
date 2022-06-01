@@ -16,7 +16,7 @@ public enum Protocol {
     ELEVATOR_OPEN,                  // Integer (elevator id)
     ELEVATOR_CLOSE,                 // Integer (elevator id)
     UPDATE_DATA,                    // ApplicationCreatures
-    WORLDS_PREPARE_SETTINGS,           // AApplicationSettings
+    ROOMS_PREPARE_SETTINGS,           // AApplicationSettings
 
     //-- FROM_CLIENT --//
     CHANGE_GAME_SPEED,              // Double (new game speed)

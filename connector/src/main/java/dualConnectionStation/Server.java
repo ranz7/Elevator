@@ -50,9 +50,7 @@ public class Server extends BaseDualConectionStation {
                     TimeUnit.MILLISECONDS.sleep(200);
                     SocketStreamReader streamReader = new SocketStreamReader(clientSocket, downlink);
                     streamReader.start();
-
-                    TimeUnit.MILLISECONDS.sleep(200);
-                    downlink.onNewSocketConnection(socketCompactData);
+                    downlink.onNewSocketConnection(clientSocket);
                 }
             } catch (Exception exception) {
                 Logger.getAnonymousLogger().warning("Server exception: " + exception.getMessage());
@@ -64,7 +62,7 @@ public class Server extends BaseDualConectionStation {
 
     @Override
     public void flush() {
-        if(isDisconnected){
+        if (isDisconnected) {
             streamBuffer.clear();
             return;
         }
@@ -82,14 +80,19 @@ public class Server extends BaseDualConectionStation {
                     }
             );
         }
+        streamBuffer.clear();
     }
 
-    private void sendAll(Reader client, List<ProtocolMessage> messages) {
+    private void sendAll(Reader client, List<ProtocolMessage> messagesToClient) {
+
         try {
+            ProtocolMessage.PureData[] messagesArray = new ProtocolMessage.PureData[messagesToClient.size()];
+            for (int i = 0; i < messagesArray.length; i++) {
+                messagesArray[i] = messagesToClient.get(i).toPureData();
+                Logger.getAnonymousLogger().info("SENT : " +  messagesToClient.get(i).getProtocol());
+            }
             client.stream().writeObject(
-                    new MessagePacket(
-                            messages.stream().map(ProtocolMessage::toSerializable)
-                                    .collect(Collectors.toList())));
+                    new MessagePacket(messagesArray));
         } catch (IOException ignore) {
         }
     }

@@ -9,7 +9,7 @@ public class ReciveFilters {
         return (protocol -> false);
     }
     public static Function<Protocol, Boolean> catchOnlySettings() {
-        return protocol -> protocol != Protocol.WORLDS_PREPARE_SETTINGS;
+        return protocol -> protocol != Protocol.ROOMS_PREPARE_SETTINGS;
     }
     public static Function<Protocol, Boolean> catchOnlyUpdate() {
         return protocol -> protocol != Protocol.UPDATE_DATA;

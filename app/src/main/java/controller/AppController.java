@@ -26,8 +26,7 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
     private final AppModel appModel = new AppModel();
 
     public void start() {
-        gates.setOnConnectEvent(
-                () -> gates.sendWithoutCheck(Protocol.HELLO_MESSAGE, -1, null));
+        gates.setOnConnectEvent(() -> gates.sendWithoutCheck(Protocol.HELLO_MESSAGE, -1, null));
         gates.setSpamEvent(this::spamWithData, (long) (1000. / ConnectionSettings.SSPS));
         gates.connect();
 
@@ -36,22 +35,20 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
         super.start();
     }
 
-    private Runnable spamWithData() {
-        return () -> {
-            appModel.getGameMaps().forEach(
-                    appModel -> {
-                        try {
-                            gates.send(
-                                    Protocol.UPDATE_DATA,
-                                    appModel.getRoomId(),
-                                    appModel.createCompactGameMapData()
-                            );
-                        } catch (Gates.NobodyReceivedMessageException e) {
-                            appModel.setDead(true);
-                        }
+    private void spamWithData() {
+        appModel.getGameMaps().forEach(
+                appModel -> {
+                    try {
+                        gates.send(
+                                Protocol.UPDATE_DATA,
+                                appModel.getRoomId(),
+                                appModel.createCompactGameMapData()
+                        );
+                    } catch (Gates.NobodyReceivedMessageException e) {
+                        appModel.setDead(true);
                     }
-            );
-        };
+                }
+        );
     }
 
     @Override
@@ -64,9 +61,7 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
                 gates.setSendFilter(message.getOwner(), SendFilters.sendOnlyIfSubscribed((SubscribeRequest) data));
                 var subscribes = ((SubscribeRequest) data).roomsToSubscribeFor();
                 appModel.createIfNotExist(subscribes, gates);
-
-                gates.sendWithoutCheckMultiple(Protocol.WORLDS_PREPARE_SETTINGS,
-                        appModel.createRoomPrepareCompactData(subscribes));
+                gates.sendWithoutCheckMultiple(Protocol.ROOMS_PREPARE_SETTINGS, appModel.createRoomPrepareCompactData(subscribes));
             }
             case CREATE_CUSTOMER -> {
                 LinkedList<Integer> floorsStartEnd = (LinkedList<Integer>) data;

@@ -53,11 +53,11 @@ public class Gates implements Tickable, Downlink {
         this.uplink = uplink;
         this.listener = listener;
         this.uplink.setDownlink(this);
-        Logger.getAnonymousLogger().info("Downlink created . . .");
+        //       Logger.getAnonymousLogger().info("Downlink created . . .");
     }
 
     public void connect() {
-        Logger.getAnonymousLogger().info("Uplink starting . . .");
+//        Logger.getAnonymousLogger().info("Uplink starting . . .");
         uplink.start();
     }
 
@@ -66,7 +66,6 @@ public class Gates implements Tickable, Downlink {
         if (uplink.isDisconnected()) {
             return;
         }
-
         if (spamTimer != null) {
             spamTimer.tick(deltaTime);
             if (spamTimer.isReady()) {
@@ -100,8 +99,8 @@ public class Gates implements Tickable, Downlink {
     }
 
     @Override
-    public void onNewSocketConnection(Reader client) {
-        Logger.getAnonymousLogger().info("Uplink created . . .");
+    public void onNewSocketConnection(Socket socket) {
+        //       Logger.getAnonymousLogger().info("Uplink created . . .");
         if (onConnectEvent != null) {
             onConnectEvent.run();
         }
@@ -110,7 +109,7 @@ public class Gates implements Tickable, Downlink {
     @Override
     public void onLostSocketConnection(Socket socket) {
         sendFilters.remove(socket);
-        Logger.getAnonymousLogger().info("Uplink end . . .");
+        //       Logger.getAnonymousLogger().info("Uplink end . . .");
         if (onGatesCloseEvent != null) {
             onGatesCloseEvent.run();
         }
@@ -121,10 +120,13 @@ public class Gates implements Tickable, Downlink {
             Boolean wasSent = false;
         };
         uplink.getReceivers().forEach(socket -> {
-            if (!sendFilters.containsKey(socket) || sendFilters.get(socket).apply(message)) {
-                uplink.send(socket, message);
-                ref.wasSent = true;
+            if (sendFilters.containsKey(socket)) {
+                if (sendFilters.get(socket).apply(message)) {
+                    return;
+                }
             }
+            uplink.send(socket, message);
+            ref.wasSent = true;
         });
         if (!ref.wasSent) {
             throw new NobodyReceivedMessageException();
@@ -140,15 +142,15 @@ public class Gates implements Tickable, Downlink {
         spamTimer = new Timer(timeToWaitBetweenSpams);
     }
 
-    public void setSendFilter(Socket owner, Function<ProtocolMessage, Boolean> sendOnlyIfSubscribed) {
-        sendFilters.put(owner, sendOnlyIfSubscribed);
+    public void setSendFilter(Socket filtered, Function<ProtocolMessage, Boolean> sendOnlyIfSubscribed) {
+        sendFilters.put(filtered, sendOnlyIfSubscribed);
     }
 
     public void sendWithoutCheck(Protocol protocol, int worldId, Serializable data) {
         try {
             send(protocol, worldId, data);
         } catch (NobodyReceivedMessageException e) {
-            throw new RuntimeException("Nobody received message, please use usual send ");
+            throw new RuntimeException("Nobody received message, please use usual send " + protocol);
         }
     }
 
@@ -157,6 +159,7 @@ public class Gates implements Tickable, Downlink {
             try {
                 send(protocol, data.getFirst(), data.getSecond());
             } catch (NobodyReceivedMessageException e) {
+                Logger.getAnonymousLogger().info(e.getMessage());
                 e.printStackTrace();
             }
         });

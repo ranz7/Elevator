@@ -50,12 +50,6 @@ public class MenuPlane extends Plane {
     }
 
     @Override
-    public int getId() {
-        return 0;
-    }
-
-
-    @Override
     public void resize(Dimension size) {
         getScaler().updateSizes(size, menuDrawable.getSize());
     }

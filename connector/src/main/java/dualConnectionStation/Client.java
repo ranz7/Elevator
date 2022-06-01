@@ -9,11 +9,13 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -53,7 +55,10 @@ public class Client extends BaseDualConectionStation {
         connecting = true;
         new Thread(() -> {
             int attempts = ConnectionSettings.attempts;
+            serversSocket = null;
             while (serversSocket == null) {
+                Logger.getAnonymousLogger().info("ATTEMPT: " + (ConnectionSettings.attempts - attempts) +
+                        " of " + (ConnectionSettings.attempts - 1));
                 serversSocket = connectToServer();
                 attempts--;
                 if (attempts == 0) {
@@ -61,15 +66,12 @@ public class Client extends BaseDualConectionStation {
                     downlink.onLostSocketConnection(serversSocket);
                     return;
                 }
-                Logger.getAnonymousLogger().info("ATTEMPT: " + (ConnectionSettings.attempts - attempts) +
-                        " of " + ConnectionSettings.attempts - 1);
             }
             socketStreamReader = new SocketStreamReader(serversSocket, downlink);
             socketStreamReader.start();
-            downlink.onNewSocketConnection(new Reader(objectOutputStream, serversSocket));
+            downlink.onNewSocketConnection(serversSocket);
             Logger.getAnonymousLogger().info("Connected +");
             connecting = false;
-            serversSocket = null;
         }).start();
     }
 
@@ -84,14 +86,16 @@ public class Client extends BaseDualConectionStation {
             return;
         }
         try {
-            objectOutputStream.writeObject(
-                    new MessagePacket(
-                            messagesToServer.stream().map(ProtocolMessage::toSerializable)
-                                    .collect(Collectors.toList()))
-            );
+            ProtocolMessage.PureData[] messages = new ProtocolMessage.PureData[messagesToServer.size()];
+            for (int i = 0; i < messages.length; i++) {
+                Logger.getAnonymousLogger().info("SENT : " +  messagesToServer.get(i).getProtocol());
+                messages[i] = messagesToServer.get(i).toPureData();
+            }
+            objectOutputStream.writeObject(new MessagePacket(messages));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        streamBuffer.clear();
     }
 
     private Socket connectToServer() {

@@ -6,6 +6,7 @@ import dualConnectionStation.Client;
 import gates.ReciveFilters;
 import gates.Gates;
 import gates.ScenarioBuilder;
+import gates.SendFilters;
 import protocol.special.GameMapCompactData;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
@@ -39,7 +40,7 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         });
         gates.setOnConnectEvent(() -> {
             addRoom(0);
-//            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, windowModel.getPlanesToSubscribeFor());
+            //    gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, windowModel.getPlanesToSubscribeFor());
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
@@ -59,9 +60,8 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         switch (protocol) {
             case HELLO_MESSAGE -> {
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
-                addRoom(4);
             }
-            case WORLDS_PREPARE_SETTINGS -> {
+            case ROOMS_PREPARE_SETTINGS -> {
                 RoomPrepareCompactData settings = (RoomPrepareCompactData) data;
                 Logger.getAnonymousLogger().info("Got It");
 

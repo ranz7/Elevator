@@ -30,14 +30,14 @@ public class PackageLoader {
                     }
                 });
         // Create
-        arrivedCreatures.forEach(
-                parentIdAndCreature -> {
-                    var parentId = parentIdAndCreature.getFirst();
-                    var creature = parentIdAndCreature.getSecond();
-                     localModel.
-                             get(parentId).
-                             add(creature);
-                });
+     //   arrivedCreatures.forEach(
+         //       parentIdAndCreature -> {
+        //            var parentId = parentIdAndCreature.getFirst();
+         //           var creature = parentIdAndCreature.getSecond();
+          //           localModel.
+         //                    get(parentId).
+         //                    add(creature);
+          //      });
     }
 
 

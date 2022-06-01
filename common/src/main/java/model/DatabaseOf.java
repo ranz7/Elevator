@@ -128,8 +128,7 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
 
     @Override
     public void tick(double deltaTime) {
-        stream().filter(posAndCreature -> posAndCreature.getSecond() != dataBaseOwner)
-                .forEach(posAndCreature -> posAndCreature.getSecond().tick(deltaTime));
+        stream().forEach(posAndCreature -> posAndCreature.getSecond().tick(deltaTime));
     }
 
     public List<Pair<Vector2D, BaseCreatureObject>> toAbsolutePositionAndObjects() {

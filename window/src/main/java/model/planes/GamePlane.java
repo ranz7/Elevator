@@ -1,8 +1,6 @@
 package model.planes;
 
-import configs.RoomPrepareCompactData;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.DrawableCreature;
 import drawable.concretes.FlyingText;
 import lombok.Getter;
 import lombok.Setter;
@@ -66,10 +64,6 @@ public class GamePlane extends Plane {
         return gameMap.getLocalDataBase();
     }
 
-    @Override
-    public int getId() {
-        return gameMap.getId();
-    }
 
     @Override
     public void resize(Dimension size) {

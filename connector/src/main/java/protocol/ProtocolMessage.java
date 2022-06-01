@@ -51,7 +51,7 @@ public class ProtocolMessage {
         return pureData.roomId;
     }
 
-    public Serializable toSerializable() {
+    public PureData toPureData() {
         pureData.setTimeStump(System.currentTimeMillis());
         return new PureData(pureData.protocol, pureData.roomId, pureData.data, pureData.timeStump);
     }

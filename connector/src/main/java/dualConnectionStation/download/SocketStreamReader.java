@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
 /**
@@ -30,25 +31,25 @@ public class SocketStreamReader extends Thread {
     @SneakyThrows
     public void run() {
         try {
-            isClosed = true;
+            isClosed = false;
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
-                var data = (MessagePacket) objectInputStream.readObject();
-                if (data == null) {
+                var messages = ((MessagePacket) objectInputStream.readObject()).messages();
+                if (messages == null) {
                     break;
                 }
-                data.messages().forEach(pureData -> {
-                    ProtocolMessage message = new ProtocolMessage((ProtocolMessage.PureData) pureData);
+                for (int i = 0; i < messages.length; i++) {
+                    var message = new ProtocolMessage(messages[i]);
                     message.setOwner(socket);
                     downlink.onReceiveMessage(message);
-                });
+                }
             }
         } catch (Exception exception) {
             socket.close();
-            isClosed = false;
+            isClosed = true;
             downlink.onLostSocketConnection(socket);
-            //   exception.printStackTrace();
+            exception.printStackTrace();
         }
     }
 }
