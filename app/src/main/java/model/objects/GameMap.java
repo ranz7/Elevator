@@ -12,6 +12,7 @@ import model.Transport;
 import model.objects.floor.FloorStructure;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
+import protocol.special.GameMapCompactData;
 import settings.LocalCreaturesSettings;
 import tools.Vector2D;
 
@@ -19,7 +20,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 
-public class GameMap extends Creature implements Transport {
+public class GameMap extends Creature implements Transport<Creature> {
     @Getter
     private final int roomId;
     @Getter
@@ -32,7 +33,7 @@ public class GameMap extends Creature implements Transport {
     private final LocalCreaturesSettings localCreaturesSettings;
 
     private final LinkedList<ElevatorsController> elevatorsControllers = new LinkedList<>();
-    private final CustomersController customersController;
+    private final CustomersController customersController = new CustomersController(this);
 
     private final Gates controllerGates;
 
@@ -41,15 +42,14 @@ public class GameMap extends Creature implements Transport {
         this.controllerGates = controllerGates;
         this.roomId = roomId;
         this.localCreaturesSettings = localCreaturesSettings;
-        customersController = new CustomersController(this);
 
         for (int i = 0; i < 1; i++) {
             var floorStructure = new FloorStructure(new Vector2D(i * 500, 0), localCreaturesSettings);
             var elevatorController = new ElevatorsController(this, floorStructure);
-            elevatorsControllers.add(elevatorController);
-            floorStructure.fillWithElevators(elevatorController);
-            floorStructure.fillWithPaintings();
-            localDataBase.add(floorStructure);
+            //elevatorsControllers.add(elevatorController);
+            //floorStructure.fillWithElevators(elevatorController);
+            //floorStructure.fillWithPaintings();
+            add(floorStructure);
             for (int j = 1; j < localCreaturesSettings.floorsCount(); j++) {
                 floorStructure.addFloor();
             }
@@ -59,10 +59,10 @@ public class GameMap extends Creature implements Transport {
 
     @Override
     public void tick(double deltaTime) {
-        new TickableList(elevatorsControllers).tick(deltaTime);
-        customersController.tick(deltaTime);
-        localDataBase.tick(deltaTime);
-        localDataBase.removeIf(Creature::isDead);
+        //new TickableList(elevatorsControllers).tick(deltaTime);
+        //customersController.tick(deltaTime);
+        //localDataBase.tick(deltaTime);
+        //localDataBase.removeIf(Creature::isDead);
     }
 
     public void send(Protocol protocol, Serializable data) {
@@ -77,15 +77,20 @@ public class GameMap extends Creature implements Transport {
         localDataBase.moveCreatureInto(moveCreatureId, whereCreature);
     }
 
-    public void CreateCustomer(Integer floorStart, Integer floorEnd) {
-
-    }
-
     public RoomPrepareCompactData.RoomData toRoomData() {
         return new RoomPrepareCompactData.RoomData(
                 getLocalCreaturesSettings().elevatorOpenCloseTime(),
                 getLocalCreaturesSettings().customerSize(),
                 getGameSpeed(),
                 getRoomId());
+    }
+
+    public Serializable createCompactGameMapData() {
+        return new GameMapCompactData(getLocalDataBase().toIdAndCreaturesList());
+    }
+
+    @Override
+    public void add(Creature creature) {
+//        if(oneOf(creature,)
     }
 }

@@ -9,7 +9,7 @@ import gates.ScenarioBuilder;
 import protocol.special.GameMapCompactData;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
-import protocol.ProtocolMessagesController;
+import protocol.MessageApplier;
 import settings.configs.GuiControllerConfig;
 import model.*;
 import tools.Vector2D;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 /**
  * control window, created with Swing
  */
-public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesController {
+public class GuiController extends ControllerEndlessLoop implements MessageApplier {
     private final GuiModel windowModel = new GuiModel();
     private final Gui gui = new Gui(this, windowModel.getLocalDrawSetting());
     public final Gates gates = new Gates(new Client(), this);
@@ -49,6 +49,7 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         super.start();
     }
 
+
     @Override
     public boolean applyMessage(ProtocolMessage message) {
         Protocol protocol = message.getProtocol();
@@ -57,10 +58,12 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         switch (protocol) {
             case HELLO_MESSAGE -> {
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
-
+                addRoom(4);
             }
             case WORLDS_PREPARE_SETTINGS -> {
                 RoomPrepareCompactData settings = (RoomPrepareCompactData) data;
+                Logger.getAnonymousLogger().info("Got It");
+
                 if (ConnectionSettings.VERSION != settings.version()) {
                     Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
                             " Your version: %s, server version %s%n")
@@ -114,5 +117,11 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
 
     public List<Plane> getAllPlanes() {
         return windowModel.getPlanes();
+    }
+
+    private void addRoom(int roomId) {
+        var subscribes = windowModel.getPlanesToSubscribeFor();
+        subscribes.roomsToSubscribeFor().add(roomId);
+        gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, subscribes);
     }
 }

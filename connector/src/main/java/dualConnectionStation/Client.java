@@ -3,6 +3,7 @@ package dualConnectionStation;
 import configs.ConnectionSettings;
 import dualConnectionStation.download.Reader;
 import dualConnectionStation.download.SocketStreamReader;
+import protocol.MessagePacket;
 import protocol.ProtocolMessage;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This class can connect to the Server,
@@ -70,6 +72,24 @@ public class Client extends BaseDualConectionStation {
         }).start();
     }
 
+    @Override
+    public void flush() {
+        var messagesToServer = streamBuffer.get(serversSocket);
+        if (messagesToServer == null) {
+            return;
+        }
+        try {
+            objectOutputStream.writeObject(
+                    new MessagePacket(
+                            messagesToServer.stream().map(ProtocolMessage::toSerializable)
+                                    .collect(Collectors.toList()))
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private Socket connectToServer() {
         Socket newServerSocket;
         try {
@@ -89,13 +109,6 @@ public class Client extends BaseDualConectionStation {
 
     }
 
-    @Override
-    public void send(Socket ignoredBecauseThereIsOnlyOneReceiver, ProtocolMessage message) {
-        try {
-            objectOutputStream.writeObject(message.toSerializable());
-        } catch (IOException ignored) {
-        }
-    }
 
     @Override
     public List<Socket> getReceivers() {

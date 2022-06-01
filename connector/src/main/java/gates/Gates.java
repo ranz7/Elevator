@@ -3,17 +3,19 @@ package gates;
 import controller.Tickable;
 import dualConnectionStation.download.Downlink;
 import dualConnectionStation.download.Reader;
+import tools.Pair;
 import tools.Timer;
 import dualConnectionStation.BaseDualConectionStation;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
-import protocol.ProtocolMessagesController;
+import protocol.MessageApplier;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -27,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class Gates implements Tickable, Downlink {
     private final BaseDualConectionStation uplink;
-    private final ProtocolMessagesController listener;
+    private final MessageApplier listener;
     private final LinkedList<ProtocolMessage> mesages = new LinkedList<>();
 
     // EVENTS
@@ -47,7 +49,7 @@ public class Gates implements Tickable, Downlink {
 
     Function<Protocol, Boolean> filter;
 
-    public Gates(BaseDualConectionStation uplink, ProtocolMessagesController listener) {
+    public Gates(BaseDualConectionStation uplink, MessageApplier listener) {
         this.uplink = uplink;
         this.listener = listener;
         this.uplink.setDownlink(this);
@@ -78,6 +80,7 @@ public class Gates implements Tickable, Downlink {
         synchronized (mesages) {
             mesages.removeIf(listener::applyMessage);
         }
+        uplink.flush();
     }
 
     @Override
@@ -117,7 +120,7 @@ public class Gates implements Tickable, Downlink {
             Boolean wasSent = false;
         };
         uplink.getReceivers().forEach(socket -> {
-            if (sendFilters.get(socket).apply(message)) {
+            if (!sendFilters.containsKey(socket) || sendFilters.get(socket).apply(message)) {
                 uplink.send(socket, message);
                 ref.wasSent = true;
             }
@@ -146,6 +149,16 @@ public class Gates implements Tickable, Downlink {
         } catch (NobodyReceivedMessageException e) {
             throw new RuntimeException("Nobody received message, please use usual send ");
         }
+    }
+
+    public void sendWithoutCheckMultiple(Protocol protocol, List<Pair<Integer, Serializable>> dataList) {
+        dataList.forEach(data -> {
+            try {
+                send(protocol, data.getFirst(), data.getSecond());
+            } catch (NobodyReceivedMessageException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static class NobodyReceivedMessageException extends Throwable {

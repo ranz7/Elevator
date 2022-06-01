@@ -10,13 +10,8 @@ import drawable.drawTool.figuresComponent.Rectangle;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.Transport;
-import model.planes.graphics.Painter;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
-
-import java.util.Comparator;
-
-
 public class MenuDrawable extends DrawableCreature implements Transport {
     @Getter
     DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);

@@ -1,5 +1,6 @@
 package dualConnectionStation.download;
 
+import protocol.MessagePacket;
 import protocol.ProtocolMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,18 +26,19 @@ public class SocketStreamReader extends Thread {
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
-                var data = (ProtocolMessage.PureData) objectInputStream.readObject();
-                ProtocolMessage message = new ProtocolMessage(data);
-                message.setOwner(socket);
-                downlink.onReceiveMessage(message);
-
-                if (message == null) {
+                var data = (MessagePacket) objectInputStream.readObject();
+                if (data == null) {
                     break;
                 }
+                data.messages().forEach(pureData -> {
+                    ProtocolMessage message = new ProtocolMessage((ProtocolMessage.PureData) pureData);
+                    message.setOwner(socket);
+                    downlink.onReceiveMessage(message);
+                });
             }
         } catch (Exception exception) {
             socket.close();
-//             exception.printStackTrace();
+            exception.printStackTrace();
         }
     }
 }

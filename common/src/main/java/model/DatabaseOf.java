@@ -1,30 +1,38 @@
 package model;
 
 import controller.Tickable;
-import lombok.RequiredArgsConstructor;
 import model.objects.Creature;
 import model.objects.CreatureInterface;
 import tools.Pair;
 import tools.Vector2D;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RequiredArgsConstructor
-public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
-    final private List<DatabaseOf<T>> databases = new LinkedList<>();
-    final private List<T> creaturesOwned = new LinkedList<>();
-    final private T dataBaseOwner;
+public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> implements Tickable {
+    final private List<DatabaseOf<BaseCreatureObject>> databases = new LinkedList<>();
+    final private List<BaseCreatureObject> creaturesOwned = new LinkedList<>();
+    final private BaseCreatureObject dataBaseOwner;
+    final private Class<? extends BaseCreatureObject>[] possibleTypes;
 
-    public Stream<Pair<Vector2D, T>> stream() {
+    public DatabaseOf(BaseCreatureObject dataBaseOwner, Class<? extends BaseCreatureObject>... possibleTypes) {
+        this.dataBaseOwner = dataBaseOwner;
+        if(possibleTypes.length==0){
+            throw new RuntimeException("There is no need to create database if you are not going to store objects in it");
+        }
+        this.possibleTypes = possibleTypes;
+    }
+
+    public Stream<Pair<Vector2D, BaseCreatureObject>> stream() {
         return stream(new Vector2D(0, 0));
     }
 
-    public Stream<Pair<Vector2D, T>> stream(Vector2D positionOfParent) {
-        var onlyOwnerCreature = new LinkedList<Pair<Vector2D, T>>();
+    public Stream<Pair<Vector2D, BaseCreatureObject>> stream(Vector2D positionOfParent) {
+        var onlyOwnerCreature = new LinkedList<Pair<Vector2D, BaseCreatureObject>>();
         onlyOwnerCreature.add(new Pair<>(positionOfParent, dataBaseOwner));
         var absoluteDrawPosition = positionOfParent.add(dataBaseOwner.getPosition());
         return Stream.concat(onlyOwnerCreature.stream(),
@@ -35,13 +43,13 @@ public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
 
     }
 
-    public <X extends T> Stream<X> streamOf(Class<X> creatureToFind) {
+    public <SubType extends BaseCreatureObject> Stream<SubType> streamOf(Class<SubType> creatureToFind) {
         return stream()
                 .filter(positionAndCreature -> creatureToFind.isAssignableFrom(positionAndCreature.getSecond().getClass()))
-                .map(positionAndCreatureToFind -> (X) positionAndCreatureToFind.getSecond());
+                .map(positionAndCreatureToFind -> (SubType) positionAndCreatureToFind.getSecond());
     }
 
-    public Stream<Pair<Vector2D, T>> streamOfPairs(Class<?> creatureToFind) {
+    public Stream<Pair<Vector2D, BaseCreatureObject>> streamOfPairs(Class<?> creatureToFind) {
         return stream()
                 .filter(positionAndCreature -> creatureToFind.isAssignableFrom(positionAndCreature.getSecond().getClass()))
                 .map(positionAndCreatureToFind ->
@@ -51,28 +59,29 @@ public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
                 );
     }
 
-    public void removeIf(Predicate<T> predicate) {
+    public void removeIf(Predicate<BaseCreatureObject> predicate) {
         creaturesOwned.removeIf(predicate);
         databases.forEach(
                 dataBaseOfCreatures -> dataBaseOfCreatures.removeIf(predicate));
     }
 
-    private void register(DatabaseOf<T> dataBaseOf) {
+    private void register(DatabaseOf<BaseCreatureObject> dataBaseOf) {
         databases.add(dataBaseOf);
     }
 
-    public void add(T creature) {
+    public void addCreature(BaseCreatureObject creature) {
+        if (Arrays.stream(possibleTypes).noneMatch(possibleTypes -> possibleTypes.isAssignableFrom(creature.getClass()))) {
+            throw new RuntimeException("Cannot add creature because there is no registrated " + creature.getClass().getName());
+        }
+
         if (creature instanceof Transportable) {
             ((Transportable) creature).setTransport((Transport) dataBaseOwner);
-        }
-        if (creature instanceof Transport) {
-            register(((Transport) creature).getLocalDataBase());
         }
         creaturesOwned.add(creature);
     }
 
-    public List<Pair<Integer, T>> toIdAndCreaturesList() {
-        var list = new LinkedList<Pair<Integer, T>>();
+    public List<Pair<Integer, BaseCreatureObject>> toIdAndCreaturesList() {
+        var list = new LinkedList<Pair<Integer, BaseCreatureObject>>();
         var ownerId = dataBaseOwner.getId();
         list.add(new Pair<>(ownerId, dataBaseOwner));
         creaturesOwned.forEach(creatureOwned -> list.add(new Pair<>(ownerId, creatureOwned)));
@@ -80,33 +89,33 @@ public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
         return list;
     }
 
-    public long countOf(Class<? extends T> classToCount) {
+    public long countOf(Class<? extends BaseCreatureObject> classToCount) {
         return streamOf(classToCount).count();
     }
 
-    public Pair<Vector2D, T> get(Class<?> creatureClass, Integer creatureId) {
+    public Pair<Vector2D, BaseCreatureObject> get(Class<?> creatureClass, Integer creatureId) {
         return streamOfPairs(creatureClass)
                 .filter(positionAndCreature -> positionAndCreature.getSecond().getId() == creatureId)
                 .findFirst().get();
     }
 
-    public void moveCreatureInto(Integer moveCreatureId, Transport whereTransport) {
-        Pair<Vector2D, T> absolutePositionAndCreature = release(moveCreatureId);
+    public void moveCreatureInto(Integer moveCreatureId, Transport<BaseCreatureObject> whereTransport) {
+        Pair<Vector2D, Transportable<BaseCreatureObject>> absolutePositionAndCreature = release(moveCreatureId);
         add(whereTransport, absolutePositionAndCreature);
     }
 
-    private void add(Transport whereTransport, Pair<Vector2D, T> absolutePositionAndCreature) {
+    private void add(Transport<BaseCreatureObject> whereTransport, Pair<Vector2D, Transportable<BaseCreatureObject>> absolutePositionAndCreature) {
         var parent = get(Creature.class, whereTransport.getId());
         var deltaInParentPositions = absolutePositionAndCreature
                 .getFirst().sub(absolutePositionAndCreature.getSecond().getPosition()).sub(parent.getFirst());
         absolutePositionAndCreature.getSecond().applyDelta(deltaInParentPositions);
-        whereTransport.getLocalDataBase().add(absolutePositionAndCreature.getSecond());
+        whereTransport.add((BaseCreatureObject) absolutePositionAndCreature.getSecond());
     }
 
-    private Pair<Vector2D, T> release(Integer idToRelease) {
+    private Pair<Vector2D, Transportable<BaseCreatureObject>> release(Integer idToRelease) {
         var object = get(Creature.class, idToRelease);
         remove(idToRelease);
-        return object;
+        return new Pair<>(object.getFirst(), (Transportable<BaseCreatureObject>) object.getSecond());
     }
 
     private void remove(Integer idToRelease) {
@@ -123,7 +132,7 @@ public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
                 .forEach(posAndCreature -> posAndCreature.getSecond().tick(deltaTime));
     }
 
-    public List<Pair<Vector2D, T>> toAbsolutePositionAndObjects() {
+    public List<Pair<Vector2D, BaseCreatureObject>> toAbsolutePositionAndObjects() {
         return stream().collect(Collectors.toList());
     }
 }

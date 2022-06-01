@@ -2,8 +2,11 @@ package model.objects.floor;
 
 import controller.subControllers.ElevatorsController;
 import lombok.Getter;
+import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
+import model.Transportable;
+import model.objects.CreatureInterface;
 import model.objects.customer.StandartCustomer.StandartCustomer;
 import settings.LocalCreaturesSettings;
 import model.objects.Creature;
@@ -14,9 +17,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class FloorStructure extends Creature implements Transport {
+public class FloorStructure extends Creature implements Transport<Creature>, Transportable<Creature> {
     @Getter
-    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this,
+            FloorStructure.class, Elevator.class, Painting.class
+    );
+
+    @Getter
+    @Setter
+    private Transport<Creature> transport;
+
     private final LocalCreaturesSettings settings;
     static final private Random random = new Random();
 
@@ -47,7 +57,7 @@ public class FloorStructure extends Creature implements Transport {
         }
         floorStructureTop = new FloorStructure(getPosition().addByY(settings.floorSize().y), settings, this);
         floorStructureTop.fillWithPaintings();
-        localDataBase.add(floorStructureTop);
+        add(floorStructureTop);
     }
 
     public FloorStructure getUpperFloor(int numberOfFloor) {
@@ -109,7 +119,7 @@ public class FloorStructure extends Creature implements Transport {
     }
 
     public void addCustomer(StandartCustomer customer) {
-        localDataBase.add(customer);
+        add(customer);
     }
 
 
@@ -131,14 +141,19 @@ public class FloorStructure extends Creature implements Transport {
 
     public void fillWithElevators(ElevatorsController elevatorController) {
         getDefaultPositionOfElevators().forEach(position -> {
-            localDataBase.add(new Elevator(position, elevatorController, settings));
+            add(new Elevator(position, elevatorController, settings));
         });
     }
 
     public void fillWithPaintings() {
         getDefaultPositionOfElevators().forEach(position -> {
-            localDataBase.add(new Painting(new Vector2D(position, getSize().y / 2), random.nextInt()));
+            add(new Painting(new Vector2D(position, getSize().y / 2), random.nextInt()));
         });
+    }
+
+    @Override
+    public void add(Creature creature) {
+        localDataBase.addCreature(creature);
     }
 }
 

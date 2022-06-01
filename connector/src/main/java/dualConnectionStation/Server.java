@@ -3,6 +3,7 @@ package dualConnectionStation;
 import configs.ConnectionSettings;
 import dualConnectionStation.download.Reader;
 import dualConnectionStation.download.SocketStreamReader;
+import protocol.MessagePacket;
 import protocol.ProtocolMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -60,18 +61,33 @@ public class Server extends BaseDualConectionStation {
         }).start();
     }
 
-
-    public void send(Socket receiver, ProtocolMessage message) {
+    @Override
+    public void flush() {
         synchronized (connectedClients) {
             connectedClients.stream().filter(Reader::isClosed).forEach(
-                    compactData->downlink.onLostSocketConnection(compactData.socket())
+                    compactData -> downlink.onLostSocketConnection(compactData.socket())
             );
             connectedClients.removeIf(Reader::isClosed);
-            for (Reader client : connectedClients) {
-                if (client.socket() == receiver) {
-                    send(client, message);
-                }
-            }
+            connectedClients.forEach(
+                    reader -> {
+                        streamBuffer.forEach(
+                                (socket, protocolMessages) -> {
+                                    if (reader.socket() == socket) {
+                                        sendAll(reader, protocolMessages);
+                                    }
+                                }
+                        );
+                    }
+            );
+        }
+    }
+    private void sendAll(Reader client, List<ProtocolMessage> messages) {
+        try {
+            client.stream().writeObject(
+                    new MessagePacket(
+                            messages.stream().map(ProtocolMessage::toSerializable)
+                                    .collect(Collectors.toList())));
+        } catch (IOException ignore) {
         }
     }
 
@@ -80,12 +96,6 @@ public class Server extends BaseDualConectionStation {
         return isDisconnect.get();
     }
 
-    private void send(Reader client, ProtocolMessage message) {
-        try {
-            client.stream().writeObject(message.toSerializable());
-        } catch (IOException ignore) {
-        }
-    }
 
     @Override
     public List<Socket> getReceivers() {
