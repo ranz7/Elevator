@@ -27,10 +27,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Server extends BaseDualConectionStation {
     private final LinkedList<Reader> connectedClients = new LinkedList<>();
+    boolean isDisconnected = true;
 
     public void start() {
         new Thread(() -> {
-            isDisconnect.set(false);
+            isDisconnected = false;
 
             if (downlink == null) {
                 Logger.getAnonymousLogger().info("No listener set. ");
@@ -56,17 +57,18 @@ public class Server extends BaseDualConectionStation {
             } catch (Exception exception) {
                 Logger.getAnonymousLogger().warning("Server exception: " + exception.getMessage());
             } finally {
-                isDisconnect.set(true);
+                isDisconnected = true;
             }
         }).start();
     }
 
     @Override
     public void flush() {
+        if(isDisconnected){
+            streamBuffer.clear();
+            return;
+        }
         synchronized (connectedClients) {
-            connectedClients.stream().filter(Reader::isClosed).forEach(
-                    compactData -> downlink.onLostSocketConnection(compactData.socket())
-            );
             connectedClients.removeIf(Reader::isClosed);
             connectedClients.forEach(
                     reader -> {
@@ -81,6 +83,7 @@ public class Server extends BaseDualConectionStation {
             );
         }
     }
+
     private void sendAll(Reader client, List<ProtocolMessage> messages) {
         try {
             client.stream().writeObject(
@@ -92,8 +95,13 @@ public class Server extends BaseDualConectionStation {
     }
 
     @Override
-    public boolean isDisconnect() {
-        return isDisconnect.get();
+    public boolean isDisconnected() {
+        return isDisconnected;
+    }
+
+    @Override
+    public boolean isConnecting() {
+        return false;
     }
 
 

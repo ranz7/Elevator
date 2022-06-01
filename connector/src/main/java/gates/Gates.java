@@ -53,19 +53,17 @@ public class Gates implements Tickable, Downlink {
         this.uplink = uplink;
         this.listener = listener;
         this.uplink.setDownlink(this);
+        Logger.getAnonymousLogger().info("Downlink created . . .");
     }
 
     public void connect() {
-        Logger.getAnonymousLogger().info("Uplink start . . .");
+        Logger.getAnonymousLogger().info("Uplink starting . . .");
         uplink.start();
     }
 
     @Override
     public void tick(double deltaTime) {
-        if (uplink.isDisconnect()) {
-            if (onGatesCloseEvent != null) {
-                onGatesCloseEvent.run();
-            }
+        if (uplink.isDisconnected()) {
             return;
         }
 
@@ -103,7 +101,7 @@ public class Gates implements Tickable, Downlink {
 
     @Override
     public void onNewSocketConnection(Reader client) {
-        Logger.getAnonymousLogger().info("Downlink connected . . .");
+        Logger.getAnonymousLogger().info("Uplink created . . .");
         if (onConnectEvent != null) {
             onConnectEvent.run();
         }
@@ -112,7 +110,10 @@ public class Gates implements Tickable, Downlink {
     @Override
     public void onLostSocketConnection(Socket socket) {
         sendFilters.remove(socket);
-        Logger.getAnonymousLogger().info("Downlink disconnected . . .");
+        Logger.getAnonymousLogger().info("Uplink end . . .");
+        if (onGatesCloseEvent != null) {
+            onGatesCloseEvent.run();
+        }
     }
 
     private void send(ProtocolMessage message) throws NobodyReceivedMessageException {

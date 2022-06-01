@@ -14,7 +14,6 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -33,47 +32,53 @@ public class Client extends BaseDualConectionStation {
     private SocketStreamReader socketStreamReader;
     @Setter
     private String host = ConnectionSettings.HOST;
-    AtomicBoolean tryToConnect = new AtomicBoolean(false);
+    boolean connecting = false;
+
 
     @Override
-    public boolean isDisconnect() {
-        if (tryToConnect.get()) {
-            return false;
-        }
+    public boolean isDisconnected() {
         if (serversSocket == null) {
             return true;
         }
-        if (isDisconnect.get() || (!socketStreamReader.isAlive())) {
-            isDisconnect.set(true);
-            return true;
-        }
-        return false;
+        return (socketStreamReader == null || !socketStreamReader.isAlive() || socketStreamReader.isClosed());
+    }
+
+    @Override
+    public boolean isConnecting() {
+        return connecting;
     }
 
     @Override
     public void start() {
-        tryToConnect.set(true);
+        connecting = true;
         new Thread(() -> {
             int attempts = ConnectionSettings.attempts;
             while (serversSocket == null) {
                 serversSocket = connectToServer();
                 attempts--;
                 if (attempts == 0) {
-                    tryToConnect.set(false);
+                    connecting = false;
+                    downlink.onLostSocketConnection(serversSocket);
                     return;
                 }
-                Logger.getAnonymousLogger().info("ATTEMPT: " + attempts);
+                Logger.getAnonymousLogger().info("ATTEMPT: " + (ConnectionSettings.attempts - attempts) +
+                        " of " + ConnectionSettings.attempts - 1);
             }
             socketStreamReader = new SocketStreamReader(serversSocket, downlink);
             socketStreamReader.start();
             downlink.onNewSocketConnection(new Reader(objectOutputStream, serversSocket));
             Logger.getAnonymousLogger().info("Connected +");
-            tryToConnect.set(false);
+            connecting = false;
+            serversSocket = null;
         }).start();
     }
 
     @Override
     public void flush() {
+        if (isDisconnected()) {
+            streamBuffer.clear();
+            return;
+        }
         var messagesToServer = streamBuffer.get(serversSocket);
         if (messagesToServer == null) {
             return;
@@ -87,7 +92,6 @@ public class Client extends BaseDualConectionStation {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private Socket connectToServer() {

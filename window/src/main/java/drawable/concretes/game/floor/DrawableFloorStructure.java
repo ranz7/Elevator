@@ -13,23 +13,24 @@ import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
-public class DrawableFloorStructure extends DrawableRemoteCreature implements Transport, Transportable {
+public class DrawableFloorStructure extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Setter
     @Getter
-    private Transport transport;
+    private Transport<Drawable> transport;
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this,
+            FloorHidingCornerWall.class);
 
     public DrawableFloorStructure(LocalDrawSetting settings) {
         super(new RectangleWithBorder(settings.florBetonColor(), 7), settings);
 
 
-        localDataBase.add(new FloorHidingCornerWall(
+        add(new FloorHidingCornerWall(
                 new Vector2D(0 - getSize().x * 4., -2),
                 new Vector2D(getSize().x * 4, getSize().y + 2),
                 settings
         ));
-        localDataBase.add(new FloorHidingCornerWall(
+        add(new FloorHidingCornerWall(
                 new Vector2D(getSize().x, -2),
                 new Vector2D(settings.customerWidth() * 4, getSize().y + 2),
                 settings
@@ -51,9 +52,14 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
     }
 
     public int getCurrentFloorNum() {
-        if(isBottomFloor()){
+        if (isBottomFloor()) {
             return 0;
         }
         return ((DrawableFloorStructure) transport).getCurrentFloorNum() + 1;
+    }
+
+    @Override
+    public void add(Drawable drawable) {
+        localDataBase.addCreature(drawable);
     }
 }

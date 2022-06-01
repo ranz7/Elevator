@@ -38,7 +38,8 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
             gates.connect();
         });
         gates.setOnConnectEvent(() -> {
-            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, windowModel.getPlanesToSubscribeFor());
+            addRoom(0);
+//            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, windowModel.getPlanesToSubscribeFor());
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
@@ -70,7 +71,7 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
                             .formatted(ConnectionSettings.VERSION, settings.version()));
                     return true;
                 }
-                settings.roomData().forEach(windowModel::updateRemoteSettings);
+                windowModel.updateRemoteSettings(settings.roomData());
                 setCurrentTime(message.getTimeStump());
                 gui.resize();
             }

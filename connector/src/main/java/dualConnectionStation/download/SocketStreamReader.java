@@ -1,5 +1,7 @@
 package dualConnectionStation.download;
 
+import dualConnectionStation.BaseDualConectionStation;
+import dualConnectionStation.upload.Uplink;
 import protocol.MessagePacket;
 import protocol.ProtocolMessage;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,17 @@ import java.net.Socket;
 public class SocketStreamReader extends Thread {
     private final Socket socket;
     private final Downlink downlink;
+    private boolean isClosed = true;
+
+    public boolean isClosed() {
+        return isClosed;
+    }
 
     @Override
     @SneakyThrows
     public void run() {
         try {
+            isClosed = true;
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
@@ -38,7 +46,9 @@ public class SocketStreamReader extends Thread {
             }
         } catch (Exception exception) {
             socket.close();
-            exception.printStackTrace();
+            isClosed = false;
+            downlink.onLostSocketConnection(socket);
+            //   exception.printStackTrace();
         }
     }
 }

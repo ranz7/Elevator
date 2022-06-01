@@ -3,12 +3,15 @@ package model;
 import controller.Tickable;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableCreature;
 import drawable.abstracts.DrawableRemoteCreature;
+import drawable.concretes.FlyingText;
 import drawable.concretes.game.floor.DrawableFloorStructure;
 import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.elevator.DrawableElevator;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
+import drawable.drawTool.text.Text;
 import lombok.Getter;
 import model.packageLoader.PackageLoader;
 import protocol.special.GameMapCompactData;
@@ -20,9 +23,9 @@ import java.awt.*;
 import java.util.Comparator;
 
 
-public class GameMap extends DrawableRemoteCreature implements Tickable, Transport {
+public class GameMap extends DrawableRemoteCreature implements Tickable, Transport<Drawable> {
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, FlyingText.class);
 
     public GameMap(LocalDrawSetting settings) {
         super(new RectangleWithBorder(new Color(222, 222, 222), 7), settings);
@@ -88,8 +91,9 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         return 0;
     }
 
+    @Override
     public void add(Drawable drawable) {
-        localDataBase.add(drawable);
+        localDataBase.addCreature(drawable);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class GameMap extends Creature implements Transport<Creature> {
     double gameSpeed = 1;
 
     @Getter
-    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this, FloorStructure.class);
     @Getter
     private final LocalCreaturesSettings localCreaturesSettings;
 
@@ -91,6 +91,6 @@ public class GameMap extends Creature implements Transport<Creature> {
 
     @Override
     public void add(Creature creature) {
-//        if(oneOf(creature,)
+        localDataBase.addCreature(creature);
     }
 }

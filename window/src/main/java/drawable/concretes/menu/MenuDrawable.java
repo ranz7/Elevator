@@ -12,9 +12,10 @@ import model.DatabaseOf;
 import model.Transport;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
-public class MenuDrawable extends DrawableCreature implements Transport {
+
+public class MenuDrawable extends DrawableCreature implements Transport<Drawable> {
     @Getter
-    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
+    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ElevatorDoor.class, ClickableButton.class);
 
     private final ElevatorDoor leftDoor;
     private final ElevatorDoor rightDoor;
@@ -29,15 +30,9 @@ public class MenuDrawable extends DrawableCreature implements Transport {
                 new Vector2D(this.getSize().x, 0), this.getSize(),
                 false, localDrawSetting, 2000);
 
-        localDataBase.add(leftDoor);
-        localDataBase.add(rightDoor);
-
-        localDataBase.add(
-                new ClickableButton(
-                        new CircleWithTextInside(
-                                getSize().divide(new Vector2D(5, 2)),
-                                localDrawSetting))
-        );
+        add(leftDoor);
+        add(rightDoor);
+        add(new ClickableButton(new CircleWithTextInside(getSize().divide(new Vector2D(5, 2)), localDrawSetting)));
     }
 
     public void changeDoorsState(boolean state) {
@@ -58,5 +53,10 @@ public class MenuDrawable extends DrawableCreature implements Transport {
     @Override
     public int getDrawPrioritet() {
         return 10;
+    }
+
+    @Override
+    public void add(Drawable drawable) {
+        localDataBase.addCreature(drawable);
     }
 }

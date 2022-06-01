@@ -14,12 +14,12 @@ import tools.Vector2D;
 import lombok.Getter;
 
 @Getter
-public class DrawableElevator extends DrawableRemoteCreature implements Transport, Transportable {
+public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Setter
     @Getter
-    private Transport transport;
+    private Transport<Drawable> transport;
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ElevatorDoor.class);
 
     private final ElevatorDoor leftDoor;
     private final ElevatorDoor rightDoor;
@@ -34,8 +34,8 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
                 new Vector2D(this.getSize().x / 2, 0), this.getSize(),
                 false, settings, OpenCloseTime);
 
-        localDataBase.add(leftDoor);
-        localDataBase.add(rightDoor);
+        add(leftDoor);
+        add(rightDoor);
     }
 
     @Override
@@ -55,5 +55,10 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
 
     public int getCurrentFloorNum() {
         return ((DrawableFloorStructure) transport).getCurrentFloorNum();
+    }
+
+    @Override
+    public void add(Drawable drawable) {
+        localDataBase.addCreature(drawable);
     }
 }

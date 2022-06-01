@@ -6,6 +6,7 @@ import model.Transport;
 import model.Transportable;
 import model.objects.Creature;
 import model.objects.CreatureInterface;
+import model.objects.customer.Customer;
 import model.objects.floor.FloorStructure;
 import model.objects.elevator.Algorithm.BestAlgorithm;
 import model.objects.elevator.Algorithm.ElevatorAlgorithm;
@@ -21,11 +22,12 @@ import tools.Vector2D;
  * Elevator is storing all requests under and behind his way, the algorithm finds the closest floor by
  * calculating distance to came from floor A to floor B and all intermediate floors.
  */
-public class Elevator extends MovingCreature implements Transportable<Creature> {
+public class Elevator extends MovingCreature implements Transportable<Creature>, Transport<Creature> {
     @Setter
     @Getter
     private Transport<Creature> transport;
-
+    @Getter
+    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this, Customer.class);
     @Getter
     @Setter
     private ElevatorState state = ElevatorState.wait;
@@ -157,5 +159,10 @@ public class Elevator extends MovingCreature implements Transportable<Creature> 
 
     private Double getRawTimeToGetToFloor(Integer requestFloor) {
         return Math.abs((requestFloor - getCurrentFloorNum()) * settings.floorSize().y - position.y) / getSpeed();
+    }
+
+    @Override
+    public void add(Creature creature) {
+        localDataBase.addCreature(creature);
     }
 }
