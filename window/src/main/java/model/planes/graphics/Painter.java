@@ -56,15 +56,16 @@ public class Painter {
         graphics2D.setStroke(oldStroke);
     }
 
-    public void drawText(String text, Vector2D position, double size, Color color) {
-        int fontSize = (int) scaler.getFromGameToRealLength(size);
+    public void drawText(String text, Vector2D position, Vector2D size, Color color) {
+        int fontSize = (int) scaler.getFromGameToRealLength(size.y);
         setColor(color);
         var font = new Font("TimesRoman", Font.PLAIN, fontSize);
         graphics2D.setFont(font);
-        int metrics = graphics2D.getFontMetrics(font).stringWidth(text);
+        int width = graphics2D.getFontMetrics(font).stringWidth(text);
+        int height = graphics2D.getFontMetrics(font).getDescent();
         graphics2D.drawString(text,
-                (int) scaler.getFromGameToRealCoordinate(position, 0).x - metrics / 2,
-                (int) scaler.getFromGameToRealCoordinate(position, 0).y);
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height/2).x - width / 2,
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height/2).y);
 
     }
 

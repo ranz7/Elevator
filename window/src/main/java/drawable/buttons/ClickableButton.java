@@ -38,6 +38,5 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     }
 
     public void mousePositionUpdate(Vector2D gamePosition) {
-
     }
 }

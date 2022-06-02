@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Rectangle extends Figure {
     public Rectangle(Color color) {
-        super(color, new Vector2D(0, 0), new Vector2D(0, 0));
+        super(color,  new Vector2D(0.5, 0.5), new Vector2D(1, 1));
     }
 
     public Rectangle(Color color, Vector2D position, Vector2D size) {
@@ -16,6 +16,7 @@ public class Rectangle extends Figure {
 
     @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
-        drawer.drawFilledRect(position, size, mainColor, mainColor, 0);
+        var tmp = afterProportionApply(position,size);
+        drawer.drawFilledRect(tmp.getFirst() ,tmp.getSecond(), mainColor, mainColor, 0);
     }
 }

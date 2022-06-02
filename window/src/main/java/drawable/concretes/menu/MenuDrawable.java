@@ -40,7 +40,7 @@ public class MenuDrawable extends DrawableCreature implements Transport {
         localDataBase.add(
                 new ClickableButton(
                         new CircleWithTextInside(
-                                getSize().divide(new Vector2D(5, 2)),
+                                new Vector2D(0,25),
                                 localDrawSetting))
         );
     }

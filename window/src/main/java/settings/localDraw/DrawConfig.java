@@ -7,5 +7,5 @@ class DrawConfig {
     public final int elevatorBorderThickness = 2;
     public final Vector2D elevatorButtonSize = new Vector2D(5, 5);
 
-    public Vector2D menuButtonSize = new Vector2D(15, 15);
+    public Vector2D menuButtonSize = new Vector2D(50,50);
 }
