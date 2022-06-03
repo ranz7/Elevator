@@ -4,12 +4,12 @@ import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
 import drawable.concretes.game.elevator.ElevatorDoor;
-import drawable.concretes.game.floor.decorations.FloorPainting;
 import drawable.concretes.game.floor.decorations.MenuPainting;
 import drawable.drawTool.figuresComponent.Rectangle;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.Transport;
+import model.objects.CreatureInterface;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
@@ -44,6 +44,13 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
     public void changeDoorsState(boolean state) {
         leftDoor.changeDoorState(state);
         rightDoor.changeDoorState(state);
+    }
+
+    @Override
+    public void tick(double deltaTime) {
+        super.tick(deltaTime);
+        getLocalDataBase().tick(deltaTime);
+        getLocalDataBase().removeIf(CreatureInterface::isDead);
     }
 
     @Override

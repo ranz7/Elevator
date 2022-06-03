@@ -9,18 +9,24 @@ import drawable.drawTool.figuresComponent.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
 import model.DatabaseOf;
+import model.GameMap;
 import model.Transport;
+import model.Transportable;
 import model.planes.GamePlane;
+import model.planes.MenuPlane;
+import model.planes.graphics.Painter;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
 
-public class Portal extends DrawableCreature implements Transport<Drawable> {
+public class Portal extends DrawableCreature implements Transport<DrawableCreature>, Transportable<DrawableCreature> {
     @Getter
-    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
-
+    DatabaseOf<DrawableCreature> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
+    @Getter
     @Setter
+    Transport<DrawableCreature> transport;
+
     private GamePlane gamePlane;
 
     @Getter
@@ -34,11 +40,24 @@ public class Portal extends DrawableCreature implements Transport<Drawable> {
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(5), settings)));
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(-5), settings)));
-        roomId = 0;
+        openPortal(0);
+    }
+
+    private void openPortal(int roomId) {
+        this.roomId = roomId;
+        // model will check and create portal for us
     }
 
     @Override
-    public void add(Drawable creature) {
+    public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
+        super.draw(realDrawPosition, gameDrawer);
+        if (gamePlane != null) {
+            gamePlane.getGameMap().draw(realDrawPosition, gameDrawer);
+        }
+    }
+
+    @Override
+    public void add(DrawableCreature creature) {
         localDataBase.addCreature(creature);
     }
 
@@ -55,8 +74,28 @@ public class Portal extends DrawableCreature implements Transport<Drawable> {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        if (gamePlane != null)
-            System.out.println(gamePlane.getRoomRemoteSettings().roomId());
+        if (gamePlane != null) {
+            gamePlane.tick(deltaTime);
+        }
     }
+
+    public void setGameMap(GameMap gameMap) {
+        if (gamePlane == null) {
+            gamePlane = new GamePlane(getSettings(), gameMap);
+            return;
+        }
+        if (gamePlane.getGameMap().getRoomRemoteSettings().roomId() != gameMap.getRoomRemoteSettings().roomId()) {
+            gamePlane = new GamePlane(getSettings(), gameMap);
+        }
+    }
+
+    public GamePlane getPlane() {
+        return gamePlane;
+    }
+
+    public void removeGameMap() {
+        gamePlane = null;
+    }
+
 }
 

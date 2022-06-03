@@ -14,7 +14,7 @@ import java.util.Random;
 public class CombienedDrawSettings extends LocalDrawSetting {
     @Getter
     @Setter
-    private RoomPrepareCompactData.RoomData roomPrepareCompactData;
+    private RoomPrepareCompactData roomPrepareCompactData;
 
     public boolean initialized() {
         if (roomPrepareCompactData == null) {

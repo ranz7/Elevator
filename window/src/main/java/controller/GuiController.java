@@ -10,12 +10,14 @@ import protocol.special.GameMapCompactData;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
 import protocol.MessageApplier;
+import protocol.special.SubscribeRequest;
 import settings.configs.GuiControllerConfig;
 import model.*;
-import tools.Vector2D;
 import view.gui.Gui;
 import model.planes.Plane;
+
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,10 +32,9 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
     public void start() {
         ScenarioBuilder connectedScenario = new ScenarioBuilder()
                 .add(ReciveFilters.catchOnlyHello())
-                .add(ReciveFilters.catchOnlySettings())
                 .add(ReciveFilters.catchOnlyUpdate());
         gates.setOnGatesCloseEvent(() -> {
-             windowModel.getMenuPlane().changeDoorsState(false);
+            windowModel.getMenuPlane().changeDoorsState(false);
             gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
             gates.connect();
         });
@@ -43,10 +44,11 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
         gui.start();
+
         addTickable(gates);
         addTickable(gui);
         addTickable(windowModel);
-        super.start();
+        super.start(this::updateSubscribes);
     }
 
 
@@ -59,27 +61,13 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
             case HELLO_MESSAGE -> {
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
             }
-            case ROOMS_PREPARE_SETTINGS -> {
-                RoomPrepareCompactData settings = (RoomPrepareCompactData) data;
-
-                if (ConnectionSettings.VERSION != settings.version()) {
-                    Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
-                            " Your version: %s, server version %s%n")
-                            .formatted(ConnectionSettings.VERSION, settings.version()));
-                    return true;
-                }
-                windowModel.updateRemoteSettings(settings.roomData());
-                setCurrentTime(message.getTimeStump());
-                gui.resize();
-            }
             case UPDATE_DATA -> {
-                    windowModel.updateMap(roomId, (GameMapCompactData) data);
-
+                windowModel.updateMap((GameMapCompactData) data);
             }
-            case ELEVATOR_OPEN -> windowModel.getMap(roomId).getElevator((int) data).changeDoorsState(false);
-            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).getElevator((int) data).changeDoorsState(true);
-            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).getCustomer((int) data).changeBehindElevator();
-            case ELEVATOR_BUTTON_CLICK -> windowModel.getGamePlane(roomId).leftMouseClicked((Vector2D) data);
+            case ELEVATOR_OPEN -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(false);
+            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(true);
+            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).get().getCustomer((int) data).changeBehindElevator();
+//            case ELEVATOR_BUTTON_CLICK -> windowModel.getGamePlane(roomId).leftMouseClicked((Vector2D) data);
         }
         return true;
     }
@@ -113,20 +101,14 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         return windowModel.getActivePlane();
     }
 
-    public List<Plane> getAllPlanes() {
-        return windowModel.getPlanes();
-    }
+    private List<Integer> lastRoomsToSubscribeFor = new LinkedList<>();
 
-    public void addRoom(int roomId) {
-        var subscribes = windowModel.getPlanesToSubscribeFor();
-        subscribes.roomsToSubscribeFor().add(roomId);
-        gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, subscribes);
-    }
-
-    public void removeRoom(int roomId) {
-        windowModel.removeGamePlane(roomId);
-        var subscribes = windowModel.getPlanesToSubscribeFor();
-        gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, subscribes);
+    public void updateSubscribes() {
+        var currentSubscribtions = windowModel.getPlanesToSubscribeFor().roomsToSubscribeFor();
+        if (!lastRoomsToSubscribeFor.equals(currentSubscribtions)) {
+            lastRoomsToSubscribeFor = currentSubscribtions;
+            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, new SubscribeRequest(currentSubscribtions));
+        }
     }
 
     public Plane getMenu() {

@@ -23,5 +23,6 @@ public abstract class DrawableMovingCreature extends MovingCreature implements D
         super(position, size, trajecotry);
         this.tool = tool;
         this.settings = settings;
+        this.id = -1; // local objects does not have id
     }
 }

@@ -40,8 +40,7 @@ public abstract class ControllerEndlessLoop {
     }
 
     protected void start() {
-        start(() -> {
-        });
+        start(() -> {});
     }
 
     protected abstract int getTickPerSecond();

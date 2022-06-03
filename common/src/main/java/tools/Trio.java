@@ -30,4 +30,14 @@ public class Trio<First, Second, Third> implements Comparable, Serializable {
         Trio<First, Second, Third> pair = (Trio<First, Second, Third>) o;
         return hashCode() - pair.hashCode();
     }
+
+
+    public Pair<Second, Third> getSecondAndThird() {
+        return new Pair<>(second, third);
+    }
+
+    public Pair<First, Third> getFirstAndThird() {
+        return new Pair<>(first, third);
+    }
+
 }

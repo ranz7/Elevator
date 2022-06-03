@@ -14,9 +14,6 @@ import java.util.List;
  * </p>
  */
 
-public record RoomPrepareCompactData(double version,  RoomData  roomData)
-        implements Serializable {
-    public record RoomData(long elevatorOpenCloseTime, Vector2D customerSize, double gameSpeed, int roomId)
-            implements Serializable {
-    }
+public record RoomPrepareCompactData(double version, long elevatorOpenCloseTime, Vector2D customerSize,
+                                     double gameSpeed, int roomId) implements Serializable {
 }

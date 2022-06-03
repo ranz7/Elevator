@@ -12,6 +12,7 @@ import model.objects.customer.Customer;
 import model.objects.elevator.Elevator;
 import model.objects.floor.ElevatorButton;
 import model.objects.floor.FloorStructure;
+import model.objects.floor.Painting;
 import protocol.Protocol;
 import protocol.special.CreatureData;
 import protocol.special.CreatureType;
@@ -23,7 +24,8 @@ import tools.Vector2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
+
+import static configs.ConnectionSettings.VERSION;
 
 
 public class GameMap extends Creature implements Transport<Creature> {
@@ -65,6 +67,7 @@ public class GameMap extends Creature implements Transport<Creature> {
 
     @Override
     public void tick(double deltaTime) {
+        localDataBase.tick(deltaTime);
         //new TickableList(elevatorsControllers).tick(deltaTime);
         //customersController.tick(deltaTime);
         //localDataBase.tick(deltaTime);
@@ -83,8 +86,8 @@ public class GameMap extends Creature implements Transport<Creature> {
         localDataBase.moveCreatureInto(moveCreatureId, whereCreature);
     }
 
-    public RoomPrepareCompactData.RoomData toRoomData() {
-        return new RoomPrepareCompactData.RoomData(
+    public RoomPrepareCompactData createRoomData(double version) {
+        return new RoomPrepareCompactData(version,
                 getLocalCreaturesSettings().elevatorOpenCloseTime(),
                 getLocalCreaturesSettings().customerSize(),
                 getGameSpeed(),
@@ -92,7 +95,7 @@ public class GameMap extends Creature implements Transport<Creature> {
     }
 
     public Serializable createCompactGameMapData() {
-        var parentsAndCreatures = getLocalDataBase().toIdAndCreaturesList();
+        var parentsAndCreatures = getLocalDataBase().streamTrio().map(Trio::getFirstAndThird);
         ArrayList<CreatureData> parentIdClassTypeObject = new ArrayList<>();
         parentsAndCreatures.forEach(
                 parentAndCreature -> parentIdClassTypeObject.add(
@@ -101,7 +104,7 @@ public class GameMap extends Creature implements Transport<Creature> {
                                 cast(parentAndCreature.getSecond().getClass()))
                 )
         );
-        return new GameMapCompactData(parentIdClassTypeObject);
+        return new GameMapCompactData(parentIdClassTypeObject, createRoomData(VERSION));
     }
 
     private CreatureType cast(Class<? extends Creature> aClass) {
@@ -113,6 +116,9 @@ public class GameMap extends Creature implements Transport<Creature> {
         }
         if (aClass == ElevatorButton.class) {
             return CreatureType.ELEVATOR_BUTTON;
+        }
+        if (aClass == Painting.class) {
+            return CreatureType.FLOOR_PAINTING;
         }
         if (aClass == FloorStructure.class) {
             return CreatureType.FLOOR;

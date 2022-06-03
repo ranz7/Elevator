@@ -56,7 +56,7 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
             return;
         }
         floorStructureTop = new FloorStructure(getPosition().addByY(settings.floorSize().y), settings, this);
-        floorStructureTop.fillWithPaintings();
+       // floorStructureTop.fillWithPaintings();
         add(floorStructureTop);
     }
 

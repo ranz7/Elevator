@@ -2,15 +2,16 @@ package model.planes;
 
 import controller.Tickable;
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableCreature;
 import drawable.buttons.ClickableButton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.DatabaseOf;
-import model.objects.CreatureInterface;
 import model.planes.graphics.Scaler;
 import settings.localDraw.LocalDrawSetting;
 import tools.Pair;
+import tools.Trio;
 import tools.Vector2D;
 import view.gui.windowReacts.MouseReact;
 import model.planes.graphics.Painter;
@@ -49,28 +50,25 @@ public abstract class Plane implements Tickable, MouseReact {
     @Override
     public void tick(double deltaTime) {
         painter.getScaler().tick(deltaTime);
-        getLocalDataBase().tick(deltaTime * getTimeSpeed());
-        getLocalDataBase().removeIf(CreatureInterface::isDead);
-        updateDrawingObjectsForThreadSafety();
+
     }
 
     private List<Pair<Vector2D, Drawable>> lastObjectsState;
 
-    private void updateDrawingObjectsForThreadSafety() {
+    protected void updateDrawingObjectsForThreadSafety() {
         lastObjectsState = getLocalDataBase()
-                .stream()
+                .streamTrio().map(Trio::getSecondAndThird)
                 .sorted(Comparator.comparingInt(
-                        drawableObjet -> drawableObjet.getSecond().getDrawPriority())).collect(Collectors.toList());
+                        drawableObjet -> drawableObjet.getSecond().getDrawPriority()))
+                .collect(Collectors.toList());
     }
-
-    protected abstract double getTimeSpeed();
 
     public void draw(Graphics g) {
         painter.prepareDrawer(g);
-        if(lastObjectsState!=null)
-        lastObjectsState.forEach(positionAndObject -> {
-            positionAndObject.getSecond().draw(positionAndObject.getFirst(), painter);
-        });
+        if (lastObjectsState != null)
+            lastObjectsState.forEach(positionAndObject -> {
+                positionAndObject.getSecond().draw(positionAndObject.getFirst(), painter);
+            });
     }
 
     protected abstract DatabaseOf<Drawable> getLocalDataBase();

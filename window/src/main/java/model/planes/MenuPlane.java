@@ -2,6 +2,7 @@ package model.planes;
 
 import controller.GuiController;
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableCreature;
 import drawable.concretes.menu.MenuDrawable;
 import drawable.concretes.menu.Portal;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class MenuPlane extends Plane {
     private final MenuDrawable menuDrawable = new MenuDrawable(getSettings());
@@ -58,11 +60,10 @@ public class MenuPlane extends Plane {
     public void tick(double deltaTime) {
         super.tick(deltaTime);
         getScaler().updateGameSizes(menuDrawable.getSize());
-    }
 
-    @Override
-    protected double getTimeSpeed() {
-        return 1;
+        menuDrawable.tick(deltaTime);
+
+        updateDrawingObjectsForThreadSafety();
     }
 
     @Override
@@ -75,9 +76,6 @@ public class MenuPlane extends Plane {
         getScaler().updateSizes(size, menuDrawable.getSize());
     }
 
-    public void roomWasDeleted(int roomId) {
-//        menuDrawable.delete
-    }
 
     public void roomWasCreated(int roomId) {
 //
@@ -92,5 +90,9 @@ public class MenuPlane extends Plane {
                 }
         );
         return rooms;
+    }
+
+    public Stream<Portal> streamOfPortals() {
+        return getLocalDataBase().streamOf(Portal.class);
     }
 }

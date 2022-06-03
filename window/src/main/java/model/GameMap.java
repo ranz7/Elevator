@@ -3,6 +3,7 @@ package model;
 import controller.Tickable;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableCreature;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.concretes.FlyingText;
 import drawable.concretes.game.floor.DrawableFloorStructure;
@@ -11,10 +12,13 @@ import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.elevator.DrawableElevator;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import lombok.Getter;
+import lombok.Setter;
+import model.objects.CreatureInterface;
 import model.packageLoader.DrawableCreatureData;
 import model.packageLoader.PackageLoader;
 import protocol.special.CreatureType;
 import protocol.special.GameMapCompactData;
+import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
@@ -26,13 +30,19 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this,
             FlyingText.class,
             DrawableFloorStructure.class);
+    @Getter
+    @Setter
+    RoomRemoteSettings roomRemoteSettings;
 
-    public GameMap(LocalDrawSetting settings) {
-        super(new RectangleWithBorder(new Color(255, 0, 0), 7), settings);
+    public GameMap(DrawableCreatureData data,LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings) {
+        super(data,new RectangleWithBorder(new Color(255, 0, 0), 7), settings);
+        this.roomRemoteSettings = roomRemoteSettings;
     }
 
     @Override
     public void tick(double deltaTime) {
+        getLocalDataBase().tick(roomRemoteSettings.gameSpeed() * deltaTime);
+        getLocalDataBase().removeIf(CreatureInterface::isDead);
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {
@@ -75,9 +85,6 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     }
 
 
-    public void applyArrivedData(GameMapCompactData data) {
-        PackageLoader.applyArrivedData(data, this);
-    }
 
     @Override
     public DrawCenter getDrawCenter() {
@@ -93,7 +100,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     public void add(Drawable drawable) {
         if (drawable instanceof DrawableCreatureData) {
             if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR) {
-                drawable = new DrawableFloorStructure(getSettings());
+                drawable = new DrawableFloorStructure((DrawableCreatureData) drawable, getSettings());
             }
         }
         localDataBase.addCreature(drawable);

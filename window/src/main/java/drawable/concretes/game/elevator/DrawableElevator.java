@@ -9,6 +9,7 @@ import model.Transportable;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
+import model.packageLoader.DrawableCreatureData;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import lombok.Getter;
@@ -25,8 +26,8 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
     private final ElevatorDoor rightDoor;
 
 
-    public DrawableElevator(double OpenCloseTime, LocalDrawSetting settings) {
-        super(new Rectangle(settings.elevatorBackGroundColor()), settings);
+    public DrawableElevator(DrawableCreatureData creatureData,double OpenCloseTime, LocalDrawSetting settings) {
+        super(creatureData,new Rectangle(settings.elevatorBackGroundColor()), settings);
         leftDoor = new ElevatorDoor(
                 new Vector2D(0, 0), this.getSize(),
                 true, settings, OpenCloseTime);

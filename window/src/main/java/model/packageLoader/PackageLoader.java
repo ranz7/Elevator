@@ -1,14 +1,16 @@
 package model.packageLoader;
 
 import drawable.abstracts.Drawable;
+import drawable.abstracts.DrawableRemoteCreature;
+import model.DatabaseOf;
 import model.GameMap;
+import model.Transport;
 import protocol.special.CreatureData;
 import protocol.special.CreatureType;
 import protocol.special.GameMapCompactData;
-import model.DatabaseOf;
-import drawable.abstracts.DrawableRemoteCreature;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class PackageLoader {
     public static void applyArrivedData(GameMapCompactData modelOfRemoteMap, GameMap map) {
@@ -38,7 +40,18 @@ public class PackageLoader {
                     }
 
                     // Create
-                    modelOfMap.get(creatureData.getIdOfParent()).add(new DrawableCreatureData(creatureData));
+                    Drawable drawable;
+                    try {
+                        drawable = modelOfMap.get(creatureData.getIdOfParent()).getSecond();
+                    } catch (NoSuchElementException e) {
+                        throw new RuntimeException("Cannot find with id: " + creatureData.getIdOfParent()
+                                + " an object: " + creatureData.getCreatureType());
+                    }
+                    try {
+                        ((Transport) drawable).add(new DrawableCreatureData(creatureData));
+                    } catch (ClassCastException e) {
+                        throw new RuntimeException("Found object" + drawable + " is not an transport");
+                    }
                 }
         );
     }

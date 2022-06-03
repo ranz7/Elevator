@@ -33,14 +33,6 @@ public class AppModel implements Tickable {
         gameMaps.removeIf(Creature::isDead);
     }
 
-    public List<Pair<Integer, Serializable>> createRoomPrepareCompactData(List<Integer> subscribes) {
-        List<Pair<Integer, Serializable>> roomsData = new LinkedList<>();
-        subscribes.forEach(roomId -> roomsData.add(new Pair<>(
-                roomId,
-                new RoomPrepareCompactData(ConnectionSettings.VERSION, getMap(roomId).toRoomData()))));
-        return roomsData;
-    }
-
 
     public GameMap getMap(long roomId) {
         return gameMaps.stream().filter(gameMap -> gameMap.getRoomId() == roomId).findFirst().get();

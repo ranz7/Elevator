@@ -15,8 +15,7 @@ public enum Protocol {
     CUSTOMER_GET_IN_OUT,            // Integer (customer id)
     ELEVATOR_OPEN,                  // Integer (elevator id)
     ELEVATOR_CLOSE,                 // Integer (elevator id)
-    UPDATE_DATA,                    // ApplicationCreatures
-    ROOMS_PREPARE_SETTINGS,           // AApplicationSettings
+    UPDATE_DATA,                    // ApplicationCreatures 
 
     //-- FROM_CLIENT --//
     CHANGE_GAME_SPEED,              // Double (new game speed)

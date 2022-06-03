@@ -3,12 +3,13 @@ package drawable.concretes.game.floor.decorations;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.texture.Texture;
+import model.packageLoader.DrawableCreatureData;
 import settings.localDraw.LocalDrawSetting;
 import java.util.Random;
 
 public class FloorPainting extends DrawableRemoteCreature {
-    public FloorPainting( LocalDrawSetting settings, Random random) {
-        super( new Texture( "/images/paintings/", random), settings);
+    public FloorPainting(DrawableCreatureData creatureData, LocalDrawSetting settings, Random random) {
+        super(creatureData, new Texture( "/images/paintings/", random), settings);
     }
 
     @Override

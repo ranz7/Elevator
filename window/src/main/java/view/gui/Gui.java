@@ -44,7 +44,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
 
 
     public void draw(Graphics g) {
-        controller.getAllPlanes().forEach(plane -> plane.draw(g));
+        controller.getMenu().draw(g);
     }
 
     @Override

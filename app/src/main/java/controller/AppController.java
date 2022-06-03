@@ -42,8 +42,7 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
                         gates.send(
                                 Protocol.UPDATE_DATA,
                                 appModel.getRoomId(),
-                                appModel.createCompactGameMapData()
-                        );
+                                appModel.createCompactGameMapData());
                     } catch (Gates.NobodyReceivedMessageException e) {
                         appModel.setDead(true);
                     }
@@ -61,7 +60,6 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
                 gates.setSendFilter(message.getOwner(), SendFilters.sendOnlyIfSubscribed((SubscribeRequest) data));
                 var subscribes = ((SubscribeRequest) data).roomsToSubscribeFor();
                 appModel.createIfNotExist(subscribes, gates);
-                gates.sendWithoutCheckMultiple(Protocol.ROOMS_PREPARE_SETTINGS, appModel.createRoomPrepareCompactData(subscribes));
             }
             case CREATE_CUSTOMER -> {
                 LinkedList<Integer> floorsStartEnd = (LinkedList<Integer>) data;

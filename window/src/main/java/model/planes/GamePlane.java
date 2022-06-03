@@ -3,12 +3,10 @@ package model.planes;
 import drawable.abstracts.Drawable;
 import drawable.concretes.FlyingText;
 import lombok.Getter;
-import lombok.Setter;
 import model.DatabaseOf;
 import model.GameMap;
 import model.planes.graphics.Painter;
 import model.planes.graphics.Scaler;
-import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
@@ -17,14 +15,10 @@ import tools.Vector2D;
 public class GamePlane extends Plane {
     @Getter
     private final GameMap gameMap;
-    @Getter
-    @Setter
-    private RoomRemoteSettings roomRemoteSettings;
 
-    public GamePlane(RoomRemoteSettings roomRemoteSettings, LocalDrawSetting localDrawSettings) {
+    public GamePlane(LocalDrawSetting localDrawSettings, GameMap gameMap) {
         super(localDrawSettings, new Painter(new Scaler(new Vector2D(50, 50), 0.2)));
-        this.gameMap = new GameMap(localDrawSettings);
-        this.roomRemoteSettings = roomRemoteSettings;
+        this.gameMap = gameMap;
     }
 
     @Override
@@ -55,12 +49,10 @@ public class GamePlane extends Plane {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
+
+        updateDrawingObjectsForThreadSafety();
     }
 
-    @Override
-    protected double getTimeSpeed() {
-        return roomRemoteSettings.gameSpeed();
-    }
 
     @Override
     protected DatabaseOf<Drawable> getLocalDataBase() {

@@ -23,8 +23,8 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
     private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this,
             FloorHidingCornerWall.class);
 
-    public DrawableFloorStructure(LocalDrawSetting settings) {
-        super(new RectangleWithBorder(settings.florBetonColor(), 7), settings);
+    public DrawableFloorStructure(DrawableCreatureData data, LocalDrawSetting settings) {
+        super(data, new RectangleWithBorder(settings.florBetonColor(), 7), settings);
 
 
         add(new FloorHidingCornerWall(
@@ -64,7 +64,7 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
     public void add(Drawable drawable) {
         if (drawable instanceof DrawableCreatureData) {
             if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR) {
-                drawable = new DrawableFloorStructure(getSettings());
+                drawable = new DrawableFloorStructure((DrawableCreatureData) drawable, getSettings());
             }
         }
         localDataBase.addCreature(drawable);

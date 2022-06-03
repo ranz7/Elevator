@@ -21,6 +21,7 @@ public abstract class DrawableCreature extends Creature implements Drawable {
         super(position, size);
         this.tool = tool;
         this.settings = settings;
+        this.id = -1; // local objects does not have id
     }
 
 }
