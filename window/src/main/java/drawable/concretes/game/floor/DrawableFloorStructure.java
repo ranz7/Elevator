@@ -7,6 +7,8 @@ import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
 import model.Transportable;
+import model.packageLoader.DrawableCreatureData;
+import protocol.special.CreatureType;
 import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
@@ -43,7 +45,7 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 14;
     }
 
@@ -60,6 +62,11 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
 
     @Override
     public void add(Drawable drawable) {
+        if (drawable instanceof DrawableCreatureData) {
+            if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR) {
+                drawable = new DrawableFloorStructure(getSettings());
+            }
+        }
         localDataBase.addCreature(drawable);
     }
 }

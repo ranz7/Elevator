@@ -1,7 +1,6 @@
 package model.objects;
 
 import configs.RoomPrepareCompactData;
-import controller.TickableList;
 import gates.Gates;
 import controller.subControllers.CustomersController;
 import controller.subControllers.ElevatorsController;
@@ -9,15 +8,22 @@ import lombok.Getter;
 import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
+import model.objects.customer.Customer;
+import model.objects.elevator.Elevator;
+import model.objects.floor.ElevatorButton;
 import model.objects.floor.FloorStructure;
 import protocol.Protocol;
-import protocol.ProtocolMessage;
+import protocol.special.CreatureData;
+import protocol.special.CreatureType;
 import protocol.special.GameMapCompactData;
 import settings.LocalCreaturesSettings;
+import tools.Trio;
 import tools.Vector2D;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class GameMap extends Creature implements Transport<Creature> {
@@ -86,7 +92,35 @@ public class GameMap extends Creature implements Transport<Creature> {
     }
 
     public Serializable createCompactGameMapData() {
-        return new GameMapCompactData(getLocalDataBase().toIdAndCreaturesList());
+        var parentsAndCreatures = getLocalDataBase().toIdAndCreaturesList();
+        ArrayList<CreatureData> parentIdClassTypeObject = new ArrayList<>();
+        parentsAndCreatures.forEach(
+                parentAndCreature -> parentIdClassTypeObject.add(
+                        new CreatureData(parentAndCreature.getSecond(),
+                                parentAndCreature.getFirst(),
+                                cast(parentAndCreature.getSecond().getClass()))
+                )
+        );
+        return new GameMapCompactData(parentIdClassTypeObject);
+    }
+
+    private CreatureType cast(Class<? extends Creature> aClass) {
+        if (aClass == Elevator.class) {
+            return CreatureType.ELEVATOR;
+        }
+        if (aClass == Customer.class) {
+            return CreatureType.CUSTOMER;
+        }
+        if (aClass == ElevatorButton.class) {
+            return CreatureType.ELEVATOR_BUTTON;
+        }
+        if (aClass == FloorStructure.class) {
+            return CreatureType.FLOOR;
+        }
+        if (aClass == GameMap.class) {
+            return CreatureType.GAME_MAP;
+        }
+        throw new RuntimeException("UNKNOW CLASS" + aClass.getName());
     }
 
     @Override

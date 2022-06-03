@@ -18,7 +18,7 @@ public class FloorHidingCornerWall extends DrawableCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 14;
     }
 }

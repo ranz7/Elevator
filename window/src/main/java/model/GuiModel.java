@@ -1,6 +1,7 @@
 package model;
 
 import configs.RoomPrepareCompactData;
+import controller.GuiController;
 import controller.Tickable;
 
 import controller.TickableList;
@@ -24,9 +25,10 @@ public class GuiModel implements Tickable {
     @Getter
     private final LocalDrawSetting localDrawSetting = new LocalDrawSetting();
 
-    public GuiModel() {
-        planes.add(new MenuPlane(localDrawSetting));
+    public GuiModel(GuiController controller) {
+        planes.add(new MenuPlane(controller, localDrawSetting));
     }
+
 
     public void updateRemoteSettings(RoomPrepareCompactData.RoomData roomPrepareCompactData) {
         planes.stream().
@@ -34,18 +36,20 @@ public class GuiModel implements Tickable {
                 filter(plane -> ((GamePlane) plane).getRoomRemoteSettings().roomId() == roomPrepareCompactData.roomId()).
                 findFirst().
                 ifPresentOrElse(
-                        plane -> ((GamePlane) plane).setRoomRemoteSettings(new RoomRemoteSettings(roomPrepareCompactData)),
-                        () -> planes.add(
-                                new GamePlane(
-                                        new RoomRemoteSettings(roomPrepareCompactData), localDrawSetting
-                                )
-                        )
+                        plane ->
+                                ((GamePlane) plane).setRoomRemoteSettings(new RoomRemoteSettings(roomPrepareCompactData)),
+                        () -> {
+                            planes.add(new GamePlane(new RoomRemoteSettings(roomPrepareCompactData), localDrawSetting));
+                            getMenuPlane().roomWasCreated(roomPrepareCompactData.roomId());
+                        }
                 );
+
     }
 
     @Override
     public void tick(double deltaTime) {
         new TickableList(planes).tick(deltaTime);
+        System.out.println(getPlanesToSubscribeFor());
     }
 
     public GameMap getMap(int roomId) {
@@ -63,14 +67,10 @@ public class GuiModel implements Tickable {
             GamePlane found;
         };
         streamOfGamePlanes().filter(gamePlane -> gamePlane.getRoomRemoteSettings().roomId() == roomId).
-                findFirst().ifPresentOrElse(plane -> ref.found = (GamePlane) plane, () -> {
+                findFirst().ifPresentOrElse(plane -> ref.found = plane, () -> {
                     throw new RuntimeException("Not found");
                 });
         return ref.found;
-    }
-
-    public Runnable createWorld(GameMapCompactData data) {
-        return null;
     }
 
     public Plane getActivePlane() {
@@ -78,15 +78,20 @@ public class GuiModel implements Tickable {
     }
 
     public void updateMap(int mapId, GameMapCompactData data) {
-
+        getMap(mapId).applyArrivedData(data);
     }
 
     public SubscribeRequest getPlanesToSubscribeFor() {
-        return new SubscribeRequest(
-                streamOfGamePlanes()
-                        .map(gamePlane -> gamePlane.getRoomRemoteSettings().roomId())
-                        .collect(Collectors.toList())
-        );
+        var gamePlanesUsedInPortals = getMenuPlane().getUsedGamePlanesInPortals();
+        return new SubscribeRequest(gamePlanesUsedInPortals.stream().distinct().collect(Collectors.toList()));
+    }
 
+    public void removeGamePlane(int roomId) {
+        planes.removeIf(plane -> plane instanceof GamePlane && ((GamePlane) plane).getRoomRemoteSettings().roomId() == roomId);
+        getMenuPlane().roomWasDeleted(roomId);
+    }
+
+    public MenuPlane getMenuPlane() {
+        return (MenuPlane) planes.get(0);
     }
 }

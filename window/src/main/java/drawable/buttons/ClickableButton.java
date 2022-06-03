@@ -33,8 +33,8 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     }
 
     @Override
-    public int getDrawPrioritet() {
-        return parasite.getDrawPrioritet();
+    public int getDrawPriority() {
+        return parasite.getDrawPriority();
     }
 
     public void mousePositionUpdate(Vector2D gamePosition) {

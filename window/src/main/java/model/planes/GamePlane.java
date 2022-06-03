@@ -12,7 +12,6 @@ import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
-import java.awt.*;
 
 
 public class GamePlane extends Plane {
@@ -56,7 +55,11 @@ public class GamePlane extends Plane {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        gameMap.tick(deltaTime * roomRemoteSettings.gameSpeed());
+    }
+
+    @Override
+    protected double getTimeSpeed() {
+        return roomRemoteSettings.gameSpeed();
     }
 
     @Override
@@ -66,8 +69,8 @@ public class GamePlane extends Plane {
 
 
     @Override
-    public void resize(Dimension size) {
-        getScaler().updateSizes(size, gameMap.getBuildingSize());
+    public void resize(Vector2D size) {
+        getScaler().updateSizes(size, gameMap.getSize());
     }
 
 }

@@ -21,7 +21,7 @@ public class UnderElevatorHidingWall extends DrawableCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 8;
     }
 }

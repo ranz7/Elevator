@@ -14,7 +14,7 @@ import tools.Vector2D;
 import lombok.Getter;
 
 @Getter
-public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable> {
+public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable>, FloorGetter{
     @Setter
     @Getter
     private Transport<Drawable> transport;
@@ -44,7 +44,7 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 4;
     }
 

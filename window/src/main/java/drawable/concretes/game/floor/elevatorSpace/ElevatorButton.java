@@ -38,7 +38,7 @@ public class ElevatorButton extends DrawableRemoteCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 10;
     }
 }

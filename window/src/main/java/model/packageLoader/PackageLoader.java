@@ -1,44 +1,46 @@
 package model.packageLoader;
 
 import drawable.abstracts.Drawable;
+import model.GameMap;
+import protocol.special.CreatureData;
+import protocol.special.CreatureType;
 import protocol.special.GameMapCompactData;
 import model.DatabaseOf;
 import drawable.abstracts.DrawableRemoteCreature;
-import model.objects.Creature;
-import tools.Pair;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class PackageLoader {
-    public static void applyArivedData(GameMapCompactData arivedData, DatabaseOf<Drawable> localModel) {
-        List<Pair<Integer, Creature>> arrivedCreatures = arivedData.parentIdAndObjects;
+    public static void applyArrivedData(GameMapCompactData modelOfRemoteMap, GameMap map) {
+        DatabaseOf<Drawable> modelOfMap = map.getLocalDataBase();
 
-        // erase or Update
-        localModel.streamOf(DrawableRemoteCreature.class).forEach(
-                drawableRemoteCreature -> {
-                    int creatureId = drawableRemoteCreature.getId();
-                    var creaturePair = arrivedCreatures.stream().filter(
-                                    creaturePairTmp -> creaturePairTmp.getSecond().getId() == creatureId)
-                            .findFirst();
-                    if (creaturePair.isEmpty()) {
-                        drawableRemoteCreature.setDead(true);
-                    } else {
-                        drawableRemoteCreature.set(arrivedCreatures.get(creatureId).getSecond());
-                        arrivedCreatures.remove(creaturePair.get());
+        List<CreatureData> arrivedCreatures = modelOfRemoteMap.parentIdClassTypeObject;
+
+        List<DrawableRemoteCreature> localCreatures = modelOfMap.streamOf(DrawableRemoteCreature.class).toList();
+
+        // Erase
+        localCreatures.forEach(localCreature -> localCreature.setDead(true));
+
+        //  Update
+        arrivedCreatures.forEach(
+                creatureData -> {
+                    if (creatureData.getCreatureType() == CreatureType.GAME_MAP) {
+                        map.set(creatureData); // Game Map can have another mapId, so we need to set it by hands
+                        return;
                     }
-                });
-        // Create
-     //   arrivedCreatures.forEach(
-         //       parentIdAndCreature -> {
-        //            var parentId = parentIdAndCreature.getFirst();
-         //           var creature = parentIdAndCreature.getSecond();
-          //           localModel.
-         //                    get(parentId).
-         //                    add(creature);
-          //      });
-    }
+                    var findWithTheSameId = localCreatures.stream()
+                            .filter(localCreature -> localCreature.getId() == creatureData.getId())
+                            .findFirst();
+                    if (findWithTheSameId.isPresent()) {
+                        findWithTheSameId.get().set(creatureData);
+                        findWithTheSameId.get().setDead(false);
+                        return;
+                    }
 
+                    // Create
+                    modelOfMap.get(creatureData.getIdOfParent()).add(new DrawableCreatureData(creatureData));
+                }
+        );
+    }
 
 }

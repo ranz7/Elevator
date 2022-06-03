@@ -23,7 +23,7 @@ public class DrawableCustomer extends DrawableRemoteCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         if (behindElevator) {
             return 12;
         }

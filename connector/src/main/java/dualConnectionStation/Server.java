@@ -4,6 +4,7 @@ import configs.ConnectionSettings;
 import dualConnectionStation.download.Reader;
 import dualConnectionStation.download.SocketStreamReader;
 import protocol.MessagePacket;
+import protocol.Protocol;
 import protocol.ProtocolMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -83,16 +84,22 @@ public class Server extends BaseDualConectionStation {
         streamBuffer.clear();
     }
 
+    int c = 10;
+
     private void sendAll(Reader client, List<ProtocolMessage> messagesToClient) {
 
         try {
             ProtocolMessage.PureData[] messagesArray = new ProtocolMessage.PureData[messagesToClient.size()];
             for (int i = 0; i < messagesArray.length; i++) {
                 messagesArray[i] = messagesToClient.get(i).toPureData();
-                Logger.getAnonymousLogger().info("SENT : " +  messagesToClient.get(i).getProtocol());
+                if (messagesToClient.get(i).getProtocol() != Protocol.UPDATE_DATA || c <= 0) {
+                    Logger.getAnonymousLogger().info("SENT : " + messagesToClient.get(i).getProtocol());
+                    c = 100;
+                } else {
+                    c--;
+                }
             }
-            client.stream().writeObject(
-                    new MessagePacket(messagesArray));
+            client.stream().writeObject(new MessagePacket(messagesArray));
         } catch (IOException ignore) {
         }
     }

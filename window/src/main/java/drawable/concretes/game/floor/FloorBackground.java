@@ -15,7 +15,7 @@ public class FloorBackground extends DrawableCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 0;
     }
 

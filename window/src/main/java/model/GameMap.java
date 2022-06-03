@@ -3,7 +3,6 @@ package model;
 import controller.Tickable;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.DrawableCreature;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.concretes.FlyingText;
 import drawable.concretes.game.floor.DrawableFloorStructure;
@@ -11,30 +10,29 @@ import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.elevator.DrawableElevator;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
-import drawable.drawTool.text.Text;
 import lombok.Getter;
+import model.packageLoader.DrawableCreatureData;
 import model.packageLoader.PackageLoader;
+import protocol.special.CreatureType;
 import protocol.special.GameMapCompactData;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
-import model.planes.graphics.Painter;
 
 import java.awt.*;
-import java.util.Comparator;
 
 
 public class GameMap extends DrawableRemoteCreature implements Tickable, Transport<Drawable> {
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, FlyingText.class);
+    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this,
+            FlyingText.class,
+            DrawableFloorStructure.class);
 
     public GameMap(LocalDrawSetting settings) {
-        super(new RectangleWithBorder(new Color(222, 222, 222), 7), settings);
+        super(new RectangleWithBorder(new Color(255, 0, 0), 7), settings);
     }
 
     @Override
     public void tick(double deltaTime) {
-        localDataBase.tick(deltaTime);
-        localDataBase.removeIf(Drawable::isDead);
     }
 
     public ElevatorButton getNearestButton(Vector2D data) {
@@ -77,22 +75,27 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     }
 
 
-    public void applyArivedData(GameMapCompactData data) {
-        PackageLoader.applyArivedData(data, getLocalDataBase());
+    public void applyArrivedData(GameMapCompactData data) {
+        PackageLoader.applyArrivedData(data, this);
     }
 
     @Override
     public DrawCenter getDrawCenter() {
-        return DrawCenter.center;
+        return DrawCenter.bottomLeft;
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 0;
     }
 
     @Override
     public void add(Drawable drawable) {
+        if (drawable instanceof DrawableCreatureData) {
+            if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR) {
+                drawable = new DrawableFloorStructure(getSettings());
+            }
+        }
         localDataBase.addCreature(drawable);
     }
 

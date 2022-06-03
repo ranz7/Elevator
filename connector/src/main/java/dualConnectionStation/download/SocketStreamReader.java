@@ -49,7 +49,7 @@ public class SocketStreamReader extends Thread {
             socket.close();
             isClosed = true;
             downlink.onLostSocketConnection(socket);
-            exception.printStackTrace();
+           // exception.printStackTrace();
         }
     }
 }
