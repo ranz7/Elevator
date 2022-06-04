@@ -64,8 +64,8 @@ public class Painter {
         int width = graphics2D.getFontMetrics(font).stringWidth(text);
         int height = graphics2D.getFontMetrics(font).getDescent();
         graphics2D.drawString(text,
-                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height/2).x - width / 2,
-                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height/2).y);
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height / 2).x - width / 2,
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height / 2).y);
 
     }
 
@@ -102,5 +102,21 @@ public class Painter {
                 (int) scaler.getFromGameToRealLength(size.x),
                 (int) scaler.getFromGameToRealLength(size.y)
         );
+    }
+
+    public void drawBlackSpaces() {
+        var leftTop = scaler.getFromGameToRealCoordinate(new Vector2D(0, 0), 0);
+        Vector2D gameSize = scaler.getGameSize();
+        var rightTop = scaler.getFromGameToRealCoordinate(new Vector2D(gameSize.x, 0), 0);
+        var rightBottom = scaler.getFromGameToRealCoordinate(new Vector2D(gameSize.x, gameSize.y), 0);
+
+
+        graphics2D.setColor(new Color(38, 45, 59));
+        graphics2D.fillRect(0, 0, (int) rightBottom.x, (int) rightBottom.y);
+        graphics2D.fillRect(0, (int) rightTop.y, (int) rightBottom.x, (int) rightBottom.y);
+
+        graphics2D.setColor(new Color(30, 30, 30));
+        graphics2D.fillRect(0, 0, (int) leftTop.x, (int) leftTop.y);
+        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().width- rightTop.x), (int) leftTop.y);
     }
 }

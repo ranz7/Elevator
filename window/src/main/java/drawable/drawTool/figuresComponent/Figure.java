@@ -14,7 +14,14 @@ public abstract class Figure extends DrawTool {
         mainColor = color;
     }
 
-    Color mainColor;
+    @Override
+    public Color getMainColor() {
+        return new Color(Math.min(mainColor.getRed() + getAdditionalLightColor().getRed(), 255),
+                Math.min(mainColor.getGreen() + getAdditionalLightColor().getGreen(),255),
+                Math.min(mainColor.getBlue() + getAdditionalLightColor().getBlue(),255));
+    }
+
+    private Color mainColor;
 
     protected Pair<Vector2D, Vector2D> afterProportionApply(
             Vector2D drawPositionbeforeProportion,

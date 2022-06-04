@@ -15,7 +15,7 @@ public abstract class DrawableCreature extends Creature implements Drawable {
 
     @Getter
     @Setter
-    Vector2D realDrawPosition;
+    Vector2D realDrawPosition = new Vector2D(0,0);
 
     public DrawableCreature(Vector2D position, Vector2D size, DrawTool tool, LocalDrawSetting settings) {
         super(position, size);

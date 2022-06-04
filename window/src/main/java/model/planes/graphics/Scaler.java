@@ -54,7 +54,7 @@ public class Scaler implements Tickable {
                         + (additionalMove.y) / (additionalZoomCurrentValue)) + screenSizeAfterShift.y + blackZone.y / 2);
     }
 
-    public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, int heigthOfTheObject) {
+    public Vector2D getFromRealToGameCoordinate(Vector2D realPosition, double heigthOfTheObject) {
         isInitialised();
         return new Vector2D(
                 (realPosition.x - drawOffset.x - blackZone.x / 2
@@ -64,10 +64,14 @@ public class Scaler implements Tickable {
                         - heigthOfTheObject);
     }
 
-    private Dimension screenSizeSave;
+    @Getter
+    private Dimension screenSize;
+    @Getter
+    private Vector2D gameSize;
 
     public void updateSizes(Dimension screenSize, Vector2D gameSize) {
-        this.screenSizeSave = screenSize;
+        this.screenSize = screenSize;
+        this.gameSize = gameSize;
         clickedPoint = clickedPoint.sub(drawOffset).divide(scalingCoefficient); // NEED TO BE FIXED
 
         screenSizeAfterShift = new Vector2D(screenSize.width - blackZone.x, screenSize.height - blackZone.y);
@@ -82,7 +86,7 @@ public class Scaler implements Tickable {
     }
 
     public void updateGameSizes(Vector2D gameSize) {
-        updateSizes(screenSizeSave, gameSize);
+        updateSizes(screenSize, gameSize);
     }
 
     private void updateZoomVector() {
@@ -113,5 +117,4 @@ public class Scaler implements Tickable {
         additionalZoomFinishValue = 1;
         this.zoomScale = 1;
     }
-
 }

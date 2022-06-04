@@ -15,8 +15,14 @@ public class Rectangle extends Figure {
     }
 
     @Override
+    public boolean isIntersect(Vector2D objectPosition, Vector2D objectSize, Vector2D gamePosition) {
+        var tmp = afterProportionApply(objectPosition, objectSize);
+        return gamePosition.isInside(tmp.getFirst(), tmp.getSecond());
+    }
+
+    @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
         var tmp = afterProportionApply(position,size);
-        drawer.drawFilledRect(tmp.getFirst() ,tmp.getSecond(), mainColor, mainColor, 0);
+        drawer.drawFilledRect(tmp.getFirst() ,tmp.getSecond(), getMainColor(), getMainColor(), 0);
     }
 }
