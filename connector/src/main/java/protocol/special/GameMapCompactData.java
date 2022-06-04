@@ -1,11 +1,14 @@
 package protocol.special;
 
 import configs.ConnectionSettings;
+import configs.RoomPrepareCompactData;
 import lombok.RequiredArgsConstructor;
 import model.objects.Creature;
 import tools.Pair;
+import tools.Trio;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,5 +21,6 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class GameMapCompactData implements Serializable {
-    public final List<Pair<Integer, Creature>> parentIdAndObjects;
+    public final ArrayList<CreatureData> parentIdClassTypeObject;
+    public final RoomPrepareCompactData roomData;
 }

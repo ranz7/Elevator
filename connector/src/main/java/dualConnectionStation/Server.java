@@ -3,6 +3,8 @@ package dualConnectionStation;
 import configs.ConnectionSettings;
 import dualConnectionStation.download.Reader;
 import dualConnectionStation.download.SocketStreamReader;
+import protocol.MessagePacket;
+import protocol.Protocol;
 import protocol.ProtocolMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -26,10 +28,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Server extends BaseDualConectionStation {
     private final LinkedList<Reader> connectedClients = new LinkedList<>();
+    boolean isDisconnected = true;
 
     public void start() {
         new Thread(() -> {
-            isDisconnect.set(false);
+            isDisconnected = false;
 
             if (downlink == null) {
                 Logger.getAnonymousLogger().info("No listener set. ");
@@ -48,44 +51,69 @@ public class Server extends BaseDualConectionStation {
                     TimeUnit.MILLISECONDS.sleep(200);
                     SocketStreamReader streamReader = new SocketStreamReader(clientSocket, downlink);
                     streamReader.start();
-
-                    TimeUnit.MILLISECONDS.sleep(200);
-                    downlink.onNewSocketConnection(socketCompactData);
+                    downlink.onNewSocketConnection(clientSocket);
                 }
             } catch (Exception exception) {
                 Logger.getAnonymousLogger().warning("Server exception: " + exception.getMessage());
             } finally {
-                isDisconnect.set(true);
+                isDisconnected = true;
             }
         }).start();
     }
 
-
-    public void send(Socket receiver, ProtocolMessage message) {
+    @Override
+    public void flush() {
+        if (isDisconnected) {
+            streamBuffer.clear();
+            return;
+        }
         synchronized (connectedClients) {
-            connectedClients.stream().filter(Reader::isClosed).forEach(
-                    compactData->downlink.onLostSocketConnection(compactData.socket())
-            );
             connectedClients.removeIf(Reader::isClosed);
-            for (Reader client : connectedClients) {
-                if (client.socket() == receiver) {
-                    send(client, message);
+            connectedClients.forEach(
+                    reader -> {
+                        streamBuffer.forEach(
+                                (socket, protocolMessages) -> {
+                                    if (reader.socket() == socket) {
+                                        sendAll(reader, protocolMessages);
+                                    }
+                                }
+                        );
+                    }
+            );
+        }
+        streamBuffer.clear();
+    }
+
+    int c = 10;
+
+    private void sendAll(Reader client, List<ProtocolMessage> messagesToClient) {
+
+        try {
+            ProtocolMessage.PureData[] messagesArray = new ProtocolMessage.PureData[messagesToClient.size()];
+            for (int i = 0; i < messagesArray.length; i++) {
+                messagesArray[i] = messagesToClient.get(i).toPureData();
+                if (messagesToClient.get(i).getProtocol() != Protocol.UPDATE_DATA || c <= 0) {
+                    Logger.getAnonymousLogger().info("SENT : " + messagesToClient.get(i).getProtocol());
+                    c = 100;
+                } else {
+                    c--;
                 }
             }
+            client.stream().writeObject(new MessagePacket(messagesArray));
+        } catch (IOException ignore) {
         }
     }
 
     @Override
-    public boolean isDisconnect() {
-        return isDisconnect.get();
+    public boolean isDisconnected() {
+        return isDisconnected;
     }
 
-    private void send(Reader client, ProtocolMessage message) {
-        try {
-            client.stream().writeObject(message.toSerializable());
-        } catch (IOException ignore) {
-        }
+    @Override
+    public boolean isConnecting() {
+        return false;
     }
+
 
     @Override
     public List<Socket> getReceivers() {

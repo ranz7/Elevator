@@ -2,12 +2,10 @@ package drawable.buttons;
 
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
-import drawable.drawTool.DrawTool;
 import drawable.drawTool.figuresComponent.Ellipse;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
-import java.awt.*;
 
 public class CircleWithTextInside extends DrawableCreature {
     public CircleWithTextInside(Vector2D position, LocalDrawSetting settings) {
@@ -24,7 +22,7 @@ public class CircleWithTextInside extends DrawableCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
-        return 12;
+    public int getDrawPriority() {
+        return 100;
     }
 }

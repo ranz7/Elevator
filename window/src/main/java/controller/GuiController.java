@@ -9,45 +9,48 @@ import gates.ScenarioBuilder;
 import protocol.special.GameMapCompactData;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
-import protocol.ProtocolMessagesController;
+import protocol.MessageApplier;
+import protocol.special.SubscribeRequest;
 import settings.configs.GuiControllerConfig;
 import model.*;
-import tools.Vector2D;
 import view.gui.Gui;
 import model.planes.Plane;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * control window, created with Swing
  */
-public class GuiController extends ControllerEndlessLoop implements ProtocolMessagesController {
-    private final GuiModel windowModel = new GuiModel();
+public class GuiController extends ControllerEndlessLoop implements MessageApplier {
+    private final GuiModel windowModel = new GuiModel(this);
     private final Gui gui = new Gui(this, windowModel.getLocalDrawSetting());
     public final Gates gates = new Gates(new Client(), this);
 
     public void start() {
         ScenarioBuilder connectedScenario = new ScenarioBuilder()
                 .add(ReciveFilters.catchOnlyHello())
-                .add(ReciveFilters.catchOnlySettings())
                 .add(ReciveFilters.catchOnlyUpdate());
         gates.setOnGatesCloseEvent(() -> {
+            windowModel.getMenuPlane().changeDoorsState(false);
             gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
             gates.connect();
         });
         gates.setOnConnectEvent(() -> {
-            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, windowModel.getPlanesToSubscribeFor());
+            windowModel.getMenuPlane().changeDoorsState(false);
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
         gui.start();
+
         addTickable(gates);
         addTickable(gui);
         addTickable(windowModel);
-        super.start();
+        super.start(this::updateSubscribes);
     }
+
 
     @Override
     public boolean applyMessage(ProtocolMessage message) {
@@ -57,28 +60,14 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         switch (protocol) {
             case HELLO_MESSAGE -> {
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
-
             }
-            case WORLDS_PREPARE_SETTINGS -> {
-                RoomPrepareCompactData settings = (RoomPrepareCompactData) data;
-                if (ConnectionSettings.VERSION != settings.version()) {
-                    Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
-                            " Your version: %s, server version %s%n")
-                            .formatted(ConnectionSettings.VERSION, settings.version()));
-                    return true;
-                }
-                settings.roomData().forEach(windowModel::updateRemoteSettings);
-                setCurrentTime(message.getTimeStump());
-                gui.resize();
-            }
-
             case UPDATE_DATA -> {
-                windowModel.updateMap(roomId, (GameMapCompactData) data);
+                windowModel.updateMap((GameMapCompactData) data);
             }
-            case ELEVATOR_OPEN -> windowModel.getMap(roomId).getElevator((int) data).changeDoorsState(false);
-            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).getElevator((int) data).changeDoorsState(true);
-            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).getCustomer((int) data).changeBehindElevator();
-            case ELEVATOR_BUTTON_CLICK -> windowModel.getGamePlane(roomId).leftMouseClicked((Vector2D) data);
+            case ELEVATOR_OPEN -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(false);
+            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(true);
+            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).get().getCustomer((int) data).changeBehindElevator();
+//            case ELEVATOR_BUTTON_CLICK -> windowModel.getGamePlane(roomId).leftMouseClicked((Vector2D) data);
         }
         return true;
     }
@@ -112,7 +101,17 @@ public class GuiController extends ControllerEndlessLoop implements ProtocolMess
         return windowModel.getActivePlane();
     }
 
-    public List<Plane> getAllPlanes() {
-        return windowModel.getPlanes();
+    private List<Integer> lastRoomsToSubscribeFor = new LinkedList<>();
+
+    public void updateSubscribes() {
+        var currentSubscribtions = windowModel.getPlanesToSubscribeFor().roomsToSubscribeFor();
+        if (!lastRoomsToSubscribeFor.equals(currentSubscribtions)) {
+            lastRoomsToSubscribeFor = currentSubscribtions;
+            gates.sendWithoutCheck(Protocol.SUBSCRIBE_FOR, -1, new SubscribeRequest(currentSubscribtions));
+        }
+    }
+
+    public Plane getMenu() {
+        return windowModel.getMenuPlane();
     }
 }

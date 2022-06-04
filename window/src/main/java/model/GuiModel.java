@@ -1,92 +1,108 @@
 package model;
 
+import configs.ConnectionSettings;
 import configs.RoomPrepareCompactData;
+import controller.GuiController;
 import controller.Tickable;
 
 import controller.TickableList;
+import drawable.concretes.menu.Portal;
 import lombok.Getter;
+import model.packageLoader.DrawableCreatureData;
+import model.packageLoader.PackageLoader;
 import model.planes.MenuPlane;
 import protocol.special.GameMapCompactData;
 import protocol.special.SubscribeRequest;
 import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
-import model.planes.GamePlane;
 import model.planes.Plane;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GuiModel implements Tickable {
     @Getter
-    private final List<Plane> planes = new LinkedList<>();
+    private MenuPlane menuPlane;
+    private List<GameMap> gameMaps = new LinkedList<>();
+
     @Getter
     private final LocalDrawSetting localDrawSetting = new LocalDrawSetting();
 
-    public GuiModel() {
-        planes.add(new MenuPlane(localDrawSetting));
+    public GuiModel(GuiController controller) {
+        menuPlane = new MenuPlane(controller, localDrawSetting);
     }
 
-    public void updateRemoteSettings(RoomPrepareCompactData.RoomData roomPrepareCompactData) {
-        planes.stream().
-                filter(plane -> plane instanceof GamePlane).
-                filter(plane -> ((GamePlane) plane).getRoomRemoteSettings().roomId() == roomPrepareCompactData.roomId()).
-                findFirst().
-                ifPresentOrElse(
-                        plane -> ((GamePlane) plane).setRoomRemoteSettings(new RoomRemoteSettings(roomPrepareCompactData)),
-                        () -> planes.add(
-                                new GamePlane(
-                                        new RoomRemoteSettings(roomPrepareCompactData), localDrawSetting
-                                )
-                        )
-                );
-    }
 
     @Override
     public void tick(double deltaTime) {
-        new TickableList(planes).tick(deltaTime);
+        menuPlane.tick(deltaTime);
+        new TickableList(gameMaps).tick(deltaTime);
+        updatePortals();
     }
 
-    public GameMap getMap(int roomId) {
-        var plane = getGamePlane(roomId);
-        return plane.getGameMap();
+
+    private void updatePortals() {
+        // give map for portal
+        streamOfGameMaps().forEach(
+                gameMap -> getMenuPlane().streamOfPortals().forEach(
+                        portal -> {
+                            if (portal.getRoomId() == gameMap.getRoomRemoteSettings().roomId()) {
+                                portal.setGameMap(gameMap);
+                            }
+                            if (portal.getRoomId() == -1) {
+                                portal.setGameMap(null);
+                            }
+                        }
+                )
+        );
     }
 
-    public Stream<GamePlane> streamOfGamePlanes() {
-        return planes.stream().
-                filter(plane -> plane instanceof GamePlane).map(plane -> (GamePlane) plane);
+    public Optional<GameMap> getMap(int roomId) {
+        return streamOfGameMaps()
+                .filter(gameMap -> gameMap.getRoomRemoteSettings().roomId() == roomId)
+                .findFirst();
     }
 
-    public GamePlane getGamePlane(int roomId) {
-        var ref = new Object() {
-            GamePlane found;
-        };
-        streamOfGamePlanes().filter(gamePlane -> gamePlane.getRoomRemoteSettings().roomId() == roomId).
-                findFirst().ifPresentOrElse(plane -> ref.found = (GamePlane) plane, () -> {
-                    throw new RuntimeException("Not found");
-                });
-        return ref.found;
-    }
-
-    public Runnable createWorld(GameMapCompactData data) {
-        return null;
+    public Stream<GameMap> streamOfGameMaps() {
+        return gameMaps.stream();
     }
 
     public Plane getActivePlane() {
-        return planes.stream().filter(Plane::isActive).findFirst().get();
+        if (menuPlane.isActive()) {
+            return menuPlane;
+        }
+        return menuPlane.streamOfPortals().map(Portal::getPlane).filter(Objects::nonNull)
+                .filter(Plane::isActive).findFirst().get();
     }
 
-    public void updateMap(int mapId, GameMapCompactData data) {
+    public void updateMap(GameMapCompactData data) {
+        if (ConnectionSettings.VERSION != data.roomData.version()) {
+            Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
+                    " Your version: %s, server version %s%n")
+                    .formatted(ConnectionSettings.VERSION, data.roomData.version()));
+        }
 
+        Optional<GameMap> mapToUpdate = getMap(data.parentIdClassTypeObject.get(0).getId());
+        if (mapToUpdate.isEmpty()) {
+            mapToUpdate = Optional.of(new GameMap(
+                    new DrawableCreatureData(data.parentIdClassTypeObject.get(0)),
+                    localDrawSetting,
+                    new RoomRemoteSettings(data.roomData)
+            ));
+            getMenuPlane().roomWasCreated(data.roomData.roomId());
+            gameMaps.add(mapToUpdate.get());
+        }
+        mapToUpdate.get().setRoomRemoteSettings(new RoomRemoteSettings(data.roomData));
+        PackageLoader.applyArrivedData(data, mapToUpdate.get());
     }
 
     public SubscribeRequest getPlanesToSubscribeFor() {
-        return new SubscribeRequest(
-                streamOfGamePlanes()
-                        .map(gamePlane -> gamePlane.getRoomRemoteSettings().roomId())
-                        .collect(Collectors.toList())
-        );
-
+        var gamePlanesUsedInPortals = getMenuPlane().getUsedGamePlanesInPortals();
+        return new SubscribeRequest(gamePlanesUsedInPortals.stream().distinct().collect(Collectors.toList()));
     }
 }

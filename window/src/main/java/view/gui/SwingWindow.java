@@ -14,6 +14,7 @@ public class SwingWindow extends JPanel implements Tickable {
     private final JFrame jframe;
     private FPScounter counter = new FPScounter("42");
     private final Gui gui;
+    private final MouseListener mouseListener;
 
     public SwingWindow(Gui gui, LocalDrawSetting localDrawSetting) {
         setLayout(null);
@@ -29,8 +30,8 @@ public class SwingWindow extends JPanel implements Tickable {
         jframe.add(this);
 
         setBackground(localDrawSetting.backGroundColor());
-
-        addMouseListener(new MouseListener(gui));
+        mouseListener = new MouseListener(gui);
+        addMouseListener(mouseListener);
         addResizeListener(new ResizeListener(gui));
         this.gui = gui;
     }
@@ -47,6 +48,7 @@ public class SwingWindow extends JPanel implements Tickable {
     @Override
     public void tick(double deltaTime) {
         counter.tick(deltaTime);
+        mouseListener.tick(deltaTime);
         jframe.repaint();
     }
 

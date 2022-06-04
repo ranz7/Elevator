@@ -1,10 +1,14 @@
 package dualConnectionStation.download;
 
+import dualConnectionStation.BaseDualConectionStation;
+import dualConnectionStation.upload.Uplink;
+import protocol.MessagePacket;
 import protocol.ProtocolMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
 /**
@@ -17,26 +21,35 @@ import java.net.Socket;
 public class SocketStreamReader extends Thread {
     private final Socket socket;
     private final Downlink downlink;
+    private boolean isClosed = true;
+
+    public boolean isClosed() {
+        return isClosed;
+    }
 
     @Override
     @SneakyThrows
     public void run() {
         try {
+            isClosed = false;
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
-                var data = (ProtocolMessage.PureData) objectInputStream.readObject();
-                ProtocolMessage message = new ProtocolMessage(data);
-                message.setOwner(socket);
-                downlink.onReceiveMessage(message);
-
-                if (message == null) {
+                var messages = ((MessagePacket) objectInputStream.readObject()).messages();
+                if (messages == null) {
                     break;
+                }
+                for (int i = 0; i < messages.length; i++) {
+                    var message = new ProtocolMessage(messages[i]);
+                    message.setOwner(socket);
+                    downlink.onReceiveMessage(message);
                 }
             }
         } catch (Exception exception) {
             socket.close();
-//             exception.printStackTrace();
+            isClosed = true;
+            downlink.onLostSocketConnection(socket);
+           // exception.printStackTrace();
         }
     }
 }

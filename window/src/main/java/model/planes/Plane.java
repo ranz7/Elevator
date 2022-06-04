@@ -8,19 +8,21 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import model.DatabaseOf;
-import model.Transport;
 import model.planes.graphics.Scaler;
 import settings.localDraw.LocalDrawSetting;
+import tools.Pair;
+import tools.Trio;
 import tools.Vector2D;
 import view.gui.windowReacts.MouseReact;
 import model.planes.graphics.Painter;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public abstract class Plane implements Tickable, MouseReact {
-
     @Getter
     @Setter
     private boolean isActive = true;
@@ -48,29 +50,34 @@ public abstract class Plane implements Tickable, MouseReact {
     @Override
     public void tick(double deltaTime) {
         painter.getScaler().tick(deltaTime);
-        getLocalDataBase().tick(deltaTime);
+
+    }
+
+    private List<Pair<Vector2D, Drawable>> lastObjectsState;
+
+    protected void updateDrawingObjectsForThreadSafety() {
+        lastObjectsState = getLocalDataBase()
+                .streamTrio().map(Trio::getSecondAndThird)
+                .sorted(Comparator.comparingInt(
+                        drawableObjet -> drawableObjet.getSecond().getDrawPriority()))
+                .collect(Collectors.toList());
     }
 
     public void draw(Graphics g) {
         painter.prepareDrawer(g);
-        var objectsAndRelativePositions = getLocalDataBase().toAbsolutePositionAndObjects();
-        objectsAndRelativePositions.sort(Comparator.comparingInt(drawableObjet -> drawableObjet.getSecond().getDrawPrioritet()));
-        objectsAndRelativePositions.forEach(
-                positionAndObject -> {
-                    positionAndObject.getSecond().draw(positionAndObject.getFirst(), painter);
-                });
+        if (lastObjectsState != null)
+            lastObjectsState.forEach(positionAndObject -> {
+                positionAndObject.getSecond().draw(positionAndObject.getFirst(), painter);
+            });
     }
 
     protected abstract DatabaseOf<Drawable> getLocalDataBase();
 
-    public abstract int getId();
-
-    public abstract void resize(Dimension size);
+    public abstract void resize(Vector2D size);
 
     public void mousePositionUpdate(Point mouseLocation) {
         var gamePosition = getScaler().getFromRealToGameCoordinate(new Vector2D(mouseLocation), 0);
         getLocalDataBase().streamOf(ClickableButton.class).forEach(
-                clickableButton -> clickableButton.mousePositionUpdate(gamePosition
-                ));
+                clickableButton -> clickableButton.mousePositionUpdate(gamePosition));
     }
 }

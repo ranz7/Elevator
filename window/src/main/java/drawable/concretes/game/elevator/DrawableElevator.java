@@ -9,24 +9,25 @@ import model.Transportable;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
+import model.packageLoader.DrawableCreatureData;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import lombok.Getter;
 
 @Getter
-public class DrawableElevator extends DrawableRemoteCreature implements Transport, Transportable {
+public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable>, FloorGetter{
     @Setter
     @Getter
-    private Transport transport;
+    private Transport<Drawable> transport;
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ElevatorDoor.class);
 
     private final ElevatorDoor leftDoor;
     private final ElevatorDoor rightDoor;
 
 
-    public DrawableElevator(double OpenCloseTime, LocalDrawSetting settings) {
-        super(new Rectangle(settings.elevatorBackGroundColor()), settings);
+    public DrawableElevator(DrawableCreatureData creatureData,double OpenCloseTime, LocalDrawSetting settings) {
+        super(creatureData,new Rectangle(settings.elevatorBackGroundColor()), settings);
         leftDoor = new ElevatorDoor(
                 new Vector2D(0, 0), this.getSize(),
                 true, settings, OpenCloseTime);
@@ -34,8 +35,8 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
                 new Vector2D(this.getSize().x / 2, 0), this.getSize(),
                 false, settings, OpenCloseTime);
 
-        localDataBase.add(leftDoor);
-        localDataBase.add(rightDoor);
+        add(leftDoor);
+        add(rightDoor);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 4;
     }
 
@@ -55,5 +56,10 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
 
     public int getCurrentFloorNum() {
         return ((DrawableFloorStructure) transport).getCurrentFloorNum();
+    }
+
+    @Override
+    public void add(Drawable drawable) {
+        localDataBase.addCreature(drawable);
     }
 }

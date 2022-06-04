@@ -28,6 +28,7 @@ public abstract class Creature implements Serializable, CreatureInterface {
     private Vector2D size;
 
     @Getter
+    @Setter
     protected Vector2D position;
     @Getter
     protected int id;
@@ -52,6 +53,7 @@ public abstract class Creature implements Serializable, CreatureInterface {
         this.size.set(creature.size);
         this.isVisible = creature.isVisible;
         this.isDead = creature.isDead;
+        this.id = creature.id;
     }
 
     @Override
@@ -61,12 +63,5 @@ public abstract class Creature implements Serializable, CreatureInterface {
 
     @Override
     public void tick(double deltaTime) {
-    }
-
-    @Override
-    public TickableList getTickableList() {
-        var tickableList = new TickableList();
-        tickableList.add(this);
-        return tickableList;
     }
 }

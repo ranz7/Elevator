@@ -10,7 +10,7 @@ import tools.Vector2D;
 @AllArgsConstructor
 public class RoomRemoteSettings  {
     @Getter
-    private final RoomPrepareCompactData.RoomData roomPrepareCompactData;
+    private final RoomPrepareCompactData roomPrepareCompactData;
 
     public int roomId() {
         return roomPrepareCompactData.roomId();

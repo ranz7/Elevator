@@ -1,129 +1,114 @@
 package model;
 
 import controller.Tickable;
-import lombok.RequiredArgsConstructor;
 import model.objects.Creature;
 import model.objects.CreatureInterface;
 import tools.Pair;
+import tools.Trio;
 import tools.Vector2D;
 
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RequiredArgsConstructor
-public final class DatabaseOf<T extends CreatureInterface> implements Tickable {
-    final private List<DatabaseOf<T>> databases = new LinkedList<>();
-    final private List<T> creaturesOwned = new LinkedList<>();
-    final private T dataBaseOwner;
+public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> implements Tickable {
+    final private List<BaseCreatureObject> creaturesOwned = new ArrayList<>();
+    final private BaseCreatureObject dataBaseOwner;
+    final private Class<? extends BaseCreatureObject>[] possibleTypes;
 
-    public Stream<Pair<Vector2D, T>> stream() {
-        return stream(new Vector2D(0, 0));
+    public DatabaseOf(BaseCreatureObject dataBaseOwner, Class<? extends BaseCreatureObject>... possibleTypes) {
+        this.dataBaseOwner = dataBaseOwner;
+        if (possibleTypes.length == 0) {
+            throw new RuntimeException("There is no need to create database if you are not going to store objects in it");
+        }
+        this.possibleTypes = possibleTypes;
     }
 
-    public Stream<Pair<Vector2D, T>> stream(Vector2D positionOfParent) {
-        var onlyOwnerCreature = new LinkedList<Pair<Vector2D, T>>();
-        onlyOwnerCreature.add(new Pair<>(positionOfParent, dataBaseOwner));
-        var absoluteDrawPosition = positionOfParent.add(dataBaseOwner.getPosition());
-        return Stream.concat(onlyOwnerCreature.stream(),
-                databases.stream()
-                        .map(databaseOfCreatures -> databaseOfCreatures.stream(absoluteDrawPosition))
-                        .reduce(creaturesOwned.stream().map(creature -> new Pair<>(absoluteDrawPosition, creature))
-                                , Stream::concat));
-
+    public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrio() {
+        return streamTrio(dataBaseOwner.getId(), new Vector2D(0, 0));
     }
 
-    public <X extends T> Stream<X> streamOf(Class<X> creatureToFind) {
-        return stream()
-                .filter(positionAndCreature -> creatureToFind.isAssignableFrom(positionAndCreature.getSecond().getClass()))
-                .map(positionAndCreatureToFind -> (X) positionAndCreatureToFind.getSecond());
-    }
+    public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrio(Integer idOfParent, Vector2D absoluteDrawPosition) {
+        var onlyOwnerCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
+        onlyOwnerCreature.add(new Trio<>(idOfParent, absoluteDrawPosition, dataBaseOwner));
 
-    public Stream<Pair<Vector2D, T>> streamOfPairs(Class<?> creatureToFind) {
-        return stream()
-                .filter(positionAndCreature -> creatureToFind.isAssignableFrom(positionAndCreature.getSecond().getClass()))
-                .map(positionAndCreatureToFind ->
-                        new Pair<>(
-                                positionAndCreatureToFind.getFirst(),
-                                positionAndCreatureToFind.getSecond())
+        var newAbsoluteDrawPosition = absoluteDrawPosition.add(dataBaseOwner.getPosition());
+        var newIdOfParent = dataBaseOwner.getId();
+
+        return creaturesOwned.stream().map(creatureObject -> {
+            if (creatureObject instanceof Transport) {
+                return ((Transport<BaseCreatureObject>) creatureObject).getLocalDataBase().streamTrio(
+                        newIdOfParent,
+                        newAbsoluteDrawPosition
                 );
+            } else {
+                var onlyOwnedCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
+                onlyOwnedCreature.add(new Trio<>(newIdOfParent, newAbsoluteDrawPosition, creatureObject));
+                return onlyOwnedCreature.stream();
+            }
+        }).reduce(onlyOwnerCreature.stream(), Stream::concat);
     }
 
-    public void removeIf(Predicate<T> predicate) {
+    public <SubType extends BaseCreatureObject> Stream<SubType> streamOf(Class<SubType> creatureToFind) {
+        return streamTrio().map(Trio::getThird)
+                .filter(creature -> creatureToFind.isAssignableFrom(creature.getClass()))
+                .map(creature -> (SubType) creature);
+    }
+
+    public void removeIf(Predicate<CreatureInterface> predicate) {
+        if (predicate.test(dataBaseOwner)) {
+            throw new RuntimeException("Cannot kill owner of database");
+        }
         creaturesOwned.removeIf(predicate);
-        databases.forEach(
-                dataBaseOfCreatures -> dataBaseOfCreatures.removeIf(predicate));
     }
 
-    private void register(DatabaseOf<T> dataBaseOf) {
-        databases.add(dataBaseOf);
-    }
-
-    public void add(T creature) {
+    public void addCreature(BaseCreatureObject creature) {
+        if (Arrays.stream(possibleTypes).noneMatch(possibleTypes -> possibleTypes.isAssignableFrom(creature.getClass()))) {
+            throw new RuntimeException("Cannot add creature because there is no registrated " + creature.getClass().getName());
+        }
         if (creature instanceof Transportable) {
             ((Transportable) creature).setTransport((Transport) dataBaseOwner);
-        }
-        if (creature instanceof Transport) {
-            register(((Transport) creature).getLocalDataBase());
         }
         creaturesOwned.add(creature);
     }
 
-    public List<Pair<Integer, T>> toIdAndCreaturesList() {
-        var list = new LinkedList<Pair<Integer, T>>();
-        var ownerId = dataBaseOwner.getId();
-        list.add(new Pair<>(ownerId, dataBaseOwner));
-        creaturesOwned.forEach(creatureOwned -> list.add(new Pair<>(ownerId, creatureOwned)));
-        databases.forEach(collection -> list.addAll(collection.toIdAndCreaturesList()));
-        return list;
-    }
-
-    public long countOf(Class<? extends T> classToCount) {
+    public long countOf(Class<? extends BaseCreatureObject> classToCount) {
         return streamOf(classToCount).count();
     }
 
-    public Pair<Vector2D, T> get(Class<?> creatureClass, Integer creatureId) {
-        return streamOfPairs(creatureClass)
+    public void moveCreatureInto(Integer moveCreatureId, Transport<BaseCreatureObject> whereTransport) {
+        add(whereTransport, release(moveCreatureId));
+    }
+
+    private Pair<Vector2D, Transportable<BaseCreatureObject>> release(Integer idToRelease) {
+        var object = get(idToRelease);
+        removeIf(creature -> creature.getId() == idToRelease);
+        return new Pair<>(object.getFirst(), (Transportable<BaseCreatureObject>) object.getSecond());
+    }
+
+    private void add(Transport<BaseCreatureObject> whereTransport,
+                     Pair<Vector2D, Transportable<BaseCreatureObject>> absolutePositionAndTransportable) {
+        var parent = get(whereTransport.getId());
+        var deltaInParentPositions = absolutePositionAndTransportable
+                .getFirst().sub(absolutePositionAndTransportable.getSecond().getPosition()).sub(parent.getFirst());
+        absolutePositionAndTransportable.getSecond().applyDelta(deltaInParentPositions);
+        whereTransport.add((BaseCreatureObject) absolutePositionAndTransportable.getSecond());
+    }
+
+
+    public Pair<Vector2D, BaseCreatureObject> get(Integer creatureId) {
+        return streamTrio().map(Trio::getSecondAndThird)
                 .filter(positionAndCreature -> positionAndCreature.getSecond().getId() == creatureId)
                 .findFirst().get();
     }
 
-    public void moveCreatureInto(Integer moveCreatureId, Transport whereTransport) {
-        Pair<Vector2D, T> absolutePositionAndCreature = release(moveCreatureId);
-        add(whereTransport, absolutePositionAndCreature);
-    }
-
-    private void add(Transport whereTransport, Pair<Vector2D, T> absolutePositionAndCreature) {
-        var parent = get(Creature.class, whereTransport.getId());
-        var deltaInParentPositions = absolutePositionAndCreature
-                .getFirst().sub(absolutePositionAndCreature.getSecond().getPosition()).sub(parent.getFirst());
-        absolutePositionAndCreature.getSecond().applyDelta(deltaInParentPositions);
-        whereTransport.getLocalDataBase().add(absolutePositionAndCreature.getSecond());
-    }
-
-    private Pair<Vector2D, T> release(Integer idToRelease) {
-        var object = get(Creature.class, idToRelease);
-        remove(idToRelease);
-        return object;
-    }
-
-    private void remove(Integer idToRelease) {
-        removeIf(creature -> creature.getId() == idToRelease);
-    }
-
-    public Transport get(Integer id) {
-        return (Transport) (stream().filter(creature -> creature.getSecond().getId() == id).findFirst().get().getSecond());
-    }
-
     @Override
     public void tick(double deltaTime) {
-        stream().filter(posAndCreature -> posAndCreature.getSecond() != dataBaseOwner)
-                .forEach(posAndCreature -> posAndCreature.getSecond().tick(deltaTime));
+        streamTrio().filter(trio -> trio.getThird() != dataBaseOwner).
+                forEach(trio -> trio.getThird().tick(deltaTime));
     }
 
-    public List<Pair<Vector2D, T>> toAbsolutePositionAndObjects() {
-        return stream().collect(Collectors.toList());
-    }
 }

@@ -10,7 +10,9 @@ import model.objects.GameMap;
 import protocol.special.GameMapCompactData;
 import settings.LocalCreaturesSettings;
 import lombok.Getter;
+import tools.Pair;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,21 +27,12 @@ public class AppModel implements Tickable {
     @Getter
     LinkedList<GameMap> gameMaps = new LinkedList<>();
 
-    public GameMapCompactData sendMap() {
-        return new GameMapCompactData(gameMaps.get(0).getLocalDataBase().toIdAndCreaturesList());
-    }
-
     @Override
     public void tick(double deltaTime) {
         new TickableList(gameMaps).tick(deltaTime);
         gameMaps.removeIf(Creature::isDead);
     }
 
-    public RoomPrepareCompactData createRoomPrepareCompactData(List<Integer> subscribes) {
-        List<RoomPrepareCompactData.RoomData> roomsData = new LinkedList<>();
-        subscribes.forEach(roomId -> roomsData.add(getMap(roomId).toRoomData()));
-        return new RoomPrepareCompactData(ConnectionSettings.VERSION, roomsData);
-    }
 
     public GameMap getMap(long roomId) {
         return gameMaps.stream().filter(gameMap -> gameMap.getRoomId() == roomId).findFirst().get();
@@ -55,4 +48,5 @@ public class AppModel implements Tickable {
                 }
         );
     }
+
 }

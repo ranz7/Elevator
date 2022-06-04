@@ -1,28 +1,27 @@
 package drawable.concretes.game.floor.elevatorSpace;
 
-import drawable.abstracts.Drawable;
-import drawable.concretes.game.elevator.DrawableElevator;
+import drawable.concretes.game.elevator.FloorGetter;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.Transport;
-import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
-public class ElevatorBorder extends DrawableCreature implements Transport {
+public class ElevatorBorder extends DrawableCreature implements Transport<DrawableCreature> {
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
-    private final DrawableElevator parentElevator;
+    private final DatabaseOf<DrawableCreature> localDataBase = new DatabaseOf<>(this,
+            ElevatorBlackSpace.class, ElevatorNumber.class);
+    private final FloorGetter parentElevator;
 
-    public ElevatorBorder(Vector2D position, DrawableElevator parentElevator, LocalDrawSetting settings) {
-        super(position, parentElevator.getSize().add(settings.borderThickness()),
+    public ElevatorBorder(Vector2D position,Vector2D elevatorSize, FloorGetter parentElevator, LocalDrawSetting settings) {
+        super(position, elevatorSize.add(settings.borderThickness()),
                 new RectangleWithBorder(settings.borderColor(), settings.borderThickness() * 2), settings);
         this.parentElevator = parentElevator;
-        localDataBase.add(new ElevatorBlackSpace(getSize(), settings));
-        localDataBase.add(new ElevatorNumber(new Vector2D(2, -getSize().y + settings.borderThickness() - 3), settings));
+        add(new ElevatorBlackSpace(getSize(), settings));
+        add(new ElevatorNumber(new Vector2D(2, -getSize().y + settings.borderThickness() - 3), settings));
     }
 
     @Override
@@ -31,11 +30,16 @@ public class ElevatorBorder extends DrawableCreature implements Transport {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         return 9;
     }
 
     public int getCurrentFloorOfElevator() {
         return parentElevator.getCurrentFloorNum();
+    }
+
+    @Override
+    public void add(DrawableCreature drawableCreature) {
+        localDataBase.addCreature(drawableCreature);
     }
 }
