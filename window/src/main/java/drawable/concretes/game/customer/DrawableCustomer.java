@@ -1,5 +1,6 @@
 package drawable.concretes.game.customer;
 
+import model.packageLoader.DrawableCreatureData;
 import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
@@ -13,8 +14,8 @@ public class DrawableCustomer extends DrawableRemoteCreature {
     @Setter
     private boolean behindElevator = true;
 
-    public DrawableCustomer(LocalDrawSetting settings) {
-        super(new Rectangle(settings.getRandomCustomerSkin()), settings);
+    public DrawableCustomer(DrawableCreatureData creatureData,LocalDrawSetting settings) {
+        super(creatureData,new Rectangle(settings.getRandomCustomerSkin()), settings);
     }
 
     @Override
@@ -23,7 +24,7 @@ public class DrawableCustomer extends DrawableRemoteCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
+    public int getDrawPriority() {
         if (behindElevator) {
             return 12;
         }

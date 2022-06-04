@@ -1,7 +1,6 @@
 package model.objects;
 
 import configs.RoomPrepareCompactData;
-import controller.TickableList;
 import gates.Gates;
 import controller.subControllers.CustomersController;
 import controller.subControllers.ElevatorsController;
@@ -9,17 +8,27 @@ import lombok.Getter;
 import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
+import model.objects.customer.Customer;
+import model.objects.elevator.Elevator;
+import model.objects.floor.ElevatorButton;
 import model.objects.floor.FloorStructure;
+import model.objects.floor.Painting;
 import protocol.Protocol;
-import protocol.ProtocolMessage;
+import protocol.special.CreatureData;
+import protocol.special.CreatureType;
+import protocol.special.GameMapCompactData;
 import settings.LocalCreaturesSettings;
+import tools.Trio;
 import tools.Vector2D;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static configs.ConnectionSettings.VERSION;
 
-public class GameMap extends Creature implements Transport {
+
+public class GameMap extends Creature implements Transport<Creature> {
     @Getter
     private final int roomId;
     @Getter
@@ -27,12 +36,12 @@ public class GameMap extends Creature implements Transport {
     double gameSpeed = 1;
 
     @Getter
-    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this);
+    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this, FloorStructure.class);
     @Getter
     private final LocalCreaturesSettings localCreaturesSettings;
 
     private final LinkedList<ElevatorsController> elevatorsControllers = new LinkedList<>();
-    private final CustomersController customersController;
+    private final CustomersController customersController = new CustomersController(this);
 
     private final Gates controllerGates;
 
@@ -41,15 +50,14 @@ public class GameMap extends Creature implements Transport {
         this.controllerGates = controllerGates;
         this.roomId = roomId;
         this.localCreaturesSettings = localCreaturesSettings;
-        customersController = new CustomersController(this);
 
         for (int i = 0; i < 1; i++) {
             var floorStructure = new FloorStructure(new Vector2D(i * 500, 0), localCreaturesSettings);
             var elevatorController = new ElevatorsController(this, floorStructure);
-            elevatorsControllers.add(elevatorController);
-            floorStructure.fillWithElevators(elevatorController);
-            floorStructure.fillWithPaintings();
-            localDataBase.add(floorStructure);
+            //elevatorsControllers.add(elevatorController);
+            //floorStructure.fillWithElevators(elevatorController);
+            //floorStructure.fillWithPaintings();
+            add(floorStructure);
             for (int j = 1; j < localCreaturesSettings.floorsCount(); j++) {
                 floorStructure.addFloor();
             }
@@ -59,10 +67,11 @@ public class GameMap extends Creature implements Transport {
 
     @Override
     public void tick(double deltaTime) {
-        new TickableList(elevatorsControllers).tick(deltaTime);
-        customersController.tick(deltaTime);
         localDataBase.tick(deltaTime);
-        localDataBase.removeIf(Creature::isDead);
+        //new TickableList(elevatorsControllers).tick(deltaTime);
+        //customersController.tick(deltaTime);
+        //localDataBase.tick(deltaTime);
+        //localDataBase.removeIf(Creature::isDead);
     }
 
     public void send(Protocol protocol, Serializable data) {
@@ -77,15 +86,51 @@ public class GameMap extends Creature implements Transport {
         localDataBase.moveCreatureInto(moveCreatureId, whereCreature);
     }
 
-    public void CreateCustomer(Integer floorStart, Integer floorEnd) {
-
-    }
-
-    public RoomPrepareCompactData.RoomData toRoomData() {
-        return new RoomPrepareCompactData.RoomData(
+    public RoomPrepareCompactData createRoomData(double version) {
+        return new RoomPrepareCompactData(version,
                 getLocalCreaturesSettings().elevatorOpenCloseTime(),
                 getLocalCreaturesSettings().customerSize(),
                 getGameSpeed(),
                 getRoomId());
+    }
+
+    public Serializable createCompactGameMapData() {
+        var parentsAndCreatures = getLocalDataBase().streamTrio().map(Trio::getFirstAndThird);
+        ArrayList<CreatureData> parentIdClassTypeObject = new ArrayList<>();
+        parentsAndCreatures.forEach(
+                parentAndCreature -> parentIdClassTypeObject.add(
+                        new CreatureData(parentAndCreature.getSecond(),
+                                parentAndCreature.getFirst(),
+                                cast(parentAndCreature.getSecond().getClass()))
+                )
+        );
+        return new GameMapCompactData(parentIdClassTypeObject, createRoomData(VERSION));
+    }
+
+    private CreatureType cast(Class<? extends Creature> aClass) {
+        if (aClass == Elevator.class) {
+            return CreatureType.ELEVATOR;
+        }
+        if (aClass == Customer.class) {
+            return CreatureType.CUSTOMER;
+        }
+        if (aClass == ElevatorButton.class) {
+            return CreatureType.ELEVATOR_BUTTON;
+        }
+        if (aClass == Painting.class) {
+            return CreatureType.FLOOR_PAINTING;
+        }
+        if (aClass == FloorStructure.class) {
+            return CreatureType.FLOOR;
+        }
+        if (aClass == GameMap.class) {
+            return CreatureType.GAME_MAP;
+        }
+        throw new RuntimeException("UNKNOW CLASS" + aClass.getName());
+    }
+
+    @Override
+    public void add(Creature creature) {
+        localDataBase.addCreature(creature);
     }
 }

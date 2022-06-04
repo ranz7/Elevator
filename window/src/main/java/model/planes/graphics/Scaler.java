@@ -29,7 +29,7 @@ public class Scaler implements Tickable {
     public Scaler(Vector2D blackZone, Double zoomStartValue) {
         this.blackZone = blackZone;
         this.additionalZoomCurrentValue = zoomStartValue;
-        updateSizes(new Dimension(100, 100), new Vector2D(100, 100));
+        updateSizes(new Vector2D(100, 100), new Vector2D(100, 100));
     }
 
     @Override
@@ -41,6 +41,9 @@ public class Scaler implements Tickable {
 
     public double getFromGameToRealLength(double length) {
         return length / (scalingCoefficient * additionalZoomCurrentValue);
+    }
+    public double getFromRealToGameLength(double length) {
+        return  (scalingCoefficient * additionalZoomCurrentValue)/length  ;
     }
 
     public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, double heigthOfTheObject) {
@@ -65,16 +68,17 @@ public class Scaler implements Tickable {
     }
 
     @Getter
-    private Dimension screenSize;
+    private Vector2D screenSize;
     @Getter
     private Vector2D gameSize;
 
-    public void updateSizes(Dimension screenSize, Vector2D gameSize) {
+
+    public void updateSizes(Vector2D screenSize, Vector2D gameSize) {
         this.screenSize = screenSize;
         this.gameSize = gameSize;
         clickedPoint = clickedPoint.sub(drawOffset).divide(scalingCoefficient); // NEED TO BE FIXED
 
-        screenSizeAfterShift = new Vector2D(screenSize.width - blackZone.x, screenSize.height - blackZone.y);
+        screenSizeAfterShift = new Vector2D(screenSize.getX() - blackZone.x, screenSize.getY() - blackZone.y);
         scalingCoefficient = gameSize.divide(screenSizeAfterShift).maxOfXY();
         Vector2D sizeOfBuildingAfterRescale = gameSize.divide(scalingCoefficient);
         drawOffset = screenSizeAfterShift.sub(sizeOfBuildingAfterRescale).divide(2);

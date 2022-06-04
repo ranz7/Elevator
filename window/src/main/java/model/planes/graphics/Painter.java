@@ -61,11 +61,10 @@ public class Painter {
         setColor(color);
         var font = new Font("TimesRoman", Font.PLAIN, fontSize);
         graphics2D.setFont(font);
-        int width = graphics2D.getFontMetrics(font).stringWidth(text);
-        int height = graphics2D.getFontMetrics(font).getDescent();
+        int width = (int)graphics2D.getFontMetrics(font).stringWidth(text);
         graphics2D.drawString(text,
-                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height / 2).x - width / 2,
-                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), height / 2).y);
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), 1 ).x - width / 2,
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), 1 ).y);
 
     }
 
@@ -117,6 +116,6 @@ public class Painter {
 
         graphics2D.setColor(new Color(30, 30, 30));
         graphics2D.fillRect(0, 0, (int) leftTop.x, (int) leftTop.y);
-        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().width- rightTop.x), (int) leftTop.y);
+        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().x- rightTop.x), (int) leftTop.y);
     }
 }

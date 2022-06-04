@@ -21,7 +21,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     public Gui(GuiController controller, LocalDrawSetting localDrawSetting) {
         this.controller = controller;
         swingWindow = new SwingWindow(this, localDrawSetting);
-
+        resize();
         //    buttonsComponent = new ButtonsComponent(gameWindow);
         //   buttonsComponent.addButtonListener(this);
     }
@@ -47,12 +47,12 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
 
 
     public void draw(Graphics g) {
-        controller.getAllPlanes().forEach(plane -> plane.draw(g));
+        controller.getMenu().draw(g);
     }
 
     @Override
     public void resize() {
-        controller.getActivePlane().resize(swingWindow.getSize());
+        controller.getMenu().resize(new Vector2D(swingWindow.getSize()));
 //        worldScaler.updateSizes(swingWindow.getSize(), new Vector2D(100, 100));
         //    buttonsComponent.resize(gameWindow.getSize());
     }

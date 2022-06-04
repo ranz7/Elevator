@@ -32,7 +32,7 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
         if (hovered) {
-            setSize(parasite.getSize().multiply(1.1));
+            setSize(parasite.getSize().multiply(1.3));
         }
         super.draw(realDrawPosition, gameDrawer);
     }
@@ -43,13 +43,13 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     }
 
     @Override
-    public int getDrawPrioritet() {
-        return parasite.getDrawPrioritet() + 1;
+    public int getDrawPriority() {
+        return parasite.getDrawPriority()+1;
     }
 
     public void mousePositionUpdate(Vector2D gamePosition) {
         if (getTool().isIntersect(getRealDrawPosition(), getSize(), gamePosition)) {
-            getTool().setAdditionalLightColor(new Color(162, 107, 107));
+            getTool().setAdditionalLightColor(new Color(189, 0, 0));
             hovered = (true);
         } else {
             getTool().setAdditionalLightColor(new Color(0, 0, 0));

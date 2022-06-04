@@ -90,4 +90,8 @@ public class LocalDrawSetting implements DataBase {
     public Color getMenuButtonColor() {
         return colorConfig.menuButtonColor;
     }
+
+    public Vector2D portalSize() {
+        return drawConfig.portalSize;
+    }
 }

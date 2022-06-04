@@ -15,7 +15,7 @@ public interface Drawable extends CreatureInterface, Tickable {
         }
 
         Vector2D positionOfTheCreature = getDrawCenter().getShiftDrawPosition(getPosition(), getSize());
-        setRealDrawPosition(positionOfTheCreature); // TODO check if works
+        setRealDrawPosition(positionOfTheCreature.add(realDrawPosition)); // TODO check if works
         getTool().draw(positionOfTheCreature.add(realDrawPosition), getSize(), gameDrawer);
     }
 
@@ -33,5 +33,5 @@ public interface Drawable extends CreatureInterface, Tickable {
 
     DrawCenter getDrawCenter();
 
-    int getDrawPrioritet();
+    int getDrawPriority();
 }

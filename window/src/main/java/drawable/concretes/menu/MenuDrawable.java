@@ -3,57 +3,58 @@ package drawable.concretes.menu;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
-import drawable.buttons.CircleWithTextInside;
 import drawable.buttons.ClickableButton;
 import drawable.concretes.game.elevator.ElevatorDoor;
+import drawable.concretes.game.floor.decorations.MenuPainting;
+import drawable.drawTool.figuresComponent.Rectangle;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.Transport;
+import model.objects.CreatureInterface;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
 import java.util.Random;
+import java.util.stream.Collectors;
 
-
-public class MenuDrawable extends DrawableCreature implements Transport {
+public class MenuDrawable extends DrawableCreature implements Transport<Drawable> {
     @Getter
-    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this);
+    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ElevatorDoor.class,
+            Portal.class,
+            MenuPainting.class);
 
     private final ElevatorDoor leftDoor;
     private final ElevatorDoor rightDoor;
+    private final ClickableButton leftDoorButton;
+    private final ClickableButton rightDoorButton;
 
     public MenuDrawable(LocalDrawSetting localDrawSetting) {
-        super(new Vector2D(0, 0), new Vector2D(800, 400),
+        super(new Vector2D(0, 0), new Vector2D(150, 75),
                 new RectangleWithBorder(localDrawSetting.florBetonColor(),
                         new Color(0, 0, 0), 7),
                 localDrawSetting);
         leftDoor = new ElevatorDoor(
                 new Vector2D(0, 0), this.getSize(),
-                true, localDrawSetting, 3000);
+                true, localDrawSetting, 3000, 999);
         rightDoor = new ElevatorDoor(
                 new Vector2D(this.getSize().x, 0), this.getSize(),
-                false, localDrawSetting, 3000);
+                false, localDrawSetting, 3000, 999);
 
-        localDataBase.add(leftDoor);
-        localDataBase.add(rightDoor);
+        leftDoorButton = new ClickableButton(  new ElevatorDoor(
+                new Vector2D(0, 0),  this.getSize().divideByX(6),
+                true, localDrawSetting, 3000, 999),()->{});
+        rightDoorButton = new ClickableButton( new ElevatorDoor(
+                new Vector2D(this.getSize().x, 0), this.getSize().divideByX(6),
+                false, localDrawSetting, 3000, 999),()->{});
 
-       /* localDataBase.add(
-                new ClickableButton(
-                        new CircleWithTextInside(
-                                new Vector2D(133, 233),
-                                localDrawSetting)));
-        localDataBase.add(
-                new ClickableButton(
-                        new CircleWithTextInside(
-                                new Vector2D(123, 133),
-                                localDrawSetting)));*/
-        localDataBase.add(
-                new ClickableButton(
-                        new CircleWithTextInside(
-                                new Vector2D(142, 52),
-                                localDrawSetting),()->{}));
+        add(leftDoor);
+        add(rightDoorButton);
+        add(leftDoorButton);
+        add(rightDoor);
+
+
     }
 
     public void changeDoorsState(boolean state) {
@@ -64,7 +65,9 @@ public class MenuDrawable extends DrawableCreature implements Transport {
 
     @Override
     public void tick(double deltaTime) {
-        System.out.println("EHO");
+        super.tick(deltaTime);
+        getLocalDataBase().tick(deltaTime);
+        getLocalDataBase().removeIf(CreatureInterface::isDead);
     }
 
     @Override
@@ -73,7 +76,71 @@ public class MenuDrawable extends DrawableCreature implements Transport {
     }
 
     @Override
-    public int getDrawPrioritet() {
-        return 10;
+    public int getDrawPriority() {
+        return -10;
+    }
+
+    @Override
+    public void add(Drawable drawable) {
+        localDataBase.addCreature(drawable);
+    }
+
+    int portalCount = 0;
+
+    public void createPortal() {
+        if (portalCount == 6) {
+            return;
+        }
+        if (portalCount == 5) {
+            add(new MenuPainting(new Vector2D(getSettings().portalSize().getX() / 2
+                    + portalCount * getSettings().portalSize().x * 1.5, getSettings().portalSize().y/2),
+                    getSettings(),
+                    new Random()));
+        } else {
+            add(new MenuPainting(new Vector2D(getSettings().portalSize().getX() / 2
+                    + portalCount * getSettings().portalSize().x * 1.5, getSettings().portalSize().y*1.2),
+                    getSettings(),
+                    new Random()));
+            add(new MenuPainting(new Vector2D(getSettings().portalSize().getX() / 2+20
+                    + portalCount * getSettings().portalSize().x * 1.5, getSettings().portalSize().y*1.7),
+                    getSettings(),
+                    new Random()));
+            add(new MenuPainting(new Vector2D(getSettings().portalSize().getX() / 2
+                    + portalCount * getSettings().portalSize().x * 1.5, getSettings().portalSize().y*2.3),
+                    getSettings(),
+                    new Random()));
+            localDataBase.addCreature(new Portal(getSettings().portalSize().getX() / 2
+                    + portalCount * getSettings().portalSize().x * 1.5, getSettings()));
+        }
+        portalCount++;
+        setSize(getSize().multiply(1.25));
+        leftDoor.updateSize(this.getSize());
+        rightDoor.updateSize(this.getSize());
+    }
+
+    public void removePortal() {
+
+        if (portalCount == 0) {
+            return;
+        }
+        portalCount--;
+
+        if (portalCount == 5) {
+            localDataBase.streamOf(MenuPainting.class)
+                .reduce((first, second) -> second)
+                .orElse(null).setDead(true);
+        } else {
+            var objects = localDataBase.streamOf(MenuPainting.class).collect(Collectors.toList());
+            objects.get(objects.size()-1).setDead(true);
+            objects.get(objects.size()-2).setDead(true);
+            objects.get(objects.size()-3).setDead(true);
+            localDataBase.streamOf(Portal.class)
+                    .reduce((first, second) -> second)
+                    .orElse(null).setDead(true);
+        }
+        setSize(getSize().multiply(0.8));
+        leftDoor.updateSize(this.getSize());
+        rightDoor.updateSize(this.getSize());
+
     }
 }

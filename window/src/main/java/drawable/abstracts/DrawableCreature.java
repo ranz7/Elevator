@@ -15,12 +15,13 @@ public abstract class DrawableCreature extends Creature implements Drawable {
 
     @Getter
     @Setter
-    Vector2D realDrawPosition = new Vector2D(0,0);
+    Vector2D realDrawPosition = new Vector2D(200,200);
 
     public DrawableCreature(Vector2D position, Vector2D size, DrawTool tool, LocalDrawSetting settings) {
         super(position, size);
         this.tool = tool;
         this.settings = settings;
+        this.id = -1; // local objects does not have id
     }
 
 }

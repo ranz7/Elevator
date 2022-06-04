@@ -3,18 +3,21 @@ package dualConnectionStation;
 import configs.ConnectionSettings;
 import dualConnectionStation.download.Reader;
 import dualConnectionStation.download.SocketStreamReader;
+import protocol.MessagePacket;
 import protocol.ProtocolMessage;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.IntFunction;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This class can connect to the Server,
@@ -31,43 +34,68 @@ public class Client extends BaseDualConectionStation {
     private SocketStreamReader socketStreamReader;
     @Setter
     private String host = ConnectionSettings.HOST;
-    AtomicBoolean tryToConnect = new AtomicBoolean(false);
+    boolean connecting = false;
+
 
     @Override
-    public boolean isDisconnect() {
-        if (tryToConnect.get()) {
-            return false;
-        }
+    public boolean isDisconnected() {
         if (serversSocket == null) {
             return true;
         }
-        if (isDisconnect.get() || (!socketStreamReader.isAlive())) {
-            isDisconnect.set(true);
-            return true;
-        }
-        return false;
+        return (socketStreamReader == null || !socketStreamReader.isAlive() || socketStreamReader.isClosed());
+    }
+
+    @Override
+    public boolean isConnecting() {
+        return connecting;
     }
 
     @Override
     public void start() {
-        tryToConnect.set(true);
+        connecting = true;
         new Thread(() -> {
             int attempts = ConnectionSettings.attempts;
+            serversSocket = null;
             while (serversSocket == null) {
+                Logger.getAnonymousLogger().info("ATTEMPT: " + (ConnectionSettings.attempts - attempts) +
+                        " of " + (ConnectionSettings.attempts - 1));
                 serversSocket = connectToServer();
                 attempts--;
                 if (attempts == 0) {
-                    tryToConnect.set(false);
+                    connecting = false;
+                    downlink.onLostSocketConnection(serversSocket);
                     return;
                 }
-                Logger.getAnonymousLogger().info("ATTEMPT: " + attempts);
             }
             socketStreamReader = new SocketStreamReader(serversSocket, downlink);
             socketStreamReader.start();
-            downlink.onNewSocketConnection(new Reader(objectOutputStream, serversSocket));
+            downlink.onNewSocketConnection(serversSocket);
             Logger.getAnonymousLogger().info("Connected +");
-            tryToConnect.set(false);
+            connecting = false;
         }).start();
+    }
+
+    @Override
+    public void flush() {
+        if (isDisconnected()) {
+            streamBuffer.clear();
+            return;
+        }
+        var messagesToServer = streamBuffer.get(serversSocket);
+        if (messagesToServer == null) {
+            return;
+        }
+        try {
+            ProtocolMessage.PureData[] messages = new ProtocolMessage.PureData[messagesToServer.size()];
+            for (int i = 0; i < messages.length; i++) {
+                Logger.getAnonymousLogger().info("SENT : " +  messagesToServer.get(i).getProtocol());
+                messages[i] = messagesToServer.get(i).toPureData();
+            }
+            objectOutputStream.writeObject(new MessagePacket(messages));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        streamBuffer.clear();
     }
 
     private Socket connectToServer() {
@@ -89,13 +117,6 @@ public class Client extends BaseDualConectionStation {
 
     }
 
-    @Override
-    public void send(Socket ignoredBecauseThereIsOnlyOneReceiver, ProtocolMessage message) {
-        try {
-            objectOutputStream.writeObject(message.toSerializable());
-        } catch (IOException ignored) {
-        }
-    }
 
     @Override
     public List<Socket> getReceivers() {

@@ -3,17 +3,19 @@ package gates;
 import controller.Tickable;
 import dualConnectionStation.download.Downlink;
 import dualConnectionStation.download.Reader;
+import tools.Pair;
 import tools.Timer;
 import dualConnectionStation.BaseDualConectionStation;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
-import protocol.ProtocolMessagesController;
+import protocol.MessageApplier;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -27,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class Gates implements Tickable, Downlink {
     private final BaseDualConectionStation uplink;
-    private final ProtocolMessagesController listener;
+    private final MessageApplier listener;
     private final LinkedList<ProtocolMessage> mesages = new LinkedList<>();
 
     // EVENTS
@@ -47,26 +49,23 @@ public class Gates implements Tickable, Downlink {
 
     Function<Protocol, Boolean> filter;
 
-    public Gates(BaseDualConectionStation uplink, ProtocolMessagesController listener) {
+    public Gates(BaseDualConectionStation uplink, MessageApplier listener) {
         this.uplink = uplink;
         this.listener = listener;
         this.uplink.setDownlink(this);
+        //       Logger.getAnonymousLogger().info("Downlink created . . .");
     }
 
     public void connect() {
-        Logger.getAnonymousLogger().info("Uplink start . . .");
+//        Logger.getAnonymousLogger().info("Uplink starting . . .");
         uplink.start();
     }
 
     @Override
     public void tick(double deltaTime) {
-        if (uplink.isDisconnect()) {
-            if (onGatesCloseEvent != null) {
-                onGatesCloseEvent.run();
-            }
+        if (uplink.isDisconnected()) {
             return;
         }
-
         if (spamTimer != null) {
             spamTimer.tick(deltaTime);
             if (spamTimer.isReady()) {
@@ -78,6 +77,7 @@ public class Gates implements Tickable, Downlink {
         synchronized (mesages) {
             mesages.removeIf(listener::applyMessage);
         }
+        uplink.flush();
     }
 
     @Override
@@ -99,8 +99,8 @@ public class Gates implements Tickable, Downlink {
     }
 
     @Override
-    public void onNewSocketConnection(Reader client) {
-        Logger.getAnonymousLogger().info("Downlink connected . . .");
+    public void onNewSocketConnection(Socket socket) {
+        //       Logger.getAnonymousLogger().info("Uplink created . . .");
         if (onConnectEvent != null) {
             onConnectEvent.run();
         }
@@ -109,7 +109,10 @@ public class Gates implements Tickable, Downlink {
     @Override
     public void onLostSocketConnection(Socket socket) {
         sendFilters.remove(socket);
-        Logger.getAnonymousLogger().info("Downlink disconnected . . .");
+        //       Logger.getAnonymousLogger().info("Uplink end . . .");
+        if (onGatesCloseEvent != null) {
+            onGatesCloseEvent.run();
+        }
     }
 
     private void send(ProtocolMessage message) throws NobodyReceivedMessageException {
@@ -117,10 +120,13 @@ public class Gates implements Tickable, Downlink {
             Boolean wasSent = false;
         };
         uplink.getReceivers().forEach(socket -> {
-            if (sendFilters.get(socket).apply(message)) {
-                uplink.send(socket, message);
-                ref.wasSent = true;
+            if (sendFilters.containsKey(socket)) {
+                if (sendFilters.get(socket).apply(message)) {
+                    return;
+                }
             }
+            uplink.send(socket, message);
+            ref.wasSent = true;
         });
         if (!ref.wasSent) {
             throw new NobodyReceivedMessageException();
@@ -136,16 +142,27 @@ public class Gates implements Tickable, Downlink {
         spamTimer = new Timer(timeToWaitBetweenSpams);
     }
 
-    public void setSendFilter(Socket owner, Function<ProtocolMessage, Boolean> sendOnlyIfSubscribed) {
-        sendFilters.put(owner, sendOnlyIfSubscribed);
+    public void setSendFilter(Socket filtered, Function<ProtocolMessage, Boolean> sendOnlyIfSubscribed) {
+        sendFilters.put(filtered, sendOnlyIfSubscribed);
     }
 
     public void sendWithoutCheck(Protocol protocol, int worldId, Serializable data) {
         try {
             send(protocol, worldId, data);
         } catch (NobodyReceivedMessageException e) {
-            throw new RuntimeException("Nobody received message, please use usual send ");
+            throw new RuntimeException("Nobody received message, please use usual send " + protocol);
         }
+    }
+
+    public void sendWithoutCheckMultiple(Protocol protocol, List<Pair<Integer, Serializable>> dataList) {
+        dataList.forEach(data -> {
+            try {
+                send(protocol, data.getFirst(), data.getSecond());
+            } catch (NobodyReceivedMessageException e) {
+                Logger.getAnonymousLogger().info(e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 
     public static class NobodyReceivedMessageException extends Throwable {

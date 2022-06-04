@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class ButtonsComponent {
@@ -19,10 +20,10 @@ public class ButtonsComponent {
     private ActionListener listenWindow;
     private ButtonsReact react;
 
-    private final LinkedList<JButton> ADD_CUSTOMER_BUTTONS = new LinkedList<>();
-    private final LinkedList<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new LinkedList<>();
-    private final LinkedList<JButton> CHANGE_SPEED_BUTTONS = new LinkedList<>();
-    private final LinkedList<JButton> SELECT_FLOOR_BUTTONS = new LinkedList<>();
+    private final List<JButton> ADD_CUSTOMER_BUTTONS = new ArrayList<>();
+    private final List<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new ArrayList<>();
+    private final List<JButton> CHANGE_SPEED_BUTTONS = new ArrayList<>();
+    private final List<JButton> SELECT_FLOOR_BUTTONS = new ArrayList<>();
 
     public void start() {
         for (int i = 0; i < 16; i++) {

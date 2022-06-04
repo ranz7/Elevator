@@ -1,5 +1,6 @@
 package controller;
 
+import configs.ConnectionSettings;
 import controller.subControllers.*;
 import dualConnectionStation.Server;
 import gates.Gates;
@@ -20,25 +21,33 @@ import java.util.LinkedList;
  * @see ElevatorsController
  */
 @RequiredArgsConstructor
-public class AppController extends ControllerEndlessLoop implements ProtocolMessagesController {
+public class AppController extends ControllerEndlessLoop implements MessageApplier {
     private final Gates gates = new Gates(new Server(), this);
     private final AppModel appModel = new AppModel();
 
     public void start() {
-        gates.setOnConnectEvent(
-                () ->gates.sendWithoutCheck(Protocol.HELLO_MESSAGE, -1, null));
-//                () -> gates.send(
-//                        Protocol.WORLD_PREPARE_SETTINGS,
-//                        appModel.createMainInitializationSettingsToSend(this.getControllerTimeSpeed())));
-//        gates.setSpamEvent(
-//                () -> gates.send(
-//                        Protocol.UPDATE_DATA, appModel.sendMap()),
-//                (long) (1000. / ConnectionSettings.SSPS));
+        gates.setOnConnectEvent(() -> gates.sendWithoutCheck(Protocol.HELLO_MESSAGE, -1, null));
+        gates.setSpamEvent(this::spamWithData, (long) (1000. / ConnectionSettings.SSPS));
         gates.connect();
 
         addTickable(gates);
         addTickable(appModel);
         super.start();
+    }
+
+    private void spamWithData() {
+        appModel.getGameMaps().forEach(
+                appModel -> {
+                    try {
+                        gates.send(
+                                Protocol.UPDATE_DATA,
+                                appModel.getRoomId(),
+                                appModel.createCompactGameMapData());
+                    } catch (Gates.NobodyReceivedMessageException e) {
+                        appModel.setDead(true);
+                    }
+                }
+        );
     }
 
     @Override
@@ -51,8 +60,6 @@ public class AppController extends ControllerEndlessLoop implements ProtocolMess
                 gates.setSendFilter(message.getOwner(), SendFilters.sendOnlyIfSubscribed((SubscribeRequest) data));
                 var subscribes = ((SubscribeRequest) data).roomsToSubscribeFor();
                 appModel.createIfNotExist(subscribes, gates);
-                gates.sendWithoutCheck(Protocol.WORLDS_PREPARE_SETTINGS,-1,
-                        appModel.createRoomPrepareCompactData(subscribes));
             }
             case CREATE_CUSTOMER -> {
                 LinkedList<Integer> floorsStartEnd = (LinkedList<Integer>) data;

@@ -13,18 +13,24 @@ public class ElevatorDoor extends DrawableCreature {
     private final Timer doorsTimer = new Timer();
     private final boolean isLeftDoor;
     private boolean isClosed = true;
-    private final Vector2D openedDoorsSize;
+    private Vector2D openedDoorsSize;
     private final double openCloseTime;
+    private int drawPriority = 14;
     private int randomFunction = 0;
 
     public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, LocalDrawSetting settings,
                         double openCloseTime) {
-        super(position, size,
-                new RectangleWithBorder(settings.doorsColor(), settings.doorsBorder(), 2),
+        super(position, size, new RectangleWithBorder(settings.doorsColor(), settings.doorsBorder(), 2),
                 settings);
         openedDoorsSize = getSize();
         this.isLeftDoor = isLeftDoor;
         this.openCloseTime = openCloseTime;
+    }
+
+    public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, LocalDrawSetting settings,
+                        double openCloseTime, int drawPriority) {
+        this(position, size, isLeftDoor, settings, openCloseTime);
+        this.drawPriority = drawPriority;
     }
 
     @Override
@@ -75,8 +81,8 @@ public class ElevatorDoor extends DrawableCreature {
     }
 
     @Override
-    public int getDrawPrioritet() {
-        return 14;
+    public int getDrawPriority() {
+        return drawPriority;
     }
 
     public void changeDoorState(boolean newState, int type) {
@@ -86,6 +92,12 @@ public class ElevatorDoor extends DrawableCreature {
         doorsTimer.restart(openCloseTime / 2);
         isClosed = !isClosed;
         randomFunction = type ;
+    }
+
+    public void updateSize(Vector2D size) {
+        this.openedDoorsSize = size;
+        if (!isLeftDoor)
+            setPosition(new Vector2D(size.x, 0));
     }
 
     public boolean isClosed() {
