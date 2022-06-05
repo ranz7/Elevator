@@ -35,11 +35,11 @@ public class Portal extends DrawableCreature implements Transport<DrawableCreatu
     public Portal(double positionX, LocalDrawSetting settings) {
         super(new Vector2D(positionX, 0), settings.portalSize(), new Rectangle(new Color(0, 139, 203)), settings);
         add(new ClickableButton(
-                new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)), settings)));
+                new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(5), settings,"^"),()->{}));
         add(new ClickableButton(
-                new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(5), settings)));
+                new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)), settings,"+"),()->{}));
         add(new ClickableButton(
-                new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(-5), settings)));
+                new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(-5), settings,"v"),()->{}));
         openPortal(0);
     }
 

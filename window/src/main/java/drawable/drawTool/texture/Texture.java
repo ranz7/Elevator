@@ -31,6 +31,11 @@ public class Texture extends DrawTool {
     }
 
     @Override
+    protected Color getMainColor() {
+        return null;
+    }
+
+    @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
         // TODO make stretch of the image with size , for example size 50  50 mieans that image is smaller 2 times
         drawer.drawImage(gameResource.getResourceImage(),position, gameResource.getSize());
@@ -39,6 +44,11 @@ public class Texture extends DrawTool {
     @Override
     public void setColor(Color color) {
         // HA LOL WTH
+    }
+
+    @Override
+    public boolean isIntersect(Vector2D objectPosition, Vector2D objectSize, Vector2D gamePosition) {
+        return gamePosition.isInside(objectPosition, objectSize);
     }
 
 }

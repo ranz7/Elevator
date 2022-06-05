@@ -14,6 +14,8 @@ import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import lombok.Getter;
 
+import java.util.Random;
+
 @Getter
 public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable>, FloorGetter{
     @Setter
@@ -50,8 +52,9 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
     }
 
     public void changeDoorsState(boolean state) {
-        leftDoor.changeDoorState(state);
-        rightDoor.changeDoorState(state);
+        int type = new Random().nextInt(5);
+        leftDoor.changeDoorState(state,type);
+        rightDoor.changeDoorState(state,type);
     }
 
     public int getCurrentFloorNum() {

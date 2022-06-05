@@ -40,7 +40,7 @@ public class LocalDrawSetting implements DataBase {
     }
 
     public Color doorsBorder() {
-        return colorConfig.elevatorDoor;
+        return colorConfig.elevatorBorder;
     }
 
     public Color[] customerSkins() {

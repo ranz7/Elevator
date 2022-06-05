@@ -64,6 +64,10 @@ public class Vector2D extends Point2D.Double {
         return new Vector2D(x + add, y + add);
     }
 
+    public Vector2D sub(double sub) {
+        return new Vector2D(x + sub, y + sub);
+    }
+
     public Vector2D sub(Vector2D vectorB) {
         return new Vector2D(x - vectorB.x, y - vectorB.y);
     }
@@ -166,5 +170,18 @@ public class Vector2D extends Point2D.Double {
 
     public Vector2D multiplyX(double multiplyBy) {
         return new Vector2D(x * multiplyBy, y);
+    }
+
+    public boolean isInside(Vector2D position, Vector2D square) {
+        return position.x < x && position.x + square.x > x
+                && position.y < y && position.y + square.x > y;
+    }
+
+    public boolean isInsideEllipse(Vector2D position, Vector2D ellipse) {
+        position = position.add(ellipse.divide(2));
+        double p = (Math.pow((x - position.x), 2) / Math.pow(ellipse.y / 2, 2))
+                + (Math.pow((y - position.y), 2) / Math.pow(ellipse.x / 2, 2));
+
+        return p <= 1;
     }
 }

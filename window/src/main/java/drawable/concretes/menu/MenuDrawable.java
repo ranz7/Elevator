@@ -3,9 +3,11 @@ package drawable.concretes.menu;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
+import drawable.buttons.ClickableButton;
 import drawable.concretes.game.elevator.ElevatorDoor;
 import drawable.concretes.game.floor.decorations.MenuPainting;
 import drawable.drawTool.figuresComponent.Rectangle;
+import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.Transport;
@@ -13,6 +15,7 @@ import model.objects.CreatureInterface;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
+import java.awt.*;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -24,26 +27,40 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
 
     private final ElevatorDoor leftDoor;
     private final ElevatorDoor rightDoor;
+    private final ClickableButton leftDoorButton;
+    private final ClickableButton rightDoorButton;
 
     public MenuDrawable(LocalDrawSetting localDrawSetting) {
-        super(new Vector2D(0, 0), new Vector2D(150, 75), new Rectangle(localDrawSetting.florBetonColor()),
+        super(new Vector2D(0, 0), new Vector2D(150, 75),
+                new RectangleWithBorder(localDrawSetting.florBetonColor(),
+                        new Color(0, 0, 0), 7),
                 localDrawSetting);
         leftDoor = new ElevatorDoor(
                 new Vector2D(0, 0), this.getSize(),
-                true, localDrawSetting, 2000, 999);
+                true, localDrawSetting, 3000, 999);
         rightDoor = new ElevatorDoor(
                 new Vector2D(this.getSize().x, 0), this.getSize(),
-                false, localDrawSetting, 2000, 999);
+                false, localDrawSetting, 3000, 999);
+
+        leftDoorButton = new ClickableButton(  new ElevatorDoor(
+                new Vector2D(0, 0),  this.getSize().divideByX(6),
+                true, localDrawSetting, 3000, 999),()->{});
+        rightDoorButton = new ClickableButton( new ElevatorDoor(
+                new Vector2D(this.getSize().x, 0), this.getSize().divideByX(6),
+                false, localDrawSetting, 3000, 999),()->{});
 
         add(leftDoor);
+        add(rightDoorButton);
+        add(leftDoorButton);
         add(rightDoor);
 
-//        add(new ElevatorBorder(new Vector2D(300,0),new Vector2D(200,400),));
+
     }
 
     public void changeDoorsState(boolean state) {
-        leftDoor.changeDoorState(state);
-        rightDoor.changeDoorState(state);
+        int type = new Random().nextInt(5);
+        leftDoor.changeDoorState(state, type);
+        rightDoor.changeDoorState(state, type);
     }
 
     @Override

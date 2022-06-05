@@ -69,6 +69,7 @@ public abstract class Plane implements Tickable, MouseReact {
             lastObjectsState.forEach(positionAndObject -> {
                 positionAndObject.getSecond().draw(positionAndObject.getFirst(), painter);
             });
+        painter.drawBlackSpaces();
     }
 
     protected abstract DatabaseOf<Drawable> getLocalDataBase();
@@ -80,4 +81,10 @@ public abstract class Plane implements Tickable, MouseReact {
         getLocalDataBase().streamOf(ClickableButton.class).forEach(
                 clickableButton -> clickableButton.mousePositionUpdate(gamePosition));
     }
+
+    public void mouseClicked() {
+        getLocalDataBase().streamOf(ClickableButton.class).filter(ClickableButton::isHovered)
+                .forEach(ClickableButton::execute);
+    }
+
 }

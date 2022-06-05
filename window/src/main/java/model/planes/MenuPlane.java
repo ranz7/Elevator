@@ -59,11 +59,11 @@ public class MenuPlane extends Plane {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-        getScaler().updateGameSizes(menuDrawable.getSize());
 
         menuDrawable.tick(deltaTime);
 
         updateDrawingObjectsForThreadSafety();
+        getScaler().updateGameSizes(menuDrawable.getSize());
     }
 
     @Override

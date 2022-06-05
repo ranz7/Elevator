@@ -1,5 +1,5 @@
 package settings.configs;
 
-public class GuiControllerConfig {
-    public static final int TPS = 150; // REMOVE AUTO DRAW
+public class GuiControllerConfig { // REMOVE AUTO DRAW
+    public static final int TPS = 50;
 }
