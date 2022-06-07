@@ -120,7 +120,7 @@ public class Server extends BaseDualConectionStation {
         synchronized (connectedClients) {
             return connectedClients.stream()
                     .map(Reader::socket)
-                    .collect(Collectors.toList());
+                    .toList();
         }
     }
 }

@@ -12,6 +12,7 @@ public class DrawableCreatureData extends DrawableCreature {
 
     public DrawableCreatureData(CreatureData arrivedCreatureData) {
         super(arrivedCreatureData.getPosition(), arrivedCreatureData.getSize(), null, null);
+        set(arrivedCreatureData);
         creatureType = arrivedCreatureData.getCreatureType();
     }
 

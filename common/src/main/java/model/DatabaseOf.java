@@ -30,6 +30,20 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
     public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrio() {
         return streamTrio(dataBaseOwner.getId(), new Vector2D(0, 0));
     }
+    public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrioOfOwned() {
+        var onlyOwnerCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
+        onlyOwnerCreature.add(new Trio<>(dataBaseOwner.getId(), new Vector2D(0, 0), dataBaseOwner));
+
+        var newAbsoluteDrawPosition = dataBaseOwner.getPosition();
+        var newIdOfParent = dataBaseOwner.getId();
+
+        return creaturesOwned.stream().map(creatureObject -> {{
+                var onlyOwnedCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
+                onlyOwnedCreature.add(new Trio<>(newIdOfParent, newAbsoluteDrawPosition, creatureObject));
+                return onlyOwnedCreature.stream();
+            }
+        }).reduce(onlyOwnerCreature.stream(), Stream::concat);
+    }
 
     public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrio(Integer idOfParent, Vector2D absoluteDrawPosition) {
         var onlyOwnerCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
@@ -56,6 +70,18 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
         return streamTrio().map(Trio::getThird)
                 .filter(creature -> creatureToFind.isAssignableFrom(creature.getClass()))
                 .map(creature -> (SubType) creature);
+    }
+
+    public <SubType extends BaseCreatureObject> Stream<SubType> streamOfOnlyOwned(Class<SubType> creatureToFind) {
+        return streamTrioOfOwned().map(Trio::getThird)
+                .filter(creature -> creatureToFind.isAssignableFrom(creature.getClass()))
+                .map(creature -> (SubType) creature);
+    }
+
+    public <SubType extends BaseCreatureObject> Stream<Pair<Integer, SubType>> streamWithParentsOf(Class<SubType> creatureToFind) {
+        return streamTrio().map(Trio::getFirstAndThird)
+                .filter(creature -> creatureToFind.isAssignableFrom(creature.getSecond().getClass()))
+                .map(creature -> new Pair<>(creature.getFirst(), (SubType) creature.getSecond()));
     }
 
     public void removeIf(Predicate<CreatureInterface> predicate) {
@@ -103,6 +129,13 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
         return streamTrio().map(Trio::getSecondAndThird)
                 .filter(positionAndCreature -> positionAndCreature.getSecond().getId() == creatureId)
                 .findFirst().get();
+    }
+
+    public <ToReturnType> Pair<Vector2D, ToReturnType> get
+            (Integer creatureId, Class<ToReturnType> creatureType) {
+        return streamTrio().map(Trio::getSecondAndThird)
+                .filter(positionAndCreature -> positionAndCreature.getSecond().getId() == creatureId)
+                .findFirst().get().cast(Vector2D.class, creatureType);
     }
 
     @Override

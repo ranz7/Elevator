@@ -24,4 +24,9 @@ public class Pair<First, Second> implements Comparable, Serializable {
         Pair<First, Second> pair = (Pair<First, Second>) o;
         return hashCode() - pair.hashCode();
     }
+
+    public <FirstCasted, SecondCasted> Pair<FirstCasted, SecondCasted>
+    cast(Class<FirstCasted> first, Class<SecondCasted> second) {
+        return new Pair<>(first.cast(getFirst()), second.cast(getSecond()));
+    }
 }

@@ -1,7 +1,5 @@
 package controller;
 
-import configs.RoomPrepareCompactData;
-import configs.ConnectionSettings;
 import dualConnectionStation.Client;
 import gates.ReciveFilters;
 import gates.Gates;
@@ -33,13 +31,13 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         ScenarioBuilder connectedScenario = new ScenarioBuilder()
                 .add(ReciveFilters.catchOnlyHello())
                 .add(ReciveFilters.catchOnlyUpdate());
-        gates.setOnGatesCloseEvent(() -> {
-            windowModel.getMenuPlane().changeDoorsState(false);
+        gates.setOnGatesLostSocketEvent((ignored) -> {
+//            windowModel.getMenuPlane().changeDoorsState(false);
             gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
             gates.connect();
         });
         gates.setOnConnectEvent(() -> {
-            windowModel.getMenuPlane().changeDoorsState(false);
+//            windowModel.getMenuPlane().changeDoorsState(false);
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();

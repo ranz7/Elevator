@@ -57,14 +57,14 @@ public class Painter {
     }
 
     public void drawText(String text, Vector2D position, Vector2D size, Color color) {
-        int fontSize = (int) scaler.getFromGameToRealLength(size.y);
+         int fontSize = (int) scaler.getFromGameToRealLength(size.y);
         setColor(color);
         var font = new Font("TimesRoman", Font.PLAIN, fontSize);
         graphics2D.setFont(font);
-        int width = (int)graphics2D.getFontMetrics(font).stringWidth(text);
+        int width = (int) graphics2D.getFontMetrics(font).stringWidth(text);
         graphics2D.drawString(text,
-                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), 1 ).x - width / 2,
-                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), 1 ).y);
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), 1).x - width / 2,
+                (int) scaler.getFromGameToRealCoordinate(position.addByX(size.x / 2), 1).y);
 
     }
 
@@ -89,7 +89,18 @@ public class Painter {
     }
 
     private void drawOnlyBorderEllipse(Vector2D position, Vector2D size, Color borderColor, int thickness) {
-
+        Stroke oldStroke = graphics2D.getStroke();
+        graphics2D.setColor(borderColor);
+        var newThickness = (float) scaler.getFromGameToRealLength(thickness);
+        graphics2D.setStroke(new BasicStroke(newThickness));
+        var realPosition = scaler.getFromGameToRealCoordinate(position, size.y);
+        graphics2D.drawOval(
+                (int) realPosition.x,
+                (int) realPosition.y,
+                (int) scaler.getFromGameToRealLength(size.x),
+                (int) scaler.getFromGameToRealLength(size.y)
+        );
+        graphics2D.setStroke(oldStroke);
     }
 
     private void fillEllipse(Vector2D position, Vector2D size, Color fillColor) {
@@ -109,13 +120,19 @@ public class Painter {
         var rightTop = scaler.getFromGameToRealCoordinate(new Vector2D(gameSize.x, 0), 0);
         var rightBottom = scaler.getFromGameToRealCoordinate(new Vector2D(gameSize.x, gameSize.y), 0);
 
-
-        graphics2D.setColor(new Color(38, 45, 59));
+/*
+        graphics2D.setColor(new Color(255, 184, 0));
         graphics2D.fillRect(0, 0, (int) rightBottom.x, (int) rightBottom.y);
-        graphics2D.fillRect(0, (int) rightTop.y, (int) rightBottom.x, (int) rightBottom.y);
+        graphics2D.setColor(new Color(0, 87, 255));
+        graphics2D.fillRect(0, (int) rightTop.y, (int) rightBottom.x+(int) (scaler.getScreenSize().x - rightTop.x), (int) rightBottom.y);
 
-        graphics2D.setColor(new Color(30, 30, 30));
+        graphics2D.setColor(new Color(255, 0, 203));
         graphics2D.fillRect(0, 0, (int) leftTop.x, (int) leftTop.y);
-        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().x- rightTop.x), (int) leftTop.y);
+        graphics2D.setColor(new Color(137, 255, 244));
+        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().x - rightTop.x), (int) leftTop.y);*/
+    }
+
+    public Graphics getPureGraphics() {
+        return graphics2D;
     }
 }

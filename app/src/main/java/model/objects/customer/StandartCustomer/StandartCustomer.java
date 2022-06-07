@@ -65,7 +65,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         if(button==null){
             return;
         }
-        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().onlyY(0)));
+        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().setY(0)));
         if (isReachedDestination()) {
             button.click(wantsGoUp());
             mainTimer.restart(settings.customerWaitAfterClick());

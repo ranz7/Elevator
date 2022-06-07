@@ -8,8 +8,8 @@ import settings.localDraw.LocalDrawSetting;
 import java.util.Random;
 
 public class FloorPainting extends DrawableRemoteCreature {
-    public FloorPainting(DrawableCreatureData creatureData, LocalDrawSetting settings, Random random) {
-        super(creatureData, new Texture( "/images/paintings/", random), settings);
+    public FloorPainting(DrawableCreatureData creatureData, LocalDrawSetting settings, Integer numberOfPainting) {
+        super(creatureData, new Texture( "/images/paintings/", new Random(numberOfPainting)), settings);
     }
 
     @Override

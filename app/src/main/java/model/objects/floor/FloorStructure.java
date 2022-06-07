@@ -20,7 +20,7 @@ import java.util.Random;
 public class FloorStructure extends Creature implements Transport<Creature>, Transportable<Creature> {
     @Getter
     private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this,
-            FloorStructure.class, Elevator.class, Painting.class
+            FloorStructure.class, Elevator.class, Painting.class, ElevatorButton.class
     );
 
     @Getter
@@ -55,8 +55,10 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
             floorStructureTop.addFloor();
             return;
         }
-        floorStructureTop = new FloorStructure(getPosition().addByY(settings.floorSize().y), settings, this);
-       // floorStructureTop.fillWithPaintings();
+        floorStructureTop = new FloorStructure(settings.floorSize().withX(0), settings, this);
+        floorStructureTop.fillWithPaintings();
+        floorStructureTop.fillWithButtons();
+
         add(floorStructureTop);
     }
 
@@ -77,7 +79,7 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     }
 
     public ElevatorButton getClosestButtonOnFloor(Vector2D position) {
-        List<ElevatorButton> buttons = localDataBase.streamOf(ElevatorButton.class).toList();
+        List<ElevatorButton> buttons = localDataBase.streamOfOnlyOwned(ElevatorButton.class).toList();
         ElevatorButton answer = null;
         Vector2D nearestPosition = new Vector2D(999, 999);
         for (var button : buttons) {
@@ -94,7 +96,7 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         if (!isOpenedElevatorOnFloorExist()) {
             return null;
         }
-        List<Elevator> elevators = localDataBase.streamOf(Elevator.class).filter(Elevator::isOpened).toList();
+        List<Elevator> elevators = localDataBase.streamOfOnlyOwned(Elevator.class).filter(Elevator::isOpened).toList();
         Elevator answer = null;
         Vector2D nearestPosition = new Vector2D(999, 999);
         for (var elevator : elevators) {
@@ -108,7 +110,7 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     }
 
     private boolean isOpenedElevatorOnFloorExist() {
-        return localDataBase.streamOf(Elevator.class).filter(Elevator::isOpened).anyMatch(Elevator::isFree);
+        return localDataBase.streamOfOnlyOwned(Elevator.class).filter(Elevator::isOpened).anyMatch(Elevator::isFree);
     }
 
     public int getHieght() {
@@ -148,6 +150,12 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     public void fillWithPaintings() {
         getDefaultPositionOfElevators().forEach(position -> {
             add(new Painting(new Vector2D(position, getSize().y / 2), random.nextInt()));
+        });
+    }
+
+    public void fillWithButtons() {
+        getDefaultPositionOfElevators().forEach(position -> {
+            add(new ElevatorButton(position, settings));
         });
     }
 

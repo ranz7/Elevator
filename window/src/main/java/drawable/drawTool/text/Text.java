@@ -18,6 +18,11 @@ public class Text extends Figure {
         this.text = text;
     }
 
+    public Text(Vector2D positionProportion, Vector2D sizeProportion, String text, Color color) {
+        super(color, positionProportion, sizeProportion);
+        this.text = text;
+    }
+
     @Override
     public boolean isIntersect(Vector2D objectPosition, Vector2D objectSize, Vector2D gamePosition) {
         var tmp = afterProportionApply(objectPosition, objectSize);
@@ -26,8 +31,8 @@ public class Text extends Figure {
 
     @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
-        var tmp = afterProportionApply(position, size);
-        drawer.drawText(text, tmp.getFirst(), tmp.getSecond(), getMainColor());
+          var tmp = afterProportionApply(position, size);
+          drawer.drawText(text, tmp.getFirst(), tmp.getSecond(), getMainColor());
 
         // TODO tutaj jak x jest 50 to text jest skrocony o 2 razy
     }

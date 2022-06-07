@@ -2,7 +2,6 @@ package model.planes;
 
 import controller.Tickable;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.DrawableCreature;
 import drawable.buttons.ClickableButton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,7 @@ public abstract class Plane implements Tickable, MouseReact {
 
     @Getter
     protected final LocalDrawSetting settings;
+    @Getter
     private final Painter painter;
 
     Scaler getScaler() {
@@ -50,7 +50,6 @@ public abstract class Plane implements Tickable, MouseReact {
     @Override
     public void tick(double deltaTime) {
         painter.getScaler().tick(deltaTime);
-
     }
 
     private List<Pair<Vector2D, Drawable>> lastObjectsState;
@@ -60,7 +59,7 @@ public abstract class Plane implements Tickable, MouseReact {
                 .streamTrio().map(Trio::getSecondAndThird)
                 .sorted(Comparator.comparingInt(
                         drawableObjet -> drawableObjet.getSecond().getDrawPriority()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void draw(Graphics g) {
@@ -82,7 +81,7 @@ public abstract class Plane implements Tickable, MouseReact {
                 clickableButton -> clickableButton.mousePositionUpdate(gamePosition));
     }
 
-    public void mouseClicked() {
+    public void executeButtonIfCan() {
         getLocalDataBase().streamOf(ClickableButton.class).filter(ClickableButton::isHovered)
                 .forEach(ClickableButton::execute);
     }
