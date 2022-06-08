@@ -29,7 +29,6 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
         gates.setOnConnectEvent(() -> gates.sendWithoutCheck(Protocol.HELLO_MESSAGE, -1, null));
         gates.setSpamEvent(this::spamWithData, (long) (1000. / ConnectionSettings.SSPS));
         gates.connect();
-
         addTickable(gates);
         addTickable(appModel);
         super.start();

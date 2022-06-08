@@ -42,7 +42,6 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void rightMouseClicked(Vector2D point) {
         controller.getActivePlane().rightMouseClicked(point);
-        controller.getActivePlane().mouseClicked();
     }
 
 
@@ -60,6 +59,7 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void leftMouseClicked(Vector2D point) {
         controller.getActivePlane().leftMouseClicked(point);
+        controller.getActivePlane().executeButtonIfCan();
     }
 //
 //    @Override

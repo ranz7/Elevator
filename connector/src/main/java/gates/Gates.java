@@ -2,7 +2,6 @@ package gates;
 
 import controller.Tickable;
 import dualConnectionStation.download.Downlink;
-import dualConnectionStation.download.Reader;
 import tools.Pair;
 import tools.Timer;
 import dualConnectionStation.BaseDualConectionStation;
@@ -17,7 +16,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -37,7 +38,7 @@ public class Gates implements Tickable, Downlink {
     Runnable onConnectEvent;
 
     @Setter
-    Runnable onGatesCloseEvent;
+    Consumer<Socket> onGatesLostSocketEvent;
 
     Runnable spamEvent;
     Timer spamTimer;
@@ -110,8 +111,8 @@ public class Gates implements Tickable, Downlink {
     public void onLostSocketConnection(Socket socket) {
         sendFilters.remove(socket);
         //       Logger.getAnonymousLogger().info("Uplink end . . .");
-        if (onGatesCloseEvent != null) {
-            onGatesCloseEvent.run();
+        if (onGatesLostSocketEvent != null) {
+            onGatesLostSocketEvent.accept(socket);
         }
     }
 

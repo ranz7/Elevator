@@ -2,6 +2,11 @@ package drawable.concretes.game.floor;
 
 import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableRemoteCreature;
+import drawable.concretes.game.customer.DrawableCustomer;
+import drawable.concretes.game.elevator.DrawableElevator;
+import drawable.concretes.game.floor.decorations.FloorPainting;
+import drawable.concretes.game.floor.elevatorSpace.ElevatorBorder;
+import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import lombok.Getter;
 import lombok.Setter;
 import model.DatabaseOf;
@@ -15,28 +20,61 @@ import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class DrawableFloorStructure extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Setter
     @Getter
     private Transport<Drawable> transport;
     @Getter
     private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this,
-            FloorHidingCornerWall.class);
+            FloorHidingCornerWall.class,
+            DrawableFloorStructure.class,
+            DrawableElevator.class,
+            DrawableCustomer.class,
+            ElevatorBorder.class,
+            ElevatorButton.class,
+            FloorPainting.class);
+
+    DrawableFloorStructure floorUnderUs;
 
     public DrawableFloorStructure(DrawableCreatureData data, LocalDrawSetting settings) {
         super(data, new RectangleWithBorder(settings.florBetonColor(), 7), settings);
-
-
         add(new FloorHidingCornerWall(
-                new Vector2D(0 - getSize().x * 4., -2),
-                new Vector2D(getSize().x * 4, getSize().y + 2),
+                new Vector2D(-settings.customerWidth() * 2., -2),
+                new Vector2D(settings.customerWidth() * 2, getSize().y + 2),
                 settings
         ));
         add(new FloorHidingCornerWall(
                 new Vector2D(getSize().x, -2),
-                new Vector2D(settings.customerWidth() * 4, getSize().y + 2),
+                new Vector2D(settings.customerWidth() * 2, getSize().y + 2),
                 settings
         ));
+    }
+
+    public void updateElevatorBorders(List<DrawableElevator> elevators) {
+        // borders are deleted automatically
+        if (floorUnderUs != null) {
+            floorUnderUs.updateElevatorBorders(elevators);
+        }
+        var elevatorsWithoutBorder = new LinkedList<>(elevators);
+        var bordersOnFloor = localDataBase.streamOfOnlyOwned(ElevatorBorder.class).toList();
+        elevatorsWithoutBorder.removeIf(
+                drawableElevator -> {
+                    // if none of borders know about elevator - than we need to create a border
+                    return bordersOnFloor.stream().anyMatch(
+                            border -> border.getParentElevator() == drawableElevator
+                    );
+                }
+        );
+        elevatorsWithoutBorder.forEach(
+                elevatorWithoutBorder -> {
+                    add(new ElevatorBorder(elevatorWithoutBorder.getPosition().withY(0),
+                            elevatorWithoutBorder.getSize(), elevatorWithoutBorder, getSettings()));
+                }
+        );
     }
 
     @Override
@@ -65,6 +103,17 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
         if (drawable instanceof DrawableCreatureData) {
             if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR) {
                 drawable = new DrawableFloorStructure((DrawableCreatureData) drawable, getSettings());
+                floorUnderUs = (DrawableFloorStructure) drawable;
+            } else if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.ELEVATOR_BUTTON) {
+                drawable = new ElevatorButton((DrawableCreatureData) drawable, getSettings());
+            } else if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.ELEVATOR) {
+                drawable = new DrawableElevator((DrawableCreatureData) drawable, 1000, getSettings());
+            } else if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.CUSTOMER) {
+                drawable = new DrawableCustomer((DrawableCreatureData) drawable, getSettings());
+            } else if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR_PAINTING) {
+                drawable = new FloorPainting((DrawableCreatureData) drawable, getSettings(), drawable.getId());
+            } else {
+                throw new RuntimeException("uncached " + ((DrawableCreatureData) drawable).getCreatureType());
             }
         }
         localDataBase.addCreature(drawable);

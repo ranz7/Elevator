@@ -54,9 +54,10 @@ public class GameMap extends Creature implements Transport<Creature> {
         for (int i = 0; i < 1; i++) {
             var floorStructure = new FloorStructure(new Vector2D(i * 500, 0), localCreaturesSettings);
             var elevatorController = new ElevatorsController(this, floorStructure);
-            //elevatorsControllers.add(elevatorController);
-            //floorStructure.fillWithElevators(elevatorController);
-            //floorStructure.fillWithPaintings();
+             elevatorsControllers.add(elevatorController);
+             floorStructure.fillWithElevators(elevatorController);
+            floorStructure.fillWithPaintings();
+            floorStructure.fillWithButtons();
             add(floorStructure);
             for (int j = 1; j < localCreaturesSettings.floorsCount(); j++) {
                 floorStructure.addFloor();

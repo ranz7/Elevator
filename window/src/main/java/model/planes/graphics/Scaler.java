@@ -105,7 +105,7 @@ public class Scaler implements Tickable {
 
     private void isInitialised() {
         if (screenSizeAfterShift == null || scalingCoefficient < 0.01) {
-            throw new RuntimeException("Scaler is not initialized Or scaling coefficient is to small." +
+            throw new RuntimeException("Scaler is not initialized Or scaling coefficient is too small." +
                     " Do update before use of draw functions and check if coefficient is set properly.");
         }
     }

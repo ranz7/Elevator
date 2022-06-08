@@ -2,7 +2,6 @@ package model.planes;
 
 import controller.GuiController;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.DrawableCreature;
 import drawable.concretes.menu.MenuDrawable;
 import drawable.concretes.menu.Portal;
 import lombok.Getter;
@@ -12,6 +11,7 @@ import model.planes.graphics.Scaler;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -34,16 +34,11 @@ public class MenuPlane extends Plane {
 
     @Override
     public void leftMouseClicked(Vector2D point) {
-        addPortal();
-    }
 
-    private void addPortal() {
-        menuDrawable.createPortal();
     }
 
     @Override
     public void rightMouseClicked(Vector2D point) {
-        menuDrawable.removePortal();
 //        controller.addRoom(counter++);
 
         //lol = !lol;
@@ -59,11 +54,9 @@ public class MenuPlane extends Plane {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-
         menuDrawable.tick(deltaTime);
 
         updateDrawingObjectsForThreadSafety();
-        getScaler().updateGameSizes(menuDrawable.getSize());
     }
 
     @Override
@@ -90,6 +83,12 @@ public class MenuPlane extends Plane {
                 }
         );
         return rooms;
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+        getScaler().updateGameSizes(menuDrawable.getSize());
     }
 
     public Stream<Portal> streamOfPortals() {

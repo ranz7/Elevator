@@ -17,8 +17,8 @@ public abstract class Figure extends DrawTool {
     @Override
     public Color getMainColor() {
         return new Color(Math.min(mainColor.getRed() + getAdditionalLightColor().getRed(), 255),
-                Math.min(mainColor.getGreen() + getAdditionalLightColor().getGreen(),255),
-                Math.min(mainColor.getBlue() + getAdditionalLightColor().getBlue(),255));
+                Math.min(mainColor.getGreen() + getAdditionalLightColor().getGreen(), 255),
+                Math.min(mainColor.getBlue() + getAdditionalLightColor().getBlue(), 255));
     }
 
     private Color mainColor;
@@ -26,14 +26,13 @@ public abstract class Figure extends DrawTool {
     protected Pair<Vector2D, Vector2D> afterProportionApply(
             Vector2D drawPositionbeforeProportion,
             Vector2D drawSizeBeforeProportion) {
-        var answer = new Pair<>(drawPositionbeforeProportion, drawSizeBeforeProportion);
-        answer.getFirst().set(
-                drawPositionbeforeProportion
-                        .add(drawSizeBeforeProportion.multiply(0.5))
-                        .sub(drawSizeBeforeProportion.multiply(positionProportion))
-        );
-        answer.getSecond().set(answer.getSecond().multiply(sizeProportion));
-        return answer;
+        var differenceVector =
+                drawSizeBeforeProportion.sub(drawSizeBeforeProportion.multiply(sizeProportion))
+                        .multiply(positionProportion);
+
+        return new Pair<>(
+                drawPositionbeforeProportion.add(differenceVector),
+                drawSizeBeforeProportion.multiply(sizeProportion));
     }
 
     Vector2D positionProportion; // FROM 0 to 100 - to jest proporcja

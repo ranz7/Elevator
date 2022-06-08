@@ -17,7 +17,7 @@ public class GamePlane extends Plane {
     private final GameMap gameMap;
 
     public GamePlane(LocalDrawSetting localDrawSettings, GameMap gameMap) {
-        super(localDrawSettings, new Painter(new Scaler(new Vector2D(50, 50), 0.2)));
+        super(localDrawSettings, new Painter(new Scaler(new Vector2D(localDrawSettings.customerWidth() , localDrawSettings.customerWidth()), 0.2)));
         this.gameMap = gameMap;
     }
 
@@ -49,16 +49,13 @@ public class GamePlane extends Plane {
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
-
         updateDrawingObjectsForThreadSafety();
     }
-
 
     @Override
     protected DatabaseOf<Drawable> getLocalDataBase() {
         return gameMap.getLocalDataBase();
     }
-
 
     @Override
     public void resize(Vector2D size) {

@@ -33,20 +33,22 @@ public class MouseListener implements java.awt.event.MouseListener, Tickable {
 
     @Override
     public void tick(double deltaTime) {
-        events.forEach(event -> {
-                    switch (event.getSecond()) {
-                        case MOUSE_PRESSED -> {
-                            if (SwingUtilities.isRightMouseButton(event.getFirst())) {
-                                react.rightMouseClicked(new Vector2D(event.getFirst().getPoint()));
-                            }
-                            if (SwingUtilities.isLeftMouseButton(event.getFirst())) {
-                                react.leftMouseClicked(new Vector2D(event.getFirst().getPoint()));
+        synchronized (events) {
+            events.forEach(event -> {
+                        switch (event.getSecond()) {
+                            case MOUSE_PRESSED -> {
+                                if (SwingUtilities.isRightMouseButton(event.getFirst())) {
+                                    react.rightMouseClicked(new Vector2D(event.getFirst().getPoint()));
+                                }
+                                if (SwingUtilities.isLeftMouseButton(event.getFirst())) {
+                                    react.leftMouseClicked(new Vector2D(event.getFirst().getPoint()));
+                                }
                             }
                         }
                     }
-                }
-        );
-        events.clear();
+            );
+            events.clear();
+        }
     }
 
     @Override

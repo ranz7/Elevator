@@ -48,12 +48,12 @@ public abstract class Creature implements Serializable, CreatureInterface {
 
     // sets object in window, by copy it into created instance
     // to be used
-    public void set(Creature creature) {
-        this.position.set(creature.position);
-        this.size.set(creature.size);
-        this.isVisible = creature.isVisible;
-        this.isDead = creature.isDead;
-        this.id = creature.id;
+    public void set(CreatureInterface creature) {
+        this.position.set(creature.getPosition());
+        this.size.set(creature.getSize());
+        this.isVisible = creature.isVisible();
+        this.isDead = creature.isDead();
+        this.id = creature.getId();
     }
 
     @Override

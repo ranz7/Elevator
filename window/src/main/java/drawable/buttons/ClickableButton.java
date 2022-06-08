@@ -10,6 +10,7 @@ import tools.Vector2D;
 import java.awt.*;
 
 public class ClickableButton extends DrawableCreature implements Hoverable {
+    @Getter
     private final DrawableCreature parasite;
     @Getter
     @Setter
@@ -17,39 +18,42 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     private Runnable toExecute;
 
     public ClickableButton(DrawableCreature parasite, Runnable toExecute) {
-        super(parasite.getPosition(), parasite.getSize().multiply(1.7),
+        super(parasite.getPosition(), parasite.getSize().multiply(1.2),
                 parasite.getTool(), parasite.getSettings());
         this.parasite = parasite;
         this.toExecute = toExecute;
+        set(parasite);
     }
 
     @Override
     public void tick(double deltaTime) {
-        set(parasite);
         parasite.tick(deltaTime);
+        setPosition(getParasite().getPosition());
     }
 
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
         if (hovered) {
-            setSize(parasite.getSize().multiply(1.3));
+            setSize(getParasite().getSize().multiply(1.3));
+        } else {
+            setSize(getParasite().getSize());
         }
         super.draw(realDrawPosition, gameDrawer);
     }
 
     @Override
     public DrawCenter getDrawCenter() {
-        return parasite.getDrawCenter();
+        return getParasite().getDrawCenter();
     }
 
     @Override
     public int getDrawPriority() {
-        return parasite.getDrawPriority()+1;
+        return getParasite().getDrawPriority();
     }
 
     public void mousePositionUpdate(Vector2D gamePosition) {
         if (getTool().isIntersect(getRealDrawPosition(), getSize(), gamePosition)) {
-            getTool().setAdditionalLightColor(new Color(189, 0, 0));
+            getTool().setAdditionalLightColor(new Color(89, 20, 20));
             hovered = (true);
         } else {
             getTool().setAdditionalLightColor(new Color(0, 0, 0));
@@ -60,4 +64,5 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     public void execute() {
         toExecute.run();
     }
+
 }

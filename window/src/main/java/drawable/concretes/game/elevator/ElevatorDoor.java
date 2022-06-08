@@ -20,7 +20,7 @@ public class ElevatorDoor extends DrawableCreature {
 
     public ElevatorDoor(Vector2D position, Vector2D size, boolean isLeftDoor, LocalDrawSetting settings,
                         double openCloseTime) {
-        super(position, size, new RectangleWithBorder(settings.doorsColor(), settings.doorsBorder(), 2),
+        super(position, size, new RectangleWithBorder(settings.doorsColor(), settings.doorsBorder(), 1),
                 settings);
         openedDoorsSize = getSize();
         this.isLeftDoor = isLeftDoor;
@@ -85,12 +85,12 @@ public class ElevatorDoor extends DrawableCreature {
         return drawPriority;
     }
 
-    public void changeDoorState(boolean newState, int type) {
-        if (isClosed == newState) {
+    public void changeDoorState(boolean isClosed, int type) {
+        if (this.isClosed == isClosed) {
             return;
         }
         doorsTimer.restart(openCloseTime / 2);
-        isClosed = !isClosed;
+        this.isClosed = !this.isClosed;
         randomFunction = type ;
     }
 

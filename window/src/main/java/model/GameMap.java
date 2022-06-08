@@ -7,6 +7,7 @@ import drawable.abstracts.DrawableCreature;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.concretes.FlyingText;
 import drawable.concretes.game.floor.DrawableFloorStructure;
+import drawable.concretes.game.floor.elevatorSpace.ElevatorBorder;
 import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.elevator.DrawableElevator;
@@ -23,11 +24,13 @@ import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
+import java.util.stream.Collectors;
 
 
 public class GameMap extends DrawableRemoteCreature implements Tickable, Transport<Drawable> {
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this,
+    private final DatabaseOf<Drawable> localDataBase =
+            new DatabaseOf<>(this,
             FlyingText.class,
             DrawableFloorStructure.class);
     @Getter
@@ -42,8 +45,15 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     @Override
     public void tick(double deltaTime) {
         getLocalDataBase().tick(roomRemoteSettings.gameSpeed() * deltaTime);
+
+        var elevators = getLocalDataBase().streamOf(DrawableElevator.class).toList();
+        getLocalDataBase().streamOf(DrawableFloorStructure.class).forEach(
+                drawableFloorStructure ->
+                        drawableFloorStructure.updateElevatorBorders(elevators)
+        );
         getLocalDataBase().removeIf(CreatureInterface::isDead);
     }
+
 
     public ElevatorButton getNearestButton(Vector2D data) {
         return localDataBase.streamOf(ElevatorButton.class)
@@ -85,7 +95,6 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     }
 
 
-
     @Override
     public DrawCenter getDrawCenter() {
         return DrawCenter.bottomLeft;
@@ -106,7 +115,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         localDataBase.addCreature(drawable);
     }
 
-    public Vector2D getBuildingSize() {
+    public Vector2D     getBuildingSize() {
         var randomFloor = localDataBase.streamOf(DrawableFloorStructure.class).findFirst().get();
         var numberOfFloors = (double) localDataBase.countOf(DrawableFloorStructure.class);
         return new Vector2D(randomFloor.getSize()).multiplyY(numberOfFloors);

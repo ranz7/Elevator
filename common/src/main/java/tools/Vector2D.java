@@ -149,15 +149,24 @@ public class Vector2D extends Point2D.Double {
         return this;
     }
 
-    public Vector2D onlyX(double newX) {
+    public Vector2D setX(double newX) {
         this.x = newX;
         return this;
     }
 
 
-    public Vector2D onlyY(double newY) {
+    public Vector2D setY(double newY) {
         this.y = newY;
         return this;
+    }
+
+    public Vector2D withX(double newX) {
+        return new Vector2D(newX,y);
+    }
+
+
+    public Vector2D withY(double newY) {
+        return new Vector2D(x,newY);
     }
 
     public boolean isZero() {
@@ -174,7 +183,7 @@ public class Vector2D extends Point2D.Double {
 
     public boolean isInside(Vector2D position, Vector2D square) {
         return position.x < x && position.x + square.x > x
-                && position.y < y && position.y + square.x > y;
+                && position.y < y && position.y + square.y > y;
     }
 
     public boolean isInsideEllipse(Vector2D position, Vector2D ellipse) {
