@@ -11,23 +11,14 @@ import view.gui.windowReacts.ResizeReact;
 
 import java.awt.*;
 
-public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
+public class Gui implements Tickable,  MouseReact, ResizeReact {
     private final GuiController controller;
     @Getter
     private final SwingWindow swingWindow;
-    //  @Getter
-    //  private final ButtonsComponent buttonsComponent;
-
     public Gui(GuiController controller, LocalDrawSetting localDrawSetting) {
         this.controller = controller;
         swingWindow = new SwingWindow(this, localDrawSetting);
         resize();
-        //    buttonsComponent = new ButtonsComponent(gameWindow);
-        //   buttonsComponent.addButtonListener(this);
-    }
-
-    public void start() {
-        //   buttonsComponent.start();
     }
 
     @Override
@@ -36,6 +27,9 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
         var mouseLocation = swingWindow.getMousePosition();
         if (mouseLocation != null) {
             controller.getActivePlane().mousePositionUpdate(mouseLocation);
+            controller.getMenu().getActivatedPortal().ifPresent(
+                    portal -> portal.getPlane().mousePositionUpdate(mouseLocation)
+            );
         }
     }
 
@@ -52,14 +46,19 @@ public class Gui implements Tickable, ButtonsReact, MouseReact, ResizeReact {
     @Override
     public void resize() {
         controller.getMenu().resize(new Vector2D(swingWindow.getSize()));
-//        worldScaler.updateSizes(swingWindow.getSize(), new Vector2D(100, 100));
-        //    buttonsComponent.resize(gameWindow.getSize());
     }
 
     @Override
     public void leftMouseClicked(Vector2D point) {
         controller.getActivePlane().leftMouseClicked(point);
         controller.getActivePlane().executeButtonIfCan();
+        controller.getMenu().getActivatedPortal().ifPresent(
+                portal -> portal.getPlane().executeButtonIfCan()
+        );
+    }
+
+    public void updatePing() {
+        swingWindow.getCounter().ping();
     }
 //
 //    @Override

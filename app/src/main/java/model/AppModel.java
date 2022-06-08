@@ -34,7 +34,7 @@ public class AppModel implements Tickable {
     }
 
 
-    public GameMap getMap(long roomId) {
+    public GameMap getMap(int roomId) {
         return gameMaps.stream().filter(gameMap -> gameMap.getRoomId() == roomId).findFirst().get();
     }
 

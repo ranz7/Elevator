@@ -4,6 +4,7 @@ import dualConnectionStation.Client;
 import gates.ReciveFilters;
 import gates.Gates;
 import gates.ScenarioBuilder;
+import model.planes.MenuPlane;
 import protocol.special.GameMapCompactData;
 import protocol.Protocol;
 import protocol.ProtocolMessage;
@@ -45,7 +46,6 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
-        gui.start();
 
         addTickable(gates);
         addTickable(gui);
@@ -65,24 +65,17 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
                 updateSubscribes();
             }
             case UPDATE_DATA -> {
-                windowModel.updateMap(message.getRoomId(), (GameMapCompactData) data);
+                windowModel.updateMap(message.getRoomId(), (GameMapCompactData) data, gates);
+                gui.updatePing();
             }
-            case ELEVATOR_OPEN -> windowModel.getMap(roomId).ifPresent(map->map.getElevator((int) data).changeDoorsState(false));
-            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).ifPresent(map->map.getElevator((int) data).changeDoorsState(true));
-            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).ifPresent(map->map.getCustomer((int) data).changeBehindElevator());
-            case ELEVATOR_BUTTON_CLICK -> windowModel.getMap(roomId).ifPresent(gameMap -> gameMap.getButton((int)(data)).buttonClick());
+            case ELEVATOR_OPEN -> windowModel.getMap(roomId).ifPresent(map -> map.getElevator((int) data).changeDoorsState(false));
+            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).ifPresent(map -> map.getElevator((int) data).changeDoorsState(true));
+            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).ifPresent(map -> map.getCustomer((int) data).changeBehindElevator());
+            case ELEVATOR_BUTTON_CLICK -> windowModel.getMap(roomId).ifPresent(gameMap -> gameMap.getButton((int) (data)).buttonClick());
         }
         return true;
     }
-//
-//    public void addCustomer(int startFloorButtonId, int endFloorId) {
-//        LinkedList<Integer> data = new LinkedList<>();
-//        data.push(startFloorButtonId);
-//        data.push(endFloorId);
-//        // TODO ID ID
-//        gates.send(new ProtocolMessage(Protocol.CREATE_CUSTOMER, data));
-//    }
-//
+
 //    public void changeElevatorsCount(boolean isAdding) {
 //        gates.send(new ProtocolMessage(Protocol.CHANGE_ELEVATORS_COUNT, isAdding));
 //    }
@@ -114,7 +107,7 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         }
     }
 
-    public Plane getMenu() {
+    public MenuPlane getMenu() {
         return windowModel.getMenuPlane();
     }
 }

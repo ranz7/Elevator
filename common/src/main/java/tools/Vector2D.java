@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 /*
  * Personal Point class with useful methods
@@ -37,7 +38,11 @@ public class Vector2D extends Point2D.Double {
     }
 
     public static Vector2D getBetween(Vector2D A, Vector2D B, double coef) {
-        return A.multiply(coef).add(B.multiply(1-coef));
+        return A.multiply(coef).add(B.multiply(1 - coef));
+    }
+
+    public static Vector2D Random() {
+        return new Vector2D(new Random().nextDouble()-0.5, new Random().nextDouble()-0.5);
     }
 
     public double distance(Point2D.Double positionA) {
@@ -165,12 +170,12 @@ public class Vector2D extends Point2D.Double {
     }
 
     public Vector2D withX(double newX) {
-        return new Vector2D(newX,y);
+        return new Vector2D(newX, y);
     }
 
 
     public Vector2D withY(double newY) {
-        return new Vector2D(x,newY);
+        return new Vector2D(x, newY);
     }
 
     public boolean isZero() {

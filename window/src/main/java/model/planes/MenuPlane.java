@@ -11,7 +11,6 @@ import model.planes.graphics.Scaler;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
-import javax.swing.text.html.Option;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +41,7 @@ public class MenuPlane extends Plane {
 
     }
 
-    private Optional<Portal> getActivatedPortal() {
+    public Optional<Portal> getActivatedPortal() {
         return getLocalDataBase().streamOf(Portal.class).filter(portal -> portal.isStartOfZoom() || portal.getExponentionalCoef() == 0).findFirst();
     }
 

@@ -1,9 +1,10 @@
 package view.gui;
 
+import lombok.Getter;
 import settings.configs.WindowConfig;
 import controller.Tickable;
 import settings.localDraw.LocalDrawSetting;
-import view.FPScounter;
+import view.FPSAndPingcounter;
 import view.gui.windowListeners.MouseListener;
 import view.gui.windowListeners.ResizeListener;
 
@@ -12,7 +13,8 @@ import java.awt.*;
 
 public class SwingWindow extends JPanel implements Tickable {
     private final JFrame jframe;
-    private FPScounter counter = new FPScounter("42");
+    @Getter
+    private FPSAndPingcounter counter = new FPSAndPingcounter("42");
     private final Gui gui;
     private final MouseListener mouseListener;
 
@@ -34,9 +36,6 @@ public class SwingWindow extends JPanel implements Tickable {
         addMouseListener(mouseListener);
         addResizeListener(new ResizeListener(gui));
         this.gui = gui;
-    }
-
-    public void start() {
     }
 
     @Override

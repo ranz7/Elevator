@@ -10,6 +10,7 @@ import protocol.special.SubscribeRequest;
 import settings.configs.AppControllerConfig;
 import lombok.RequiredArgsConstructor;
 import model.*;
+import tools.Pair;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -61,15 +62,15 @@ public class AppController extends ControllerEndlessLoop implements MessageAppli
                 appModel.createIfNotExist(subscribes, gates);
             }
             case CREATE_CUSTOMER -> {
-                LinkedList<Integer> floorsStartEnd = (LinkedList<Integer>) data;
-//                appModel.getMap(message.getWorldId()).CreateCustomer(floorsStartEnd.get(1), floorsStartEnd.get(0));
+                Pair<Integer,Boolean> floorIdIfLeft= (Pair<Integer, Boolean>) data;
+                 appModel.getMap(message.getRoomId()).createCustomer(floorIdIfLeft.getFirst(),
+                         floorIdIfLeft.getSecond());
             }
             case CHANGE_ELEVATORS_COUNT -> {
                 //              appModel.getMap(message.getWorldId()).changeElevatorsCount((boolean) data);
             }
             case CHANGE_GAME_SPEED -> {
-                multiplyControllerSpeedBy((double) data);
-//                gates.send(Protocol.CHANGE_GAME_SPEED, this.getControllerTimeSpeed());
+                appModel.getMap(message.getRoomId()).changeGameSpeed((double)data);
             }
         }
         return true;

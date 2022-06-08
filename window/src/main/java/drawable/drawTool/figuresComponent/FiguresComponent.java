@@ -1,6 +1,7 @@
 package drawable.drawTool.figuresComponent;
 
 import drawable.drawTool.DrawTool;
+import drawable.drawTool.text.Text;
 import tools.Vector2D;
 import model.planes.graphics.Painter;
 
@@ -30,7 +31,7 @@ public class FiguresComponent extends DrawTool {
 
     @Override
     public void setColor(Color color) {
-        figures.forEach(figure -> figure.setColor(color));
+        figures.stream().filter(instance ->!(instance instanceof Text)).forEach(figure -> figure.setColor(color));
     }
 
     @Override

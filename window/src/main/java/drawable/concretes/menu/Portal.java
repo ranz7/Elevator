@@ -6,6 +6,8 @@ import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
 import drawable.buttons.CircleWithTextInside;
 import drawable.buttons.ClickableButton;
+import drawable.concretes.game.elevator.FloorGetter;
+import drawable.concretes.game.floor.elevatorSpace.ElevatorNumber;
 import drawable.drawTool.figuresComponent.Rectangle;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import lombok.Getter;
@@ -23,13 +25,15 @@ import tools.Vector2D;
 import java.awt.*;
 import java.util.function.Function;
 
-public class Portal extends DrawableCreature implements Transport<Drawable>, Transportable<Drawable> {
+public class Portal extends DrawableCreature implements Transport<Drawable>, Transportable<Drawable>, FloorGetter {
     @Getter
-    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
+    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class,
+            ElevatorNumber.class);
     @Getter
     @Setter
     Transport<Drawable> transport;
 
+    @Getter
     private GamePlane gamePlane;
 
     @Getter
@@ -48,14 +52,22 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
         rainbow = new RainbowColor(getTool().getMainColor());
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(5), settings, "^"), () -> {
+            roomId++;
         }));
+
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)), settings, "+"),
                 this::changeZoom));
+
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(-5), settings, "v"),
                 () -> {
+                    roomId--;
+                    roomId = Math.max(roomId, 0);
                 }));
+
+        add(new ElevatorNumber(getSize().divideByX(2), this, getSettings()));
+
         exitButton = new ClickableButton(
                 new CircleWithTextInside(new Vector2D(15, 15), settings, "x"),
                 this::changeZoom);
@@ -69,12 +81,13 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
     boolean startOfZoom = false;
     Function<Double, Double> expo = MathFunctions.randomFunction();
 
-    private void changeZoom() {
+    public void changeZoom() {
         startOfZoom = !startOfZoom;
-         expo = MathFunctions.randomFunction();
+        expo = MathFunctions.randomFunction();
 
         if (!startOfZoom) {
             ((MenuDrawable) transport).portalWasClosed();
+            gamePlane.getGameMap().removeButtons();
         }
     }
 
@@ -92,6 +105,7 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
     @Getter
     private double exponentionalCoef = 1;
     private RainbowColor rainbow;
+
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
         exponentionalCoef = expo.apply(changeCoef);
@@ -104,6 +118,7 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
             if (changeCoef < 0.010 && changeCoef > 0) {
                 ((MenuDrawable) transport).portalWasOpened();
                 setVisible(true);
+                gamePlane.getGameMap().initializeButtons(this);
                 changeCoef = 0;
             }
 
@@ -142,7 +157,7 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
                     (int) positionOfScaler.getX(),
                     (int) positionOfScaler.getY()
             );
-            gamePlane.getPainter().setBlackSpaces(1-changeCoef);
+            gamePlane.getPainter().setBlackSpaces(1 - changeCoef);
             gamePlane.draw(gameDrawer.getPureGraphics());
             gamePlane.getPainter().getPureGraphics().translate(
                     -(int) positionOfScaler.getX(),
@@ -176,13 +191,12 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
         if (gamePlane != null) {
             gamePlane.tick(deltaTime);
         }
-        getTool().setColor( rainbow.next());
+        getTool().setColor(rainbow.next());
 
     }
 
     public void setGameMap(GameMap gameMap) {
         if (gamePlane == null) {
-
             gamePlane = new GamePlane(getSettings(), gameMap);
             return;
         }
@@ -197,6 +211,11 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
 
     public void removeGameMap() {
         gamePlane = null;
+    }
+
+    @Override
+    public int getCurrentFloorNum() {
+        return roomId;
     }
 
 }

@@ -9,31 +9,49 @@ import drawable.concretes.game.floor.DrawableFloorStructure;
 import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.elevator.DrawableElevator;
+import drawable.concretes.menu.Portal;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
+import gates.Gates;
 import lombok.Getter;
 import lombok.Setter;
 import model.objects.CreatureInterface;
 import model.packageLoader.DrawableCreatureData;
+import protocol.Protocol;
 import protocol.special.CreatureType;
 import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
+import tools.Pair;
 import tools.Vector2D;
+import view.buttons.GameButtonComponent;
 
 import java.awt.*;
+import java.io.Serializable;
 
 public class GameMap extends DrawableRemoteCreature implements Tickable, Transport<Drawable> {
     @Getter
     private final DatabaseOf<Drawable> localDataBase =
             new DatabaseOf<>(this,
                     FlyingText.class,
-                    DrawableFloorStructure.class);
+                    DrawableFloorStructure.class,
+                    GameButtonComponent.class);
     @Getter
     @Setter
     RoomRemoteSettings roomRemoteSettings;
 
-    public GameMap(DrawableCreatureData data, LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings) {
+    public void initializeButtons(Portal portal) {
+        add(new GameButtonComponent(portal, getSettings()));
+    }
+
+    public void removeButtons() {
+        localDataBase.streamOfOnlyOwned(GameButtonComponent.class).findFirst().get().destroy();
+    }
+
+    Gates gates;
+
+    public GameMap(DrawableCreatureData data, LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings, Gates gates) {
         super(data, new RectangleWithBorder(new Color(133, 101, 101), 7), settings);
         this.roomRemoteSettings = roomRemoteSettings;
+        this.gates = gates;
     }
 
     @Override
@@ -113,6 +131,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     }
 
     @Override
+
     public void add(Drawable drawable) {
         if (drawable instanceof DrawableCreatureData) {
             if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.FLOOR) {
@@ -139,5 +158,19 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
                         });
         return ref.found;
 
+    }
+
+
+    public void createCustomer(int floorId, boolean fromLeft) {
+        gates.sendWithoutCheck(Protocol.CREATE_CUSTOMER, getRoomRemoteSettings().roomId(),
+                new Pair<Integer, Boolean>(floorId, fromLeft));
+    }
+
+    public void changeGameSpeed(boolean slow) {
+        if (slow) {
+            gates.sendWithoutCheck(Protocol.CHANGE_GAME_SPEED, getRoomRemoteSettings().roomId(), 0.5);
+        } else {
+            gates.sendWithoutCheck(Protocol.CHANGE_GAME_SPEED, getRoomRemoteSettings().roomId(), 1.5);
+        }
     }
 }

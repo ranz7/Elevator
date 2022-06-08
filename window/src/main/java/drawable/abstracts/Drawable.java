@@ -34,4 +34,8 @@ public interface Drawable extends CreatureInterface, Tickable {
     DrawCenter getDrawCenter();
 
     int getDrawPriority();
+
+    void setPosition(Vector2D position);
+
+    void setSize(Vector2D position);
 }
