@@ -3,6 +3,8 @@ package drawable.concretes.game.elevator;
 import drawable.abstracts.Drawable;
 import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.floor.DrawableFloorStructure;
+import drawable.concretes.game.floor.decorations.FloorPainting;
+import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
@@ -11,6 +13,7 @@ import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.drawTool.figuresComponent.Rectangle;
 import model.packageLoader.DrawableCreatureData;
+import protocol.special.CreatureType;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 import lombok.Getter;
@@ -64,6 +67,13 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
 
     @Override
     public void add(Drawable drawable) {
+        if (drawable instanceof DrawableCreatureData) {
+            if (((DrawableCreatureData) drawable).getCreatureType() == CreatureType.CUSTOMER) {
+                drawable = new DrawableCustomer((DrawableCreatureData) drawable, getSettings());
+            } else{
+                throw new RuntimeException("uncached " + ((DrawableCreatureData) drawable).getCreatureType());
+            }
+        }
         localDataBase.addCreature(drawable);
     }
 }

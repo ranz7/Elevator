@@ -7,6 +7,7 @@ import controller.Tickable;
 
 import controller.TickableList;
 import drawable.concretes.menu.Portal;
+import gates.Gates;
 import lombok.Getter;
 import model.objects.Creature;
 import model.packageLoader.DrawableCreatureData;
@@ -84,7 +85,7 @@ public class GuiModel implements Tickable {
                 .filter(Plane::isActive).findFirst().get();
     }
 
-    public void updateMap(int roomId , GameMapCompactData data) {
+    public void updateMap(int roomId , GameMapCompactData data, Gates gates) {
         if (ConnectionSettings.VERSION != data.roomData.version()) {
             Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
                     " Your version: %s, server version %s%n")
@@ -96,7 +97,8 @@ public class GuiModel implements Tickable {
             mapToUpdate = Optional.of(new GameMap(
                     new DrawableCreatureData(data.parentIdClassTypeObject.get(0)),
                     localDrawSetting,
-                    new RoomRemoteSettings(data.roomData)
+                    new RoomRemoteSettings(data.roomData),
+                    gates
             ));
             gameMaps.add(mapToUpdate.get());
         }

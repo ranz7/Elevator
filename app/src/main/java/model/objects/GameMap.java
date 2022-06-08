@@ -43,7 +43,7 @@ public class GameMap extends Creature implements Transport<Creature> {
     private final LocalCreaturesSettings localCreaturesSettings;
 
     private final LinkedList<ElevatorsController> elevatorsControllers = new LinkedList<>();
-    private final CustomersController customersController = new CustomersController(this);
+    private final CustomersController customersController;
 
     private final Gates controllerGates;
 
@@ -52,12 +52,12 @@ public class GameMap extends Creature implements Transport<Creature> {
         this.controllerGates = controllerGates;
         this.roomId = roomId;
         this.localCreaturesSettings = localCreaturesSettings;
-
+        this.customersController = new CustomersController(this, localCreaturesSettings);
         for (int i = 0; i < 1; i++) {
             var floorStructure = new FloorStructure(new Vector2D(i * 500, 0), localCreaturesSettings);
             var elevatorsController = new ElevatorsController(this, floorStructure, localCreaturesSettings);
             elevatorsControllers.add(elevatorsController);
-            floorStructure.fillWithElevators(elevatorsController,this);
+            floorStructure.fillWithElevators(elevatorsController, this);
             floorStructure.fillWithPaintings();
             floorStructure.fillWithButtons(elevatorsController);
             add(floorStructure);
@@ -70,7 +70,7 @@ public class GameMap extends Creature implements Transport<Creature> {
 
     @Override
     public void tick(double deltaTime) {
-        localDataBase.tick(deltaTime);
+        localDataBase.tick(deltaTime*gameSpeed);
         new TickableList(elevatorsControllers).tick(deltaTime);
         customersController.tick(deltaTime);
         localDataBase.removeIf(CreatureInterface::isDead);
@@ -141,5 +141,13 @@ public class GameMap extends Creature implements Transport<Creature> {
 
     public void moveElevatorTo(Elevator elevator, FloorStructure floorStructureTop) {
         moveCreatureInto(elevator.getId(), floorStructureTop);
+    }
+
+    public void createCustomer(Integer floorId, Boolean ifLeft) {
+        customersController.createCustomer(floorId, ifLeft);
+    }
+
+    public void changeGameSpeed(double data) {
+        gameSpeed*=data;
     }
 }

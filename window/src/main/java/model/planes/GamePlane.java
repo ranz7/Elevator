@@ -2,6 +2,7 @@ package model.planes;
 
 import drawable.abstracts.Drawable;
 import drawable.concretes.FlyingText;
+import drawable.concretes.menu.MenuDrawable;
 import lombok.Getter;
 import model.DatabaseOf;
 import model.GameMap;
@@ -58,5 +59,6 @@ public class GamePlane extends Plane {
     public void resize(Vector2D size) {
         getScaler().updateSizes(size, gameMap.getSize());
     }
+
 
 }

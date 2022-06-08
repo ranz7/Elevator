@@ -79,6 +79,7 @@ public abstract class Plane implements Tickable, MouseReact {
         var gamePosition = getScaler().getFromRealToGameCoordinate(new Vector2D(mouseLocation), 0);
         getLocalDataBase().streamOf(ClickableButton.class).forEach(
                 clickableButton -> clickableButton.mousePositionUpdate(gamePosition));
+
     }
 
     public void executeButtonIfCan() {

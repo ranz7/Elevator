@@ -1,6 +1,7 @@
 package drawable.buttons;
 
 import drawable.abstracts.DrawCenter;
+import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,13 +12,13 @@ import java.awt.*;
 
 public class ClickableButton extends DrawableCreature implements Hoverable {
     @Getter
-    private final DrawableCreature parasite;
+    private final Drawable parasite;
     @Getter
     @Setter
     private boolean hovered = false;
     private Runnable toExecute;
 
-    public ClickableButton(DrawableCreature parasite, Runnable toExecute) {
+    public ClickableButton(Drawable parasite, Runnable toExecute) {
         super(parasite.getPosition(), parasite.getSize().multiply(1.2),
                 parasite.getTool(), parasite.getSettings());
         this.parasite = parasite;

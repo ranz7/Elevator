@@ -90,8 +90,8 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
         if (predicate.test(dataBaseOwner)) {
             Logger.getAnonymousLogger().info(
                     "You are trying to delete owner of database, " +
-                    "but owner cannot be deleted by itself");
-            return ;
+                            "but owner cannot be deleted by itself");
+            return;
         }
         creaturesOwned.removeIf(predicate);
         creaturesOwned.forEach(
@@ -129,7 +129,8 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
 
     private void add(Transport<BaseCreatureObject> whereTransport,
                      Pair<Vector2D, Transportable<BaseCreatureObject>> absolutePositionAndTransportable) {
-        var whereToPutPairOfAbsolutePositionAndObject = get(whereTransport.getId()); var whereToPutPosition = whereToPutPairOfAbsolutePositionAndObject.getSecond().getPosition().add(whereToPutPairOfAbsolutePositionAndObject.getFirst());
+        var whereToPutPairOfAbsolutePositionAndObject = get(whereTransport.getId());
+        var whereToPutPosition = whereToPutPairOfAbsolutePositionAndObject.getSecond().getPosition().add(whereToPutPairOfAbsolutePositionAndObject.getFirst());
         var fromPosition = absolutePositionAndTransportable.getFirst();
 
         var deltaInParentPositions = whereToPutPosition.sub(fromPosition);
@@ -158,4 +159,7 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
                 forEach(trio -> trio.getThird().tick(deltaTime));
     }
 
+    public boolean isEmpty() {
+        return creaturesOwned.isEmpty();
+    }
 }

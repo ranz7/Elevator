@@ -11,6 +11,7 @@ import model.objects.customer.StandartCustomer.StandartCustomer;
 import java.util.Random;
 
 import model.objects.elevator.Elevator;
+import settings.LocalCreaturesSettings;
 import tools.Timer;
 
 /**
@@ -19,7 +20,7 @@ import tools.Timer;
 @RequiredArgsConstructor
 public class CustomersController implements Tickable {
     private final GameMap gameMap;
-
+    private final LocalCreaturesSettings settings;
     private final Timer spawnTimer = new Timer(1);
 
     @Override
@@ -54,6 +55,19 @@ public class CustomersController implements Tickable {
         startFloor.addCustomer(customer);
     }
 
+    public void CreateCustomer(FloorStructure startFloor, FloorStructure endFloor, boolean left) {
+        double startPosition = 0;
+
+        if (left) {
+            startPosition = 0 - settings.customerSize().x;
+        } else {
+            startPosition = endFloor.getSize().x + settings.customerSize().x;
+
+        }
+        var customer = new StandartCustomer(endFloor, startPosition, this, gameMap.getLocalCreaturesSettings());
+        startFloor.addCustomer(customer);
+    }
+
     public void customerGetIntoElevator(StandartCustomer standartCustomer, Elevator closestOpenedElevator) {
         gameMap.moveCreatureInto(standartCustomer.getId(), closestOpenedElevator);
         gameMap.send(Protocol.CUSTOMER_GET_IN_OUT, standartCustomer.getId());
@@ -63,5 +77,21 @@ public class CustomersController implements Tickable {
         elevator.removeCustomer();
         gameMap.moveCreatureInto(standartCustomer.getId(), elevator.getCurrentFloor());
         gameMap.send(Protocol.CUSTOMER_GET_IN_OUT, standartCustomer.getId());
+    }
+
+    public void createCustomer(Integer floorId, Boolean ifLeft) {
+
+        var dataBase = gameMap.getLocalDataBase();
+
+        var listOfBottomFloors = dataBase.streamOf(FloorStructure.class).filter(FloorStructure::isBottomFloor).toList();
+        var randBottomFloor = listOfBottomFloors.get(new Random().nextInt(listOfBottomFloors.size()));
+
+        var maxFloor = randBottomFloor.getHieght();
+
+        var randomStartFloorNum = ((FloorStructure) dataBase.get(floorId).getSecond()).getCurrentFloorNum();
+        var randomEndFloorNum = new Random().nextInt(0, maxFloor);
+
+        randomEndFloorNum = (maxFloor + randomStartFloorNum + randomEndFloorNum - 1) % maxFloor;
+        CreateCustomer(randBottomFloor.getUpperFloor(randomStartFloorNum), randBottomFloor.getUpperFloor(randomEndFloorNum), ifLeft);
     }
 }
