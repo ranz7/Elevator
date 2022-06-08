@@ -23,7 +23,7 @@ public class ElevatorBorder extends DrawableCreature implements Transport<Drawab
                 new RectangleWithBorder(settings.borderColor(), settings.borderThickness() * 2), settings);
         this.parentElevator = parentElevator;
         add(new ElevatorBlackSpace(getSize(), settings));
-        add(new ElevatorNumber(new Vector2D(2, -getSize().y + settings.borderThickness() - 3), settings));
+        add(new ElevatorNumber(new Vector2D(2, getSize().y + settings.borderThickness() - 3), settings));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ElevatorBorder extends DrawableCreature implements Transport<Drawab
 
     @Override
     public DrawCenter getDrawCenter() {
-        return DrawCenter.bottomLeft;
+        return DrawCenter.bottomCenter;
     }
 
     @Override

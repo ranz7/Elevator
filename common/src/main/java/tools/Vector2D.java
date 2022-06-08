@@ -36,6 +36,10 @@ public class Vector2D extends Point2D.Double {
         this(size.width, size.height);
     }
 
+    public static Vector2D getBetween(Vector2D A, Vector2D B, double coef) {
+        return A.multiply(coef).add(B.multiply(1-coef));
+    }
+
     public double distance(Point2D.Double positionA) {
         return Math.sqrt(Math.pow(positionA.x - x, 2) + Math.pow(positionA.y - y, 2));
     }

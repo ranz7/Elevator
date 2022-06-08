@@ -91,7 +91,7 @@ public abstract class MoveFunction {
             public Vector2D tickAndGet(double deltaTime, double speed, Vector2D position) {
                 var newPosition = position.getShiftedByDistance(position.add(vector), deltaTime * speed);
 
-                differenceVector.sub(newPosition.sub(newPosition));
+                vector.set(vector.sub(newPosition.sub(position)));
                 return newPosition;
             }
         };

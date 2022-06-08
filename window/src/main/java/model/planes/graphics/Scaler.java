@@ -43,7 +43,7 @@ public class Scaler implements Tickable {
         return length / (scalingCoefficient * additionalZoomCurrentValue);
     }
     public double getFromRealToGameLength(double length) {
-        return  (scalingCoefficient * additionalZoomCurrentValue)/length  ;
+        return  (scalingCoefficient * additionalZoomCurrentValue)*length  ;
     }
 
     public Vector2D getFromGameToRealCoordinate(Vector2D gameCoordinate, double heigthOfTheObject) {

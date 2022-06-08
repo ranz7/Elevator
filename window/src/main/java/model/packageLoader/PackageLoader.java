@@ -47,7 +47,8 @@ public class PackageLoader {
                     try {
                         drawable = modelOfMap.get(creatureData.getIdOfParent()).getSecond();
                     } catch (NoSuchElementException e) {
-                        throw new RuntimeException("Cannot find with id: " + creatureData.getIdOfParent()
+                        throw new RuntimeException(
+                                "Cannot find with id: " + creatureData.getIdOfParent()
                                 + " an object: " + creatureData.getCreatureType());
                     }
 

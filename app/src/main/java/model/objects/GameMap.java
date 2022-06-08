@@ -1,6 +1,7 @@
 package model.objects;
 
 import configs.RoomPrepareCompactData;
+import controller.TickableList;
 import gates.Gates;
 import controller.subControllers.CustomersController;
 import controller.subControllers.ElevatorsController;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
 import model.objects.customer.Customer;
+import model.objects.customer.StandartCustomer.StandartCustomer;
 import model.objects.elevator.Elevator;
 import model.objects.floor.ElevatorButton;
 import model.objects.floor.FloorStructure;
@@ -53,14 +55,14 @@ public class GameMap extends Creature implements Transport<Creature> {
 
         for (int i = 0; i < 1; i++) {
             var floorStructure = new FloorStructure(new Vector2D(i * 500, 0), localCreaturesSettings);
-            var elevatorController = new ElevatorsController(this, floorStructure);
-             elevatorsControllers.add(elevatorController);
-             floorStructure.fillWithElevators(elevatorController);
+            var elevatorsController = new ElevatorsController(this, floorStructure, localCreaturesSettings);
+            elevatorsControllers.add(elevatorsController);
+            floorStructure.fillWithElevators(elevatorsController,this);
             floorStructure.fillWithPaintings();
-            floorStructure.fillWithButtons();
+            floorStructure.fillWithButtons(elevatorsController);
             add(floorStructure);
             for (int j = 1; j < localCreaturesSettings.floorsCount(); j++) {
-                floorStructure.addFloor();
+                floorStructure.addFloor(elevatorsController);
             }
         }
 
@@ -69,10 +71,9 @@ public class GameMap extends Creature implements Transport<Creature> {
     @Override
     public void tick(double deltaTime) {
         localDataBase.tick(deltaTime);
-        //new TickableList(elevatorsControllers).tick(deltaTime);
-        //customersController.tick(deltaTime);
-        //localDataBase.tick(deltaTime);
-        //localDataBase.removeIf(Creature::isDead);
+        new TickableList(elevatorsControllers).tick(deltaTime);
+        customersController.tick(deltaTime);
+        localDataBase.removeIf(CreatureInterface::isDead);
     }
 
     public void send(Protocol protocol, Serializable data) {
@@ -127,11 +128,18 @@ public class GameMap extends Creature implements Transport<Creature> {
         if (aClass == GameMap.class) {
             return CreatureType.GAME_MAP;
         }
+        if (aClass == StandartCustomer.class) {
+            return CreatureType.CUSTOMER;
+        }
         throw new RuntimeException("UNKNOW CLASS" + aClass.getName());
     }
 
     @Override
     public void add(Creature creature) {
         localDataBase.addCreature(creature);
+    }
+
+    public void moveElevatorTo(Elevator elevator, FloorStructure floorStructureTop) {
+        moveCreatureInto(elevator.getId(), floorStructureTop);
     }
 }

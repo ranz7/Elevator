@@ -7,7 +7,7 @@ public class Painting extends Creature {
     int randomSeed;
 
     public Painting(Vector2D position, int randomSeed) {
-        super(position, new Vector2D(100, 100));
+        super(position, new Vector2D(1,1));
         this.randomSeed = randomSeed;
     }
 }

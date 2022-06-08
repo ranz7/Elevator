@@ -25,7 +25,10 @@ import java.awt.*;
             new Color(232, 156, 123)
     };
 
-    public final Color backGroundColor = new Color(255, 255, 255);
+    public final Color backGroundColor = new Color(12, 12, 12);
+    public final Color portalColor = new Color(85, 67, 93);
     public final Color jButtonsColor = new Color(30, 57, 98);
-    public Color menuButtonColor = new Color(104, 218, 97, 102);
+    public final Color menuButtonColor = new Color(104, 218, 97, 102);
+    public final Color blackSpacesColor = new Color(37, 26, 30);
+
   }

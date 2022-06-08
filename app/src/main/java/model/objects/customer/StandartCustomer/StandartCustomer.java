@@ -62,10 +62,10 @@ public class StandartCustomer extends MovingCreature implements Transportable {
     private void processGoToButton() {
         assertTransport(FloorStructure.class);
         var button = ((FloorStructure) transport).getClosestButtonOnFloor(getPosition());
-        if(button==null){
+        if (button == null) {
             return;
         }
-        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().setY(0)));
+        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().withY(0)));
         if (isReachedDestination()) {
             button.click(wantsGoUp());
             mainTimer.restart(settings.customerWaitAfterClick());
@@ -79,6 +79,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         if (nearestOpenedElevatorOnFloor != null) {
             setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(
                     nearestOpenedElevatorOnFloor::getPosition));
+            setSpeedCoefficient(settings.fastSpeedCustomerMultiply());
             setState(StandartCustomerState.getIn);
             return;
         }
@@ -96,7 +97,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         var closestOpenedElevator = ((FloorStructure) transport).getClosestOpenedElevatorOnFloor(getPosition());
         if (closestOpenedElevator == null) {
             setState(goToButton);
-            setMoveTrajectory(new Trajectory().WithNewConstSpeedToOldDestination(getSpeed()));
+            setSpeedCoefficient(settings.fastSpeedCustomerMultiply());
             return;
         }
 
@@ -106,14 +107,13 @@ public class StandartCustomer extends MovingCreature implements Transportable {
             var makeSpaceInElevator = closestOpenedElevator.getSize().x / 2;
             var newDestination = new Vector2D(
                     new Random().nextDouble(
-                            -makeSpaceInElevator,
-                            makeSpaceInElevator - getSize().x), 0);
+                            -makeSpaceInElevator + getSize().x/2,
+                            makeSpaceInElevator - getSize().x/2), 0);
 
             closestOpenedElevator.addFloorToThrowOut(floorToGetOut.getCurrentFloorNum());
             var shiftToMakeSpaceInElevator = getPosition().add(newDestination);
-            setMoveTrajectory(Trajectory.ToTheDestination(
-                    getSpeed(),
-                    () -> shiftToMakeSpaceInElevator));
+            setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> shiftToMakeSpaceInElevator));
+            setSpeedCoefficient(1.);
             setState(StandartCustomerState.stayIn);
         }
     }
@@ -122,13 +122,10 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         Elevator elevator = (Elevator) transport;
         if (elevator.isOpened()) {
             if (elevator.getCurrentFloorNum() == floorToGetOut.getCurrentFloorNum()) {
-                setSpeedCoefficient(1.);
                 setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(elevator::getPosition));
                 controller.customerGetOutFromElevator(this, elevator);
                 setState(StandartCustomerState.getOut);
             }
-        } else {
-            setSpeedCoefficient(999.);
         }
     }
 
@@ -136,13 +133,13 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         if (!isReachedDestination()) {
             return;
         }
-        if (getPosition().x > ((FloorStructure) transport).getSize().x + getSize().x || getPosition().x < -getSize().x) {
+        if (getPosition().x > ((FloorStructure) transport).getSize().x || getPosition().x < -0) {
             setDead(true);
             return;
         }
         setMoveTrajectory(
                 Trajectory.WithOldSpeedToTheDestination(
-                        () -> new Vector2D(((FloorStructure) transport).getStartPositionAfterBuilding(), 0)
+                        new Vector2D(((FloorStructure) transport).getStartPositionAfterBuilding(), 0)
                 ));
     }
 

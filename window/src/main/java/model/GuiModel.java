@@ -8,6 +8,7 @@ import controller.Tickable;
 import controller.TickableList;
 import drawable.concretes.menu.Portal;
 import lombok.Getter;
+import model.objects.Creature;
 import model.packageLoader.DrawableCreatureData;
 import model.packageLoader.PackageLoader;
 import model.planes.MenuPlane;
@@ -40,6 +41,7 @@ public class GuiModel implements Tickable {
 
     @Override
     public void tick(double deltaTime) {
+        gameMaps.removeIf(Creature::isDead);
         menuPlane.tick(deltaTime);
         new TickableList(gameMaps).tick(deltaTime);
         updatePortals();
@@ -47,12 +49,14 @@ public class GuiModel implements Tickable {
 
 
     private void updatePortals() {
+        gameMaps.forEach(map->map.setDead(true));
         // give map for portal
         streamOfGameMaps().forEach(
                 gameMap -> getMenuPlane().streamOfPortals().forEach(
                         portal -> {
                             if (portal.getRoomId() == gameMap.getRoomRemoteSettings().roomId()) {
                                 portal.setGameMap(gameMap);
+                                gameMap.setDead(false);
                             }
                             if (portal.getRoomId() == -1) {
                                 portal.setGameMap(null);
@@ -80,29 +84,30 @@ public class GuiModel implements Tickable {
                 .filter(Plane::isActive).findFirst().get();
     }
 
-    public void updateMap(GameMapCompactData data) {
+    public void updateMap(int roomId , GameMapCompactData data) {
         if (ConnectionSettings.VERSION != data.roomData.version()) {
             Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
                     " Your version: %s, server version %s%n")
                     .formatted(ConnectionSettings.VERSION, data.roomData.version()));
         }
 
-        Optional<GameMap> mapToUpdate = getMap(data.parentIdClassTypeObject.get(0).getId());
+        Optional<GameMap> mapToUpdate = getMap(roomId );
         if (mapToUpdate.isEmpty()) {
             mapToUpdate = Optional.of(new GameMap(
                     new DrawableCreatureData(data.parentIdClassTypeObject.get(0)),
                     localDrawSetting,
                     new RoomRemoteSettings(data.roomData)
             ));
-            getMenuPlane().roomWasCreated(data.roomData.roomId());
             gameMaps.add(mapToUpdate.get());
         }
         mapToUpdate.get().setRoomRemoteSettings(new RoomRemoteSettings(data.roomData));
         PackageLoader.applyArrivedData(data, mapToUpdate.get());
+
     }
 
     public SubscribeRequest getPlanesToSubscribeFor() {
         var gamePlanesUsedInPortals = getMenuPlane().getUsedGamePlanesInPortals();
         return new SubscribeRequest(gamePlanesUsedInPortals.stream().distinct().collect(Collectors.toList()));
     }
+
 }

@@ -14,7 +14,6 @@ import model.Transport;
 import model.Transportable;
 import model.packageLoader.DrawableCreatureData;
 import protocol.special.CreatureType;
-import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import settings.localDraw.LocalDrawSetting;
@@ -22,7 +21,6 @@ import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DrawableFloorStructure extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Setter
@@ -36,23 +34,28 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
             DrawableCustomer.class,
             ElevatorBorder.class,
             ElevatorButton.class,
-            FloorPainting.class);
+            FloorPainting.class,
+            FloorBackground.class,
+            UnderElevatorHidingWall.class);
 
     DrawableFloorStructure floorUnderUs;
 
     public DrawableFloorStructure(DrawableCreatureData data, LocalDrawSetting settings) {
         super(data, new RectangleWithBorder(settings.florBetonColor(), 7), settings);
+        add(new FloorBackground(getSize(), settings));
         add(new FloorHidingCornerWall(
-                new Vector2D(-settings.customerWidth() * 2., -2),
-                new Vector2D(settings.customerWidth() * 2, getSize().y + 2),
+                new Vector2D(-settings.customerWidth() , -2),
+                new Vector2D(settings.customerWidth()  , getSize().y + 2),
                 settings
         ));
         add(new FloorHidingCornerWall(
                 new Vector2D(getSize().x, -2),
-                new Vector2D(settings.customerWidth() * 2, getSize().y + 2),
+                new Vector2D(settings.customerWidth() , getSize().y + 2),
                 settings
         ));
     }
+
+    boolean hidingWallWasAdded = false;
 
     public void updateElevatorBorders(List<DrawableElevator> elevators) {
         // borders are deleted automatically
@@ -75,6 +78,10 @@ public class DrawableFloorStructure extends DrawableRemoteCreature implements Tr
                             elevatorWithoutBorder.getSize(), elevatorWithoutBorder, getSettings()));
                 }
         );
+        if (!hidingWallWasAdded) {
+            add(new UnderElevatorHidingWall(elevators.get(0).getSize(), getSize(), getSettings()));
+            hidingWallWasAdded = true;
+        }
     }
 
     @Override

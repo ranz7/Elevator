@@ -3,7 +3,6 @@ package tools;
 import controller.Tickable;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 public class Timer implements Tickable {
     private double currentTimeInMillisec;
     private double startTimeInMillisec;
@@ -11,7 +10,9 @@ public class Timer implements Tickable {
     public Timer(double startTimerTime) {
         restart(startTimerTime);
     }
-
+    public Timer(){
+        restart();
+    }
     @Override
     public void tick(double deltaTime) {
         currentTimeInMillisec -= deltaTime;

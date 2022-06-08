@@ -9,12 +9,15 @@ public class LocalCreaturesSettings {
     private final CustomerConfig customerConfig = new CustomerConfig();
     private final ElevatorSystemConfig elevatorSystemConfig = new ElevatorSystemConfig();
     private final Random random = new Random();
+
     public Vector2D elevatorSize() {
         return elevatorSystemConfig.elevatorSize;
     }
 
     public Vector2D customerSize() {
-        return customerConfig.customerSize;
+        return customerConfig.customerSize.multiply(
+                new Vector2D(new Random().nextDouble() / 1.25 + 0.2,
+                new Random().nextDouble() / 1.5 + 0.5));
     }
 
     public long elevatorOpenCloseTime() {
@@ -33,10 +36,6 @@ public class LocalCreaturesSettings {
         return elevatorSystemConfig.buttonRelativePosition;
     }
 
-    public long picturesGeneratorSeed() {
-        return elevatorSystemConfig.picturesGeneratorSeed;
-    }
-
     public long maxCustomers() {
         return customerConfig.maxCustomers;
     }
@@ -45,6 +44,7 @@ public class LocalCreaturesSettings {
     public Vector2D floorSize() {
         return elevatorSystemConfig.floorSize;
     }
+
     // NOT SAVE
     public double distanceBetweenElevators() {
         return (floorSize().x) / (elevatorsCount() + 1);
@@ -98,10 +98,14 @@ public class LocalCreaturesSettings {
     }
 
     public Double slowSpeedCustomerMultiply() {
-        return null;
+        return customerConfig.slowSpeedMultiply;
     }
 
     public long maxHumanCapacity() {
         return elevatorSystemConfig.elevatorMaxHumanCapacity;
+    }
+
+    public Double fastSpeedCustomerMultiply() {
+        return customerConfig.fastSpeedMultiply;
     }
 }

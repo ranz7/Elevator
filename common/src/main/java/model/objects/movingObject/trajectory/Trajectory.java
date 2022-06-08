@@ -44,6 +44,9 @@ public class Trajectory {
     public static Trajectory StayInPlaceWithSpeedSupplier(Supplier<Double> speedFunction) {
         return new Trajectory().add(MoveFunction.Constant()).add(SpeedFunction.WithConstantSpeed(speedFunction));
     }
+    public static Trajectory WithOldSpeedToTheDestination(Vector2D destination) {
+        return new Trajectory().add(MoveFunction.GetToDestination(()->destination));
+    }
 
     public Vector2D tickAndGet(double deltaTime, Vector2D startPosition) {
         if (!initialized()) {

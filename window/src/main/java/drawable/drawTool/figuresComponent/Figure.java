@@ -7,8 +7,12 @@ import tools.Vector2D;
 
 import java.awt.*;
 
-@AllArgsConstructor
 public abstract class Figure extends DrawTool {
+    public Figure(Color mainColor, Vector2D positionProportion, Vector2D sizeProportion) {
+        super(positionProportion, sizeProportion);
+        this.mainColor = mainColor;
+    }
+
     @Override
     public void setColor(Color color) {
         mainColor = color;
@@ -23,19 +27,4 @@ public abstract class Figure extends DrawTool {
 
     private Color mainColor;
 
-    protected Pair<Vector2D, Vector2D> afterProportionApply(
-            Vector2D drawPositionbeforeProportion,
-            Vector2D drawSizeBeforeProportion) {
-        var differenceVector =
-                drawSizeBeforeProportion.sub(drawSizeBeforeProportion.multiply(sizeProportion))
-                        .multiply(positionProportion);
-
-        return new Pair<>(
-                drawPositionbeforeProportion.add(differenceVector),
-                drawSizeBeforeProportion.multiply(sizeProportion));
-    }
-
-    Vector2D positionProportion; // FROM 0 to 100 - to jest proporcja
-
-    Vector2D sizeProportion; // FROM 0 to 100  - to jest proporcja
 }

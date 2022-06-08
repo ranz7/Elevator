@@ -8,10 +8,10 @@ import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 public class UnderElevatorHidingWall extends DrawableCreature {
-    public UnderElevatorHidingWall( LocalDrawSetting settings) {
-//        super(  new Vector2D(0,settings.elevatorSize().y),
-//                new Vector2D(settings.buildingSize().x , (settings.floorHeight() - settings.elevatorSize().y)),
-                super(new Vector2D(0,0),new Vector2D(200,10),new Rectangle(settings.floorWallColor()),
+    public UnderElevatorHidingWall(Vector2D elevatorSize,Vector2D floorSize,LocalDrawSetting settings) {
+        super(new Vector2D(0, elevatorSize.y),
+                new Vector2D(floorSize.x, (floorSize.y - elevatorSize.y)),
+                new Rectangle(settings.floorWallColor()),
                 settings);
     }
 

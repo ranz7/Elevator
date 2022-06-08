@@ -1,6 +1,7 @@
 package drawable.concretes.game.elevator;
 
 import drawable.abstracts.Drawable;
+import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.floor.DrawableFloorStructure;
 import lombok.Setter;
 import model.DatabaseOf;
@@ -17,21 +18,21 @@ import lombok.Getter;
 import java.util.Random;
 
 @Getter
-public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable>, FloorGetter{
+public class DrawableElevator extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable>, FloorGetter {
     @Setter
     @Getter
     private Transport<Drawable> transport;
     @Getter
-    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ElevatorDoor.class);
+    private final DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ElevatorDoor.class, DrawableCustomer.class);
 
     private final ElevatorDoor leftDoor;
     private final ElevatorDoor rightDoor;
 
 
-    public DrawableElevator(DrawableCreatureData creatureData,double OpenCloseTime, LocalDrawSetting settings) {
-        super(creatureData,new Rectangle(settings.elevatorBackGroundColor()), settings);
+    public DrawableElevator(DrawableCreatureData creatureData, double OpenCloseTime, LocalDrawSetting settings) {
+        super(creatureData, new Rectangle(settings.elevatorBackGroundColor()), settings);
         leftDoor = new ElevatorDoor(
-                new Vector2D(0, 0), this.getSize(),
+                new Vector2D(-this.getSize().x / 2, 0), this.getSize(),
                 true, settings, OpenCloseTime);
         rightDoor = new ElevatorDoor(
                 new Vector2D(this.getSize().x / 2, 0), this.getSize(),
@@ -53,8 +54,8 @@ public class DrawableElevator extends DrawableRemoteCreature implements Transpor
 
     public void changeDoorsState(boolean state) {
         int type = new Random().nextInt(5);
-        leftDoor.changeDoorState(state,type);
-        rightDoor.changeDoorState(state,type);
+        leftDoor.changeDoorState(state, type);
+        rightDoor.changeDoorState(state, type);
     }
 
     public int getCurrentFloorNum() {

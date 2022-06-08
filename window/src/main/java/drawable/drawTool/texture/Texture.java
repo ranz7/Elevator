@@ -1,6 +1,7 @@
 package drawable.drawTool.texture;
 
 import drawable.drawTool.DrawTool;
+import lombok.Getter;
 import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;
 import tools.Vector2D;
@@ -10,9 +11,11 @@ import java.awt.*;
 import java.util.Random;
 
 public class Texture extends DrawTool {
+    @Getter
     private final GameResource gameResource;
 
     public Texture(String textureFolderName, String textureGameSourceName) {
+        super(new Vector2D(0.5,0.5), new Vector2D(1,1));
         gameResource = ResourceLoader.getGameResource(textureFolderName, textureGameSourceName);
     }
 
@@ -31,14 +34,14 @@ public class Texture extends DrawTool {
     }
 
     @Override
-    protected Color getMainColor() {
+    public Color getMainColor() {
         return null;
     }
 
     @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
-        // TODO make stretch of the image with size , for example size 50  50 mieans that image is smaller 2 times
-        drawer.drawImage(gameResource.getResourceImage(),position, gameResource.getSize());
+        var tmp = afterProportionApply(position, size);
+        drawer.drawImage(gameResource.getResourceImage(), tmp.getFirst().sub(gameResource.getSize().divideByX(2)), gameResource.getSize());
     }
 
     @Override

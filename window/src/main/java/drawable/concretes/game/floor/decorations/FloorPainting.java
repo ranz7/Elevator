@@ -14,7 +14,7 @@ public class FloorPainting extends DrawableRemoteCreature {
 
     @Override
     public int getDrawPriority() {
-        return 9;
+        return 2;
     }
 
     @Override

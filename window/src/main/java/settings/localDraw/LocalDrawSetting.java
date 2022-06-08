@@ -94,4 +94,12 @@ public class LocalDrawSetting implements DataBase {
     public Vector2D portalSize() {
         return drawConfig.portalSize;
     }
+
+    public Color portalColor() {
+        return colorConfig.portalColor;
+    }
+
+    public Color blackSpacesColor() {
+        return colorConfig.blackSpacesColor;
+    }
 }

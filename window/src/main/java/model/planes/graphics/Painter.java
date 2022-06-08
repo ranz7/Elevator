@@ -2,6 +2,7 @@ package model.planes.graphics;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ public class Painter {
     // The ratio of game coordinates to real
     @Getter
     private final Scaler scaler;
+    private final LocalDrawSetting settings;
     protected Graphics2D graphics2D;
 
     public void setColor(Color red) {
@@ -57,7 +59,7 @@ public class Painter {
     }
 
     public void drawText(String text, Vector2D position, Vector2D size, Color color) {
-         int fontSize = (int) scaler.getFromGameToRealLength(size.y);
+        int fontSize = (int) scaler.getFromGameToRealLength(size.y);
         setColor(color);
         var font = new Font("TimesRoman", Font.PLAIN, fontSize);
         graphics2D.setFont(font);
@@ -119,20 +121,29 @@ public class Painter {
         Vector2D gameSize = scaler.getGameSize();
         var rightTop = scaler.getFromGameToRealCoordinate(new Vector2D(gameSize.x, 0), 0);
         var rightBottom = scaler.getFromGameToRealCoordinate(new Vector2D(gameSize.x, gameSize.y), 0);
-
-/*
-        graphics2D.setColor(new Color(255, 184, 0));
+        var col = new Color(
+                settings.blackSpacesColor().getRed(),
+                settings.blackSpacesColor().getGreen(),
+                settings.blackSpacesColor().getBlue(),
+                (int) (255 * blackSpacesCoefficient)
+        );
+        graphics2D.setColor(col);
         graphics2D.fillRect(0, 0, (int) rightBottom.x, (int) rightBottom.y);
-        graphics2D.setColor(new Color(0, 87, 255));
-        graphics2D.fillRect(0, (int) rightTop.y, (int) rightBottom.x+(int) (scaler.getScreenSize().x - rightTop.x), (int) rightBottom.y);
+        graphics2D.fillRect(0, (int) rightTop.y, (int) rightBottom.x + (int) (scaler.getScreenSize().x - rightTop.x), (int) rightBottom.y);
 
-        graphics2D.setColor(new Color(255, 0, 203));
         graphics2D.fillRect(0, 0, (int) leftTop.x, (int) leftTop.y);
-        graphics2D.setColor(new Color(137, 255, 244));
-        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().x - rightTop.x), (int) leftTop.y);*/
+        graphics2D.fillRect((int) rightTop.x, 0, (int) (scaler.getScreenSize().x - rightTop.x), (int) leftTop.y);
+
+
     }
 
     public Graphics getPureGraphics() {
         return graphics2D;
+    }
+
+    double blackSpacesCoefficient = 1;
+
+    public void setBlackSpaces(double i) {
+        blackSpacesCoefficient = i;
     }
 }

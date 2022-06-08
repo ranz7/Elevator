@@ -6,7 +6,7 @@ import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
 import model.Transportable;
-import model.objects.CreatureInterface;
+import model.objects.GameMap;
 import model.objects.customer.StandartCustomer.StandartCustomer;
 import settings.LocalCreaturesSettings;
 import model.objects.Creature;
@@ -20,7 +20,7 @@ import java.util.Random;
 public class FloorStructure extends Creature implements Transport<Creature>, Transportable<Creature> {
     @Getter
     private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this,
-            FloorStructure.class, Elevator.class, Painting.class, ElevatorButton.class
+            FloorStructure.class, Elevator.class, Painting.class, ElevatorButton.class,StandartCustomer.class
     );
 
     @Getter
@@ -50,14 +50,14 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         return floorStructureBot == null;
     }
 
-    public void addFloor() {
+    public void addFloor(ElevatorsController elevatorsController) {
         if (floorStructureTop != null) {
-            floorStructureTop.addFloor();
+            floorStructureTop.addFloor(elevatorsController);
             return;
         }
         floorStructureTop = new FloorStructure(settings.floorSize().withX(0), settings, this);
         floorStructureTop.fillWithPaintings();
-        floorStructureTop.fillWithButtons();
+        floorStructureTop.fillWithButtons(elevatorsController);
 
         add(floorStructureTop);
     }
@@ -73,9 +73,9 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     public double getStartPositionAfterBuilding() {
         boolean spawnInLeftCorner = new Random().nextBoolean();
         if (spawnInLeftCorner) {
-            return 0;
+            return 0 - settings.customerSize().x;
         }
-        return getSize().x;
+        return getSize().x+settings.customerSize().x;
     }
 
     public ElevatorButton getClosestButtonOnFloor(Vector2D position) {
@@ -136,26 +136,27 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         List<Double> list = new LinkedList<>();
         double distanceBetweenElevators = settings.distanceBetweenElevators();
         for (int j = 0; j < settings.elevatorsCount(); j++) {
-            list.add(distanceBetweenElevators * j + distanceBetweenElevators / 2);
+            list.add(distanceBetweenElevators * j + distanceBetweenElevators );
         }
         return list;
     }
 
-    public void fillWithElevators(ElevatorsController elevatorController) {
+    public void fillWithElevators(ElevatorsController elevatorController, GameMap gameMap) {
         getDefaultPositionOfElevators().forEach(position -> {
-            add(new Elevator(position, elevatorController, settings));
+            add(new Elevator(position, elevatorController,gameMap, settings));
         });
     }
 
     public void fillWithPaintings() {
+        double distanceBetweenElevators = settings.distanceBetweenElevators();
         getDefaultPositionOfElevators().forEach(position -> {
-            add(new Painting(new Vector2D(position, getSize().y / 2), random.nextInt()));
+            add(new Painting(new Vector2D(position- distanceBetweenElevators/2, settings.elevatorSize().y), random.nextInt()));
         });
     }
 
-    public void fillWithButtons() {
+    public void fillWithButtons(ElevatorsController elevatorController) {
         getDefaultPositionOfElevators().forEach(position -> {
-            add(new ElevatorButton(position, settings));
+            add(new ElevatorButton(position,elevatorController, settings));
         });
     }
 
@@ -163,6 +164,7 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     public void add(Creature creature) {
         localDataBase.addCreature(creature);
     }
+
 }
 
 

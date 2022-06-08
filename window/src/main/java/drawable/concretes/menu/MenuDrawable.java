@@ -19,7 +19,6 @@ import tools.Vector2D;
 
 import java.awt.*;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class MenuDrawable extends DrawableCreature implements Transport<Drawable> {
     @Getter
@@ -198,4 +197,13 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
         setSize(getSize().multiply(0.8));
     }
 
+
+    public void portalWasOpened() {
+        localDataBase.streamTrio().forEach(trio -> trio.getThird().setVisible(false));
+    }
+
+
+    public void portalWasClosed() {
+        localDataBase.streamTrio().forEach(trio -> trio.getThird().setVisible(true));
+    }
 }

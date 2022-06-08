@@ -11,13 +11,16 @@ import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 
-
 public class GamePlane extends Plane {
     @Getter
     private final GameMap gameMap;
 
     public GamePlane(LocalDrawSetting localDrawSettings, GameMap gameMap) {
-        super(localDrawSettings, new Painter(new Scaler(new Vector2D(localDrawSettings.customerWidth() , localDrawSettings.customerWidth()), 0.2)));
+        super(localDrawSettings, new Painter(
+                new Scaler(
+                        new Vector2D(localDrawSettings.customerWidth() * 1.5,
+                                localDrawSettings.customerWidth() * 1.5), 1.),
+                gameMap.getSettings()));
         this.gameMap = gameMap;
     }
 
@@ -37,13 +40,7 @@ public class GamePlane extends Plane {
     public void leftMouseClicked(Vector2D point) {
         var pointInGame = getScaler().getFromRealToGameCoordinate(point, 0);
         gameMap.add(FlyingText.FlyingTextUpFast("Click", pointInGame));
-        var button = gameMap.getNearestButton(pointInGame);
-        if (button == null) {
-            return;
-        }
-        if (button.getPosition().distance(pointInGame) < 20) {
-            button.buttonClick();
-        }
+
     }
 
     @Override
