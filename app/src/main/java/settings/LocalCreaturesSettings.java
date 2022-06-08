@@ -15,7 +15,9 @@ public class LocalCreaturesSettings {
     }
 
     public Vector2D customerSize() {
-        return customerConfig.customerSize;
+        return customerConfig.customerSize.multiply(
+                new Vector2D(new Random().nextDouble() / 1.25 + 0.2,
+                new Random().nextDouble() / 1.5 + 0.5));
     }
 
     public long elevatorOpenCloseTime() {

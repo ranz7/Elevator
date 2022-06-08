@@ -65,7 +65,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         if (button == null) {
             return;
         }
-        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().setY(0)));
+        setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().withY(0)));
         if (isReachedDestination()) {
             button.click(wantsGoUp());
             mainTimer.restart(settings.customerWaitAfterClick());
@@ -79,6 +79,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         if (nearestOpenedElevatorOnFloor != null) {
             setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(
                     nearestOpenedElevatorOnFloor::getPosition));
+            setSpeedCoefficient(settings.fastSpeedCustomerMultiply());
             setState(StandartCustomerState.getIn);
             return;
         }
@@ -106,8 +107,8 @@ public class StandartCustomer extends MovingCreature implements Transportable {
             var makeSpaceInElevator = closestOpenedElevator.getSize().x / 2;
             var newDestination = new Vector2D(
                     new Random().nextDouble(
-                            -makeSpaceInElevator,
-                            makeSpaceInElevator - getSize().x), 0);
+                            -makeSpaceInElevator + getSize().x/2,
+                            makeSpaceInElevator - getSize().x/2), 0);
 
             closestOpenedElevator.addFloorToThrowOut(floorToGetOut.getCurrentFloorNum());
             var shiftToMakeSpaceInElevator = getPosition().add(newDestination);
@@ -132,13 +133,13 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         if (!isReachedDestination()) {
             return;
         }
-        if (getPosition().x > ((FloorStructure) transport).getSize().x + getSize().x || getPosition().x < -getSize().x) {
+        if (getPosition().x > ((FloorStructure) transport).getSize().x || getPosition().x < -0) {
             setDead(true);
             return;
         }
         setMoveTrajectory(
                 Trajectory.WithOldSpeedToTheDestination(
-                        () -> new Vector2D(((FloorStructure) transport).getStartPositionAfterBuilding(), 0)
+                        new Vector2D(((FloorStructure) transport).getStartPositionAfterBuilding(), 0)
                 ));
     }
 

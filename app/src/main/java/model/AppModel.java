@@ -29,8 +29,8 @@ public class AppModel implements Tickable {
 
     @Override
     public void tick(double deltaTime) {
-        new TickableList(gameMaps).tick(deltaTime);
         gameMaps.removeIf(Creature::isDead);
+        new TickableList(gameMaps).tick(deltaTime);
     }
 
 

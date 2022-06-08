@@ -1,11 +1,13 @@
 package drawable.concretes.menu;
 
+import drawable.RainbowColor;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
 import drawable.buttons.CircleWithTextInside;
 import drawable.buttons.ClickableButton;
 import drawable.drawTool.figuresComponent.Rectangle;
+import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import lombok.Getter;
 import lombok.Setter;
 import model.DatabaseOf;
@@ -15,9 +17,11 @@ import model.Transportable;
 import model.planes.GamePlane;
 import model.planes.graphics.Painter;
 import settings.localDraw.LocalDrawSetting;
+import tools.MathFunctions;
 import tools.Vector2D;
 
 import java.awt.*;
+import java.util.function.Function;
 
 public class Portal extends DrawableCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Getter
@@ -33,38 +37,42 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
     ClickableButton exitButton;
 
     public Portal(double positionX, LocalDrawSetting settings) {
-        super(new Vector2D(positionX, 0), settings.portalSize(), new Rectangle(new Color(0, 139, 203)), settings);
-        sizeSave = getSize();
-        positionSave = getPosition();
+        super(new Vector2D(positionX, 0), settings.portalSize(),
+                new RectangleWithBorder(
+                        settings.portalColor(),
+                        new Color(255, 201, 0),
+                        1), settings);
+        originalSize = getSize();
+        originalPosition = getPosition();
+
+        rainbow = new RainbowColor(getTool().getMainColor());
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(5), settings, "^"), () -> {
         }));
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)), settings, "+"),
-                () -> {
-                    System.out.println("GEG");
-                    changeZoom();
-                }));
+                this::changeZoom));
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(-5), settings, "v"),
                 () -> {
                 }));
         exitButton = new ClickableButton(
                 new CircleWithTextInside(new Vector2D(15, 15), settings, "x"),
-                () -> {
-                    System.out.println("KEK");
-                    changeZoom();
-                });
+                this::changeZoom);
         add(exitButton);
         exitButton.setVisible(false);
         openPortal(0);
     }
 
+    @Getter
+
     boolean startOfZoom = false;
+    Function<Double, Double> expo = MathFunctions.randomFunction();
 
     private void changeZoom() {
         startOfZoom = !startOfZoom;
-        changeCoef = 1;
+         expo = MathFunctions.randomFunction();
+
         if (!startOfZoom) {
             ((MenuDrawable) transport).portalWasClosed();
         }
@@ -75,39 +83,45 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
         // model will check and create portal for us
     }
 
-    private Vector2D sizeSave;
-    private Vector2D positionSave;
-    private double changeCoef = 0;
+    private Vector2D originalSize;
+    private Vector2D originalPosition;
 
+
+    private double changeCoef = 1;
+
+    @Getter
+    private double exponentionalCoef = 1;
+    private RainbowColor rainbow;
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
-        if (startOfZoom) {
-            setSize(Vector2D.getBetween(sizeSave, new Vector2D(gameDrawer.getScaler().getGameSize()), changeCoef));
-            setPosition(Vector2D.getBetween(positionSave, new Vector2D(0, 0), changeCoef));
-        }
+        exponentionalCoef = expo.apply(changeCoef);
+        setSize(Vector2D.getBetween(originalSize, new Vector2D(gameDrawer.getScaler().getGameSize()), exponentionalCoef));
+        setPosition(Vector2D.getBetween(originalPosition, new Vector2D(0, 0), changeCoef));
 //        getTool().setColor(getTool().getMainColor().);
         super.draw(realDrawPosition, gameDrawer);
         if (startOfZoom) {
-            changeCoef = changeCoef - changeCoef / 50;
-            if (changeCoef < 0.0001 && changeCoef > 0) {
+            changeCoef = Math.max(0, changeCoef - 0.005);
+            if (changeCoef < 0.010 && changeCoef > 0) {
                 ((MenuDrawable) transport).portalWasOpened();
                 setVisible(true);
                 changeCoef = 0;
             }
-            setSize(Vector2D.getBetween(sizeSave, new Vector2D(
-                    gameDrawer.getScaler().getFromRealToGameLength(
-                            gameDrawer.getScaler().getScreenSize().getX()),
-                    gameDrawer.getScaler().getFromRealToGameLength(
-                            gameDrawer.getScaler().getScreenSize().getY())), changeCoef));
-            setPosition(Vector2D.getBetween(positionSave,
-                    gameDrawer.getScaler()
-                            .getFromRealToGameCoordinate(new Vector2D(0, 0)
-                                    , sizeSave.y), changeCoef));
 
         } else {
-            setPosition(positionSave);
-            setSize(sizeSave);
+            changeCoef = Math.min(1, changeCoef + 0.005);
         }
+
+        setSize(Vector2D.getBetween(originalSize, new Vector2D(
+                gameDrawer.getScaler().getFromRealToGameLength(
+                        gameDrawer.getScaler().getScreenSize().getX()),
+                gameDrawer.getScaler().getFromRealToGameLength(
+                        gameDrawer.getScaler().getScreenSize().getY())), exponentionalCoef));
+        setPosition(Vector2D.getBetween(originalPosition,
+                gameDrawer.getScaler()
+                        .getFromRealToGameCoordinate(new Vector2D(0, 0)
+                                , originalSize.y), exponentionalCoef));
+
+
         if (gamePlane != null) {
             Vector2D sizeOfGame = new Vector2D(
                     gameDrawer.getScaler().getFromGameToRealLength(getSize().getX()),
@@ -120,15 +134,15 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
                     .updateSizes(sizeOfGame, sizeOfBuilding);
             var startDrawOfSubPlane = getRealDrawPosition();
             var positionOfScaler = gameDrawer.getScaler().getFromGameToRealCoordinate(
-                    startDrawOfSubPlane, sizeSave.y
+                    startDrawOfSubPlane, originalSize.y
             );
-            if (startOfZoom) {
-                positionOfScaler = Vector2D.getBetween(positionOfScaler, new Vector2D(0, 0), changeCoef);
-            }
+            positionOfScaler = Vector2D.getBetween(positionOfScaler, new Vector2D(0, 0), changeCoef);
+
             gameDrawer.getPureGraphics().translate(
                     (int) positionOfScaler.getX(),
                     (int) positionOfScaler.getY()
             );
+            gamePlane.getPainter().setBlackSpaces(1-changeCoef);
             gamePlane.draw(gameDrawer.getPureGraphics());
             gamePlane.getPainter().getPureGraphics().translate(
                     -(int) positionOfScaler.getX(),
@@ -162,10 +176,13 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
         if (gamePlane != null) {
             gamePlane.tick(deltaTime);
         }
+        getTool().setColor( rainbow.next());
+
     }
 
     public void setGameMap(GameMap gameMap) {
         if (gamePlane == null) {
+
             gamePlane = new GamePlane(getSettings(), gameMap);
             return;
         }

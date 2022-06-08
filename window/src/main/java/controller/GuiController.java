@@ -11,6 +11,7 @@ import protocol.MessageApplier;
 import protocol.special.SubscribeRequest;
 import settings.configs.GuiControllerConfig;
 import model.*;
+import tools.Vector2D;
 import view.gui.Gui;
 import model.planes.Plane;
 
@@ -31,13 +32,16 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         ScenarioBuilder connectedScenario = new ScenarioBuilder()
                 .add(ReciveFilters.catchOnlyHello())
                 .add(ReciveFilters.catchOnlyUpdate());
+        windowModel.getMenuPlane().changeDoorsState(true);
         gates.setOnGatesLostSocketEvent((ignored) -> {
-//            windowModel.getMenuPlane().changeDoorsState(false);
+            windowModel.getMenuPlane().changeDoorsState(true);
+            windowModel.streamOfGameMaps().forEach(gameMap -> gameMap.setDead(true));
             gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
             gates.connect();
         });
         gates.setOnConnectEvent(() -> {
-//            windowModel.getMenuPlane().changeDoorsState(false);
+            windowModel.getMenuPlane().changeDoorsState(false);
+
         });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
@@ -58,14 +62,15 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         switch (protocol) {
             case HELLO_MESSAGE -> {
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
+                updateSubscribes();
             }
             case UPDATE_DATA -> {
-                windowModel.updateMap(message.getRoomId(),(GameMapCompactData) data);
+                windowModel.updateMap(message.getRoomId(), (GameMapCompactData) data);
             }
-            case ELEVATOR_OPEN -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(false);
-            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(true);
-            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).get().getCustomer((int) data).changeBehindElevator();
- //           case ELEVATOR_BUTTON_CLICK -> windowModel.getMap(roomId).leftMouseClicked((Vector2D) data);
+            case ELEVATOR_OPEN -> windowModel.getMap(roomId).ifPresent(map->map.getElevator((int) data).changeDoorsState(false));
+            case ELEVATOR_CLOSE -> windowModel.getMap(roomId).ifPresent(map->map.getElevator((int) data).changeDoorsState(true));
+            case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).ifPresent(map->map.getCustomer((int) data).changeBehindElevator());
+            case ELEVATOR_BUTTON_CLICK -> windowModel.getMap(roomId).ifPresent(gameMap -> gameMap.getButton((int)(data)).buttonClick());
         }
         return true;
     }

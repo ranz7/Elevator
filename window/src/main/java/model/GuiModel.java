@@ -8,6 +8,7 @@ import controller.Tickable;
 import controller.TickableList;
 import drawable.concretes.menu.Portal;
 import lombok.Getter;
+import model.objects.Creature;
 import model.packageLoader.DrawableCreatureData;
 import model.packageLoader.PackageLoader;
 import model.planes.MenuPlane;
@@ -40,6 +41,7 @@ public class GuiModel implements Tickable {
 
     @Override
     public void tick(double deltaTime) {
+        gameMaps.removeIf(Creature::isDead);
         menuPlane.tick(deltaTime);
         new TickableList(gameMaps).tick(deltaTime);
         updatePortals();
@@ -47,12 +49,14 @@ public class GuiModel implements Tickable {
 
 
     private void updatePortals() {
+        gameMaps.forEach(map->map.setDead(true));
         // give map for portal
         streamOfGameMaps().forEach(
                 gameMap -> getMenuPlane().streamOfPortals().forEach(
                         portal -> {
                             if (portal.getRoomId() == gameMap.getRoomRemoteSettings().roomId()) {
                                 portal.setGameMap(gameMap);
+                                gameMap.setDead(false);
                             }
                             if (portal.getRoomId() == -1) {
                                 portal.setGameMap(null);
@@ -105,4 +109,5 @@ public class GuiModel implements Tickable {
         var gamePlanesUsedInPortals = getMenuPlane().getUsedGamePlanesInPortals();
         return new SubscribeRequest(gamePlanesUsedInPortals.stream().distinct().collect(Collectors.toList()));
     }
+
 }

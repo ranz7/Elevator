@@ -17,7 +17,7 @@ public class ElevatorBlackSpace extends DrawableCreature {
 
     @Override
     public DrawCenter getDrawCenter() {
-        return DrawCenter.bottomLeft;
+        return DrawCenter.bottomCenter;
     }
 
     @Override

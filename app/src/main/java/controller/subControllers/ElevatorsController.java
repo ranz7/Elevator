@@ -2,6 +2,7 @@ package controller.subControllers;
 
 import lombok.RequiredArgsConstructor;
 import model.objects.GameMap;
+import model.objects.floor.ElevatorButton;
 import model.objects.floor.FloorStructure;
 import model.objects.elevator.ElevatorRequest;
 import model.objects.elevator.Elevator;
@@ -31,9 +32,9 @@ public class ElevatorsController implements Tickable {
         pendingElevatorRequests.removeIf(this::tryToCallElevator);
     }
 
-    public void buttonClick(Integer floorNum, Vector2D buttonPosition, boolean goUp) {
-        gameMap.send(Protocol.ELEVATOR_BUTTON_CLICK, buttonPosition);
-        var request = new ElevatorRequest(floorNum, buttonPosition, goUp);
+    public void buttonClick(Integer floorNum, ElevatorButton button, boolean goUp) {
+        gameMap.send(Protocol.ELEVATOR_BUTTON_CLICK, button.getId());
+        var request = new ElevatorRequest(floorNum, button.getPosition(), goUp);
         pendingElevatorRequests.add(request);
     }
 

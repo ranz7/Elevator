@@ -50,13 +50,6 @@ public class CustomersController implements Tickable {
 
     public void CreateCustomer(FloorStructure startFloor, FloorStructure endFloor) {
         double startPosition = startFloor.getStartPositionAfterBuilding();
-        // So u can't see customer when he spawns
-        if (startPosition == 0) {
-            startPosition -= gameMap.getLocalCreaturesSettings().customerMaxSize() * 2;
-        } else {
-            startPosition += gameMap.getLocalCreaturesSettings().customerMaxSize() * 2;
-        }
-
         var customer = new StandartCustomer(endFloor, startPosition, this, gameMap.getLocalCreaturesSettings());
         startFloor.addCustomer(customer);
     }

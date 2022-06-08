@@ -1,6 +1,5 @@
 package drawable.concretes.game.floor;
 
-import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableCreature;
 import drawable.drawTool.figuresComponent.Rectangle;

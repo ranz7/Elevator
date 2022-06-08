@@ -17,18 +17,22 @@ public class ElevatorButton extends Creature implements Transportable {
     LocalCreaturesSettings settings;
 
     public ElevatorButton(Double position, ElevatorsController elevatorController, LocalCreaturesSettings settings) {
-        super(new Vector2D(position, settings.elevatorSize().y / 2).add(settings.buttonRelativePosition()),
+        super(new Vector2D(position, settings.elevatorSize().y / 4).add(settings.buttonRelativePosition()),
                 settings.buttonSize());
         this.elevatorController = elevatorController;
         this.settings = settings;
     }
 
-    public void click(boolean wantsGoUp) {
+    @Override
+    public void tick(double deltaTime) {
+        super.tick(deltaTime);
+    }
 
+    public void click(boolean wantsGoUp) {
         elevatorController.buttonClick(
                 ((FloorStructure) transport).getCurrentFloorNum(),
-                getPosition(), wantsGoUp);
-
+                this,
+                wantsGoUp);
     }
 
 }

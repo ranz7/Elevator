@@ -6,7 +6,6 @@ import lombok.Setter;
 import model.DatabaseOf;
 import model.Transport;
 import model.Transportable;
-import model.objects.CreatureInterface;
 import model.objects.GameMap;
 import model.objects.customer.StandartCustomer.StandartCustomer;
 import settings.LocalCreaturesSettings;
@@ -74,9 +73,9 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     public double getStartPositionAfterBuilding() {
         boolean spawnInLeftCorner = new Random().nextBoolean();
         if (spawnInLeftCorner) {
-            return 0;
+            return 0 - settings.customerSize().x;
         }
-        return getSize().x;
+        return getSize().x+settings.customerSize().x;
     }
 
     public ElevatorButton getClosestButtonOnFloor(Vector2D position) {
@@ -137,7 +136,7 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         List<Double> list = new LinkedList<>();
         double distanceBetweenElevators = settings.distanceBetweenElevators();
         for (int j = 0; j < settings.elevatorsCount(); j++) {
-            list.add(distanceBetweenElevators * j + distanceBetweenElevators / 2);
+            list.add(distanceBetweenElevators * j + distanceBetweenElevators );
         }
         return list;
     }
@@ -149,8 +148,9 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     }
 
     public void fillWithPaintings() {
+        double distanceBetweenElevators = settings.distanceBetweenElevators();
         getDefaultPositionOfElevators().forEach(position -> {
-            add(new Painting(new Vector2D(position, getSize().y / 2), random.nextInt()));
+            add(new Painting(new Vector2D(position- distanceBetweenElevators/2, settings.elevatorSize().y), random.nextInt()));
         });
     }
 

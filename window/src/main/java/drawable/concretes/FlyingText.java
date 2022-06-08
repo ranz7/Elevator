@@ -23,14 +23,21 @@ public class FlyingText extends DrawableMovingCreature {
                 7, new Color(220, 160, 10));
     }
 
-    public FlyingText(String text, Vector2D position, Trajectory trajecotry, int colorSize, Color color) { // uups :)
-        super( position, new Vector2D(100, colorSize), trajecotry, new Text(text, color), null);
+    public FlyingText(String text, Vector2D position, Trajectory trajecotry, int colorSize, Color color) {
+        super(position, new Vector2D(100, colorSize), trajecotry, new Text(text, color), null);
     }
 
+    @Override
+    public void tick(double delta_time) {
+        super.tick(delta_time);
+        if (isReachedDestination()) {
+            setDead(true);
+        }
+    }
 
     @Override
     public DrawCenter getDrawCenter() {
-        return DrawCenter.bottomLeft;
+        return DrawCenter.center;
     }
 
     @Override

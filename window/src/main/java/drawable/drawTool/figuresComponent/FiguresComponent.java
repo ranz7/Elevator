@@ -14,6 +14,7 @@ public class FiguresComponent extends DrawTool {
     List<Figure> figures = new LinkedList<>();
 
     public FiguresComponent(Figure... figures) {
+        super(new Vector2D(0.5, 0.5), new Vector2D(1, 1));
         Arrays.stream(figures).forEach(figure -> this.figures.add(figure));
     }
 
@@ -21,18 +22,20 @@ public class FiguresComponent extends DrawTool {
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
         figures.forEach(figure -> figure.draw(position, size, drawer));
     }
+
     @Override
-    public Color getMainColor(){
+    public Color getMainColor() {
         return null;
     }
+
     @Override
     public void setColor(Color color) {
-        figures.forEach(figure->figure.setColor(color));
+        figures.forEach(figure -> figure.setColor(color));
     }
 
     @Override
     public void setAdditionalLightColor(Color additionalLightColor) {
-        figures.forEach(figure->figure.setAdditionalLightColor(additionalLightColor));
+        figures.forEach(figure -> figure.setAdditionalLightColor(additionalLightColor));
     }
 
     @Override

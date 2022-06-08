@@ -39,7 +39,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     @Override
     public void tick(double deltaTime) {
         getLocalDataBase().tick(roomRemoteSettings.gameSpeed() * deltaTime);
-
+        updateBuildingSize();
         var elevators = getLocalDataBase().streamOf(DrawableElevator.class).toList();
         getLocalDataBase().streamOf(DrawableFloorStructure.class).forEach(
                 drawableFloorStructure ->
@@ -48,30 +48,41 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         getLocalDataBase().removeIf(CreatureInterface::isDead);
     }
 
+    Vector2D buildingSize = new Vector2D(0, 0);
+
+    private void updateBuildingSize() {
+        var randomFloor = localDataBase.streamOf(DrawableFloorStructure.class).findFirst().get();
+        var numberOfFloors = (double) localDataBase.countOf(DrawableFloorStructure.class);
+        this.buildingSize = new Vector2D(randomFloor.getSize()).multiplyY(numberOfFloors);
+    }
+
 
     public ElevatorButton getNearestButton(Vector2D data) {
-        return localDataBase.streamOf(ElevatorButton.class)
+        return (ElevatorButton) localDataBase.streamTrio().filter(
+                        creature -> creature.getThird() instanceof ElevatorButton
+                )
                 .reduce(null, (elevatorButtonA, elevatorButtonB) -> {
-                    if (elevatorButtonA == null) {
-                        return elevatorButtonB;
-                    }
                     if (elevatorButtonB == null) {
                         return elevatorButtonA;
                     }
-                    if (data.getNearest(elevatorButtonA.getPosition(), elevatorButtonB.getPosition())
-                            .equals(elevatorButtonA.getPosition())) {
+                    if (data.getNearest(elevatorButtonA.getSecond().add(elevatorButtonA.getThird().getPosition()),
+                                    elevatorButtonB.getSecond().add(elevatorButtonB.getThird().getPosition()))
+                            .equals(elevatorButtonA.getSecond().add(elevatorButtonA.getThird().getPosition()))) {
                         return elevatorButtonA;
                     }
                     return elevatorButtonB;
-                });
+                }).getThird();
     }
 
     public DrawableCustomer getCustomer(int id) {
         var ref = new Object() {
             DrawableCustomer customer = null;
         };
-        localDataBase.streamOf(DrawableCustomer.class).filter(elevator -> elevator.getId() == id)
-                .findFirst().ifPresentOrElse(customer -> ref.customer = customer, () -> {
+        localDataBase
+                .streamOf(DrawableCustomer.class)
+                .filter(elevator -> elevator.getId() == id)
+                .findFirst()
+                .ifPresentOrElse(customer -> ref.customer = customer, () -> {
                     throw new RuntimeException("Customer not fond.");
                 });
         return ref.customer;
@@ -81,7 +92,9 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         var ref = new Object() {
             DrawableElevator foundDrawableElevator;
         };
-        localDataBase.streamOf(DrawableElevator.class).filter(elevator -> elevator.getId() == id)
+        localDataBase
+                .streamOf(DrawableElevator.class)
+                .filter(elevator -> elevator.getId() == id)
                 .findFirst().ifPresentOrElse(drawableElevator -> ref.foundDrawableElevator = drawableElevator, () -> {
                     throw new RuntimeException("Elevator not found");
                 });
@@ -110,8 +123,21 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
     }
 
     public Vector2D getBuildingSize() {
-        var randomFloor = localDataBase.streamOf(DrawableFloorStructure.class).findFirst().get();
-        var numberOfFloors = (double) localDataBase.countOf(DrawableFloorStructure.class);
-        return new Vector2D(randomFloor.getSize()).multiplyY(numberOfFloors);
+        return buildingSize;
+    }
+
+    public ElevatorButton getButton(int data) {
+        var ref = new Object() {
+            ElevatorButton found;
+        };
+        localDataBase.streamOf(ElevatorButton.class)
+                .filter(button -> button.getId() == data)
+                .findFirst()
+                .ifPresentOrElse(
+                        drawableElevator -> ref.found = drawableElevator, () -> {
+                            throw new RuntimeException("Button not found");
+                        });
+        return ref.found;
+
     }
 }

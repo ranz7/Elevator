@@ -13,12 +13,13 @@ import java.io.Serializable;
 
  class CustomerConfig implements Serializable {
     public final long timeToWaitAfterButtonClick = 1000;
-    public final Vector2D customerSize = new Vector2D(30, 50);
-    public final double slowSpeedMultiply = 0.5;
+    public final Vector2D customerSize = new Vector2D(40, 75);
+    public final double slowSpeedMultiply = 0.7;
     public final double fastSpeedMultiply = 1.5;
+    public double customerSpeedCoefficient = 2.3;
+
     public final double customerSpeed = 140;
     public final long timeToWalk = 3000;
-    public final int maxCustomers = 1;
+    public final int maxCustomers = 5;
     public final long spawnRate = 500;
-   public double customerSpeedCoefficient = 3;
 }
