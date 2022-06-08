@@ -24,10 +24,9 @@ class ElevatorSystemConfig implements Serializable {
     public final int elevatorMaxHumanCapacity = 4;
     public final double elevatorSpeed = 150;
     public final int floorsCount = 6;
-    public long picturesGeneratorSeed = 1234;
     public Vector2D buttonSize = new Vector2D(5,5);
 
     @Getter
     @Setter
-    public int elevatorsCount = 5;
+    public int elevatorsCount = 1;
 }

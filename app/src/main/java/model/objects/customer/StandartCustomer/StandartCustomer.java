@@ -62,7 +62,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
     private void processGoToButton() {
         assertTransport(FloorStructure.class);
         var button = ((FloorStructure) transport).getClosestButtonOnFloor(getPosition());
-        if(button==null){
+        if (button == null) {
             return;
         }
         setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> button.getPosition().setY(0)));
@@ -96,7 +96,7 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         var closestOpenedElevator = ((FloorStructure) transport).getClosestOpenedElevatorOnFloor(getPosition());
         if (closestOpenedElevator == null) {
             setState(goToButton);
-            setMoveTrajectory(new Trajectory().WithNewConstSpeedToOldDestination(getSpeed()));
+            setSpeedCoefficient(settings.fastSpeedCustomerMultiply());
             return;
         }
 
@@ -111,9 +111,8 @@ public class StandartCustomer extends MovingCreature implements Transportable {
 
             closestOpenedElevator.addFloorToThrowOut(floorToGetOut.getCurrentFloorNum());
             var shiftToMakeSpaceInElevator = getPosition().add(newDestination);
-            setMoveTrajectory(Trajectory.ToTheDestination(
-                    getSpeed(),
-                    () -> shiftToMakeSpaceInElevator));
+            setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(() -> shiftToMakeSpaceInElevator));
+            setSpeedCoefficient(1.);
             setState(StandartCustomerState.stayIn);
         }
     }
@@ -122,13 +121,10 @@ public class StandartCustomer extends MovingCreature implements Transportable {
         Elevator elevator = (Elevator) transport;
         if (elevator.isOpened()) {
             if (elevator.getCurrentFloorNum() == floorToGetOut.getCurrentFloorNum()) {
-                setSpeedCoefficient(1.);
                 setMoveTrajectory(Trajectory.WithOldSpeedToTheDestination(elevator::getPosition));
                 controller.customerGetOutFromElevator(this, elevator);
                 setState(StandartCustomerState.getOut);
             }
-        } else {
-            setSpeedCoefficient(999.);
         }
     }
 

@@ -34,10 +34,6 @@ public class LocalCreaturesSettings {
         return elevatorSystemConfig.buttonRelativePosition;
     }
 
-    public long picturesGeneratorSeed() {
-        return elevatorSystemConfig.picturesGeneratorSeed;
-    }
-
     public long maxCustomers() {
         return customerConfig.maxCustomers;
     }
@@ -105,5 +101,9 @@ public class LocalCreaturesSettings {
 
     public long maxHumanCapacity() {
         return elevatorSystemConfig.elevatorMaxHumanCapacity;
+    }
+
+    public Double fastSpeedCustomerMultiply() {
+        return customerConfig.fastSpeedMultiply;
     }
 }

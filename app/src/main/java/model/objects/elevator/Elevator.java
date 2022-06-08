@@ -6,7 +6,9 @@ import model.Transport;
 import model.Transportable;
 import model.objects.Creature;
 import model.objects.CreatureInterface;
+import model.objects.GameMap;
 import model.objects.customer.Customer;
+import model.objects.customer.StandartCustomer.StandartCustomer;
 import model.objects.floor.FloorStructure;
 import model.objects.elevator.Algorithm.BestAlgorithm;
 import model.objects.elevator.Algorithm.ElevatorAlgorithm;
@@ -27,7 +29,8 @@ public class Elevator extends MovingCreature implements Transportable<Creature>,
     @Getter
     private Transport<Creature> transport;
     @Getter
-    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this, Customer.class);
+    private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this,
+            StandartCustomer.class);
     @Getter
     @Setter
     private ElevatorState state = ElevatorState.wait;
@@ -36,14 +39,16 @@ public class Elevator extends MovingCreature implements Transportable<Creature>,
     private final ElevatorAlgorithm algorithm;
     private final LocalCreaturesSettings settings;
     private final ElevatorsController controller;
+    private final GameMap gameMap;
 
-    public Elevator(Double x, ElevatorsController controller, LocalCreaturesSettings settings) {
+    public Elevator(Double x, ElevatorsController controller, GameMap gameMap, LocalCreaturesSettings settings) {
         super(new Vector2D(x, 0), settings.elevatorSize(),
                 Trajectory.StayOnPlaceWithConstSpeed(settings.elevatorSpeed()));
         var timeToSpendOfFloor = settings.elevatorOpenCloseTime() * 2 +
                 settings.elevatorAfterCloseAfkTime() + settings.elevatorWaitAsOpenedTime();
         algorithm = new BestAlgorithm(timeToSpendOfFloor, settings.maxHumanCapacity(), this::getRawTimeToGetToFloor);
         this.controller = controller;
+        this.gameMap = gameMap;
         this.settings = settings;
     }
 
@@ -51,11 +56,22 @@ public class Elevator extends MovingCreature implements Transportable<Creature>,
     public void tick(double deltaTime) {
         super.tick(deltaTime);
         timer.tick(deltaTime);
+        updateFloor();
         switch (state) {
             case wait -> processWait();
             case inMotion -> processInMotion();
             case opening, closing -> processOpeningClosing();
             case opened -> processOpened();
+        }
+    }
+
+    private void updateFloor() {
+        var hightOfFloor = ((FloorStructure) transport).getSize().y;
+        if (hightOfFloor / 2 < getPosition().y) {
+            gameMap.moveElevatorTo(this, ((FloorStructure) transport).getFloorStructureTop());
+        }
+        if (getPosition().y < -hightOfFloor / 2) {
+            gameMap.moveElevatorTo(this, ((FloorStructure) transport).getFloorStructureBot());
         }
     }
 

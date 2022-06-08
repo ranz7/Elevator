@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> implements Tickable {
@@ -30,6 +30,7 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
     public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrio() {
         return streamTrio(dataBaseOwner.getId(), new Vector2D(0, 0));
     }
+
     public Stream<Trio<Integer, Vector2D, BaseCreatureObject>> streamTrioOfOwned() {
         var onlyOwnerCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
         onlyOwnerCreature.add(new Trio<>(dataBaseOwner.getId(), new Vector2D(0, 0), dataBaseOwner));
@@ -37,7 +38,8 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
         var newAbsoluteDrawPosition = dataBaseOwner.getPosition();
         var newIdOfParent = dataBaseOwner.getId();
 
-        return creaturesOwned.stream().map(creatureObject -> {{
+        return creaturesOwned.stream().map(creatureObject -> {
+            {
                 var onlyOwnedCreature = new ArrayList<Trio<Integer, Vector2D, BaseCreatureObject>>();
                 onlyOwnedCreature.add(new Trio<>(newIdOfParent, newAbsoluteDrawPosition, creatureObject));
                 return onlyOwnedCreature.stream();
@@ -86,9 +88,19 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
 
     public void removeIf(Predicate<CreatureInterface> predicate) {
         if (predicate.test(dataBaseOwner)) {
-            throw new RuntimeException("Cannot kill owner of database");
+            Logger.getAnonymousLogger().info(
+                    "You are trying to delete owner of database, " +
+                    "but owner cannot be deleted by itself");
+            return ;
         }
         creaturesOwned.removeIf(predicate);
+        creaturesOwned.forEach(
+                creatureOwned -> {
+                    if (creatureOwned instanceof Transport) {
+                        ((Transport) creatureOwned).getLocalDataBase().removeIf(predicate);
+                    }
+                }
+        );
     }
 
     public void addCreature(BaseCreatureObject creature) {
@@ -117,10 +129,12 @@ public final class DatabaseOf<BaseCreatureObject extends CreatureInterface> impl
 
     private void add(Transport<BaseCreatureObject> whereTransport,
                      Pair<Vector2D, Transportable<BaseCreatureObject>> absolutePositionAndTransportable) {
-        var parent = get(whereTransport.getId());
-        var deltaInParentPositions = absolutePositionAndTransportable
-                .getFirst().sub(absolutePositionAndTransportable.getSecond().getPosition()).sub(parent.getFirst());
+        var whereToPutPairOfAbsolutePositionAndObject = get(whereTransport.getId()); var whereToPutPosition = whereToPutPairOfAbsolutePositionAndObject.getSecond().getPosition().add(whereToPutPairOfAbsolutePositionAndObject.getFirst());
+        var fromPosition = absolutePositionAndTransportable.getFirst();
+
+        var deltaInParentPositions = whereToPutPosition.sub(fromPosition);
         absolutePositionAndTransportable.getSecond().applyDelta(deltaInParentPositions);
+
         whereTransport.add((BaseCreatureObject) absolutePositionAndTransportable.getSecond());
     }
 

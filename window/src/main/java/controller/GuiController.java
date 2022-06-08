@@ -65,7 +65,7 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
             case ELEVATOR_OPEN -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(false);
             case ELEVATOR_CLOSE -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(true);
             case CUSTOMER_GET_IN_OUT -> windowModel.getMap(roomId).get().getCustomer((int) data).changeBehindElevator();
-//            case ELEVATOR_BUTTON_CLICK -> windowModel.getGamePlane(roomId).leftMouseClicked((Vector2D) data);
+ //           case ELEVATOR_BUTTON_CLICK -> windowModel.getMap(roomId).leftMouseClicked((Vector2D) data);
         }
         return true;
     }

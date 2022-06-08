@@ -7,6 +7,7 @@ import model.DatabaseOf;
 import model.Transport;
 import model.Transportable;
 import model.objects.CreatureInterface;
+import model.objects.GameMap;
 import model.objects.customer.StandartCustomer.StandartCustomer;
 import settings.LocalCreaturesSettings;
 import model.objects.Creature;
@@ -50,14 +51,14 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         return floorStructureBot == null;
     }
 
-    public void addFloor() {
+    public void addFloor(ElevatorsController elevatorsController) {
         if (floorStructureTop != null) {
-            floorStructureTop.addFloor();
+            floorStructureTop.addFloor(elevatorsController);
             return;
         }
         floorStructureTop = new FloorStructure(settings.floorSize().withX(0), settings, this);
         floorStructureTop.fillWithPaintings();
-        floorStructureTop.fillWithButtons();
+        floorStructureTop.fillWithButtons(elevatorsController);
 
         add(floorStructureTop);
     }
@@ -141,9 +142,9 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         return list;
     }
 
-    public void fillWithElevators(ElevatorsController elevatorController) {
+    public void fillWithElevators(ElevatorsController elevatorController, GameMap gameMap) {
         getDefaultPositionOfElevators().forEach(position -> {
-            add(new Elevator(position, elevatorController, settings));
+            add(new Elevator(position, elevatorController,gameMap, settings));
         });
     }
 
@@ -163,7 +164,6 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     public void add(Creature creature) {
         localDataBase.addCreature(creature);
     }
-
 
 }
 

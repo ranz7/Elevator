@@ -103,11 +103,11 @@ public class ElevatorsController implements Tickable {
         //           appModel.getBuilding().updateElevatorsPosition();
     }
 
-    public void elevatorDoorsOpen(long elevatoId) {
+    public void elevatorDoorsOpen(int elevatoId) {
         gameMap.send(Protocol.ELEVATOR_OPEN, elevatoId);
     }
 
-    public void elevatorDoorsClose(long elevatorId) {
+    public void elevatorDoorsClose(int elevatorId) {
         gameMap.send(Protocol.ELEVATOR_CLOSE, elevatorId);
     }
 }

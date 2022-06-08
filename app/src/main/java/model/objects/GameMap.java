@@ -55,14 +55,14 @@ public class GameMap extends Creature implements Transport<Creature> {
 
         for (int i = 0; i < 1; i++) {
             var floorStructure = new FloorStructure(new Vector2D(i * 500, 0), localCreaturesSettings);
-            var elevatorController = new ElevatorsController(this, floorStructure);
-             elevatorsControllers.add(elevatorController);
-             floorStructure.fillWithElevators(elevatorController);
+            var elevatorsController = new ElevatorsController(this, floorStructure, localCreaturesSettings);
+            elevatorsControllers.add(elevatorsController);
+            floorStructure.fillWithElevators(elevatorsController,this);
             floorStructure.fillWithPaintings();
-            floorStructure.fillWithButtons(elevatorController);
+            floorStructure.fillWithButtons(elevatorsController);
             add(floorStructure);
             for (int j = 1; j < localCreaturesSettings.floorsCount(); j++) {
-                floorStructure.addFloor();
+                floorStructure.addFloor(elevatorsController);
             }
         }
 
@@ -137,5 +137,9 @@ public class GameMap extends Creature implements Transport<Creature> {
     @Override
     public void add(Creature creature) {
         localDataBase.addCreature(creature);
+    }
+
+    public void moveElevatorTo(Elevator elevator, FloorStructure floorStructureTop) {
+        moveCreatureInto(elevator.getId(), floorStructureTop);
     }
 }
