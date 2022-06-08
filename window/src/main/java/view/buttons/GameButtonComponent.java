@@ -23,16 +23,16 @@ import java.util.LinkedList;
 public class GameButtonComponent extends DrawableCreature implements Transport<Drawable> {
     @Getter
     @Setter
-    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
+    private final  DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
 
-    LinkedList<ClickableButton> automat = new LinkedList<>();
+    private final LinkedList<ClickableButton> automat = new LinkedList<>();
 
-    Timer timerToShoot = new Timer(200);
-    Portal portal;
+    private final Timer timerToShoot = new Timer(200);
+    private final Portal portal;
 
     public GameButtonComponent(Portal portal, LocalDrawSetting setting) {
         super(new Vector2D(15, 15), new Vector2D(40, 40), new Rectangle(Color.cyan), setting);
-        double floorHeight = portal.getGamePlane().getGameMap().getLocalDataBase().streamOf(DrawableFloorStructure.class).findFirst().get().getSize().y;
+        this.portal = portal;
         var start = portal.getGamePlane().getGameMap().getBuildingSize().divide(2);
         automat.add(new ClickableButton(
                 new MovingSquareWithTextInside(start,
@@ -98,7 +98,7 @@ public class GameButtonComponent extends DrawableCreature implements Transport<D
                         getSettings()),() -> portal
                 .getPlane()
                 .getGameMap()
-                .changeGameSpeed(false)
+                .changeGameSpeed(true)
         ));
 
 
