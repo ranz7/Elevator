@@ -80,25 +80,25 @@ public class GuiModel implements Tickable {
                 .filter(Plane::isActive).findFirst().get();
     }
 
-    public void updateMap(GameMapCompactData data) {
+    public void updateMap(int roomId , GameMapCompactData data) {
         if (ConnectionSettings.VERSION != data.roomData.version()) {
             Logger.getLogger(GuiController.class.getName()).warning(("You have different versions with sever." +
                     " Your version: %s, server version %s%n")
                     .formatted(ConnectionSettings.VERSION, data.roomData.version()));
         }
 
-        Optional<GameMap> mapToUpdate = getMap(data.parentIdClassTypeObject.get(0).getId());
+        Optional<GameMap> mapToUpdate = getMap(roomId );
         if (mapToUpdate.isEmpty()) {
             mapToUpdate = Optional.of(new GameMap(
                     new DrawableCreatureData(data.parentIdClassTypeObject.get(0)),
                     localDrawSetting,
                     new RoomRemoteSettings(data.roomData)
             ));
-            getMenuPlane().roomWasCreated(data.roomData.roomId());
             gameMaps.add(mapToUpdate.get());
         }
         mapToUpdate.get().setRoomRemoteSettings(new RoomRemoteSettings(data.roomData));
         PackageLoader.applyArrivedData(data, mapToUpdate.get());
+
     }
 
     public SubscribeRequest getPlanesToSubscribeFor() {

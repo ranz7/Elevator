@@ -31,7 +31,7 @@ public class Texture extends DrawTool {
     }
 
     @Override
-    protected Color getMainColor() {
+    public Color getMainColor() {
         return null;
     }
 

@@ -14,7 +14,6 @@ import model.Transport;
 import model.Transportable;
 import model.packageLoader.DrawableCreatureData;
 import protocol.special.CreatureType;
-import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import settings.localDraw.LocalDrawSetting;
@@ -22,7 +21,6 @@ import tools.Vector2D;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DrawableFloorStructure extends DrawableRemoteCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Setter

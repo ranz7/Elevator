@@ -7,6 +7,7 @@ import model.objects.elevator.ElevatorRequest;
 import model.objects.elevator.Elevator;
 import protocol.Protocol;
 import controller.Tickable;
+import settings.LocalCreaturesSettings;
 import tools.Vector2D;
 
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import java.util.LinkedList;
 public class ElevatorsController implements Tickable {
     private final GameMap gameMap;
     private final FloorStructure baseFloorStructure;
+    private final LocalCreaturesSettings settings;
     private final LinkedList<ElevatorRequest> pendingElevatorRequests = new LinkedList<>();
 
     @Override
@@ -77,7 +79,15 @@ public class ElevatorsController implements Tickable {
         if (timeToBeForElevatorA < timeToBeForElevatorB) {
             return elevatorA;
         }
-        if (request.buttonPosition().getNearest(elevatorA.getPosition(), elevatorB.getPosition())
+        var absoluteButtonPosition = request.buttonPosition().addByY(
+                requestFloor * settings.floorSize().y);
+        var absoluteElevatorPositionA = elevatorA.getPosition().addByY(
+                elevatorA.getCurrentFloorNum() * settings.floorSize().y);
+        var absoluteElevatorPositionB = elevatorB.getPosition().addByY(
+                elevatorB.getCurrentFloorNum() * settings.floorSize().y);
+        if (absoluteButtonPosition.getNearest(
+                        absoluteElevatorPositionA,
+                        absoluteElevatorPositionB)
                 .equals(elevatorA.getPosition())) {
             return elevatorA;
         }

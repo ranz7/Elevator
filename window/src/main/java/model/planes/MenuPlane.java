@@ -70,9 +70,6 @@ public class MenuPlane extends Plane {
     }
 
 
-    public void roomWasCreated(int roomId) {
-//
-    }
 
     public List<Integer> getUsedGamePlanesInPortals() {
         List<Integer> rooms = new LinkedList<>();

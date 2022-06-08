@@ -52,6 +52,10 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     }
 
     public void mousePositionUpdate(Vector2D gamePosition) {
+        if (!isVisible()) {
+            hovered = false;
+            return;
+        }
         if (getTool().isIntersect(getRealDrawPosition(), getSize(), gamePosition)) {
             getTool().setAdditionalLightColor(new Color(89, 20, 20));
             hovered = (true);

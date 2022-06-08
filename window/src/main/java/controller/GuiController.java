@@ -60,7 +60,7 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
             }
             case UPDATE_DATA -> {
-                windowModel.updateMap((GameMapCompactData) data);
+                windowModel.updateMap(message.getRoomId(),(GameMapCompactData) data);
             }
             case ELEVATOR_OPEN -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(false);
             case ELEVATOR_CLOSE -> windowModel.getMap(roomId).get().getElevator((int) data).changeDoorsState(true);

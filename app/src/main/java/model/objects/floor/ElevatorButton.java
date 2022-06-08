@@ -1,5 +1,6 @@
 package model.objects.floor;
 
+import controller.subControllers.ElevatorsController;
 import lombok.Getter;
 import lombok.Setter;
 import model.Transport;
@@ -12,13 +13,21 @@ public class ElevatorButton extends Creature implements Transportable {
     @Getter
     @Setter
     Transport transport;
+    ElevatorsController elevatorController;
+    LocalCreaturesSettings settings;
 
-    public ElevatorButton(Double position, LocalCreaturesSettings settings) {
+    public ElevatorButton(Double position, ElevatorsController elevatorController, LocalCreaturesSettings settings) {
         super(new Vector2D(position, settings.elevatorSize().y / 2).add(settings.buttonRelativePosition()),
                 settings.buttonSize());
+        this.elevatorController = elevatorController;
+        this.settings = settings;
     }
 
     public void click(boolean wantsGoUp) {
+
+        elevatorController.buttonClick(
+                ((FloorStructure) transport).getCurrentFloorNum(),
+                getPosition(), wantsGoUp);
 
     }
 

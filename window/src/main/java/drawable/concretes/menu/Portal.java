@@ -1,6 +1,7 @@
 package drawable.concretes.menu;
 
 import drawable.abstracts.DrawCenter;
+import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
 import drawable.buttons.CircleWithTextInside;
 import drawable.buttons.ClickableButton;
@@ -18,17 +19,18 @@ import tools.Vector2D;
 
 import java.awt.*;
 
-public class Portal extends DrawableCreature implements Transport<DrawableCreature>, Transportable<DrawableCreature> {
+public class Portal extends DrawableCreature implements Transport<Drawable>, Transportable<Drawable> {
     @Getter
-    DatabaseOf<DrawableCreature> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
+    DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
     @Getter
     @Setter
-    Transport<DrawableCreature> transport;
+    Transport<Drawable> transport;
 
     private GamePlane gamePlane;
 
     @Getter
     private int roomId = -1;
+    ClickableButton exitButton;
 
     public Portal(double positionX, LocalDrawSetting settings) {
         super(new Vector2D(positionX, 0), settings.portalSize(), new Rectangle(new Color(0, 139, 203)), settings);
@@ -40,20 +42,32 @@ public class Portal extends DrawableCreature implements Transport<DrawableCreatu
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)), settings, "+"),
                 () -> {
-                    startZoom();
+                    System.out.println("GEG");
+                    changeZoom();
                 }));
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(-5), settings, "v"),
                 () -> {
                 }));
+        exitButton = new ClickableButton(
+                new CircleWithTextInside(new Vector2D(15, 15), settings, "x"),
+                () -> {
+                    System.out.println("KEK");
+                    changeZoom();
+                });
+        add(exitButton);
+        exitButton.setVisible(false);
         openPortal(0);
     }
 
     boolean startOfZoom = false;
 
-    private void startZoom() {
+    private void changeZoom() {
         startOfZoom = !startOfZoom;
         changeCoef = 1;
+        if (!startOfZoom) {
+            ((MenuDrawable) transport).portalWasClosed();
+        }
     }
 
     private void openPortal(int roomId) {
@@ -68,44 +82,49 @@ public class Portal extends DrawableCreature implements Transport<DrawableCreatu
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
         if (startOfZoom) {
-//             changeCoef *= 0.001;
-//            setPosition(positionSave.multiply(changeCoef));
-//            setSize(sizeSave.multiplyX(changeCoef).add(
-//                    gameDrawer.getScaler().getScreenSize().multiply(1 - changeCoef)));
-
-            setSize(new Vector2D(
+            setSize(Vector2D.getBetween(sizeSave, new Vector2D(gameDrawer.getScaler().getGameSize()), changeCoef));
+            setPosition(Vector2D.getBetween(positionSave, new Vector2D(0, 0), changeCoef));
+        }
+//        getTool().setColor(getTool().getMainColor().);
+        super.draw(realDrawPosition, gameDrawer);
+        if (startOfZoom) {
+            changeCoef = changeCoef - changeCoef / 50;
+            if (changeCoef < 0.0001 && changeCoef > 0) {
+                ((MenuDrawable) transport).portalWasOpened();
+                setVisible(true);
+                changeCoef = 0;
+            }
+            setSize(Vector2D.getBetween(sizeSave, new Vector2D(
                     gameDrawer.getScaler().getFromRealToGameLength(
                             gameDrawer.getScaler().getScreenSize().getX()),
                     gameDrawer.getScaler().getFromRealToGameLength(
-                            gameDrawer.getScaler().getScreenSize().getY())));
-            setPosition(
+                            gameDrawer.getScaler().getScreenSize().getY())), changeCoef));
+            setPosition(Vector2D.getBetween(positionSave,
                     gameDrawer.getScaler()
                             .getFromRealToGameCoordinate(new Vector2D(0, 0)
-                                    , sizeSave.y));
+                                    , sizeSave.y), changeCoef));
 
-
-            realDrawPosition = new Vector2D(0, 0);
         } else {
             setPosition(positionSave);
             setSize(sizeSave);
         }
-        super.draw(realDrawPosition, gameDrawer);
         if (gamePlane != null) {
             Vector2D sizeOfGame = new Vector2D(
                     gameDrawer.getScaler().getFromGameToRealLength(getSize().getX()),
                     gameDrawer.getScaler().getFromGameToRealLength(getSize().getY()));
-            sizeOfGame = gameDrawer.getScaler().getScreenSize();
             var sizeOfBuilding = gamePlane.getGameMap().getBuildingSize();
             if (sizeOfBuilding.length() < 1) {
                 sizeOfBuilding = new Vector2D(100, 100);
             }
             gamePlane.getPainter().getScaler()
                     .updateSizes(sizeOfGame, sizeOfBuilding);
-
+            var startDrawOfSubPlane = getRealDrawPosition();
             var positionOfScaler = gameDrawer.getScaler().getFromGameToRealCoordinate(
-                    getRealDrawPosition(), sizeSave.y
+                    startDrawOfSubPlane, sizeSave.y
             );
-            positionOfScaler = new Vector2D(0,0);
+            if (startOfZoom) {
+                positionOfScaler = Vector2D.getBetween(positionOfScaler, new Vector2D(0, 0), changeCoef);
+            }
             gameDrawer.getPureGraphics().translate(
                     (int) positionOfScaler.getX(),
                     (int) positionOfScaler.getY()
@@ -119,7 +138,7 @@ public class Portal extends DrawableCreature implements Transport<DrawableCreatu
     }
 
     @Override
-    public void add(DrawableCreature creature) {
+    public void add(Drawable creature) {
         localDataBase.addCreature(creature);
     }
 
@@ -130,12 +149,16 @@ public class Portal extends DrawableCreature implements Transport<DrawableCreatu
 
     @Override
     public int getDrawPriority() {
+        if (startOfZoom) {
+            return 1000;
+        }
         return -2;
     }
 
     @Override
     public void tick(double deltaTime) {
         super.tick(deltaTime);
+        exitButton.setVisible(startOfZoom);
         if (gamePlane != null) {
             gamePlane.tick(deltaTime);
         }

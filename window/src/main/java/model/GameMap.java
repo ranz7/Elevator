@@ -3,11 +3,9 @@ package model;
 import controller.Tickable;
 import drawable.abstracts.DrawCenter;
 import drawable.abstracts.Drawable;
-import drawable.abstracts.DrawableCreature;
 import drawable.abstracts.DrawableRemoteCreature;
 import drawable.concretes.FlyingText;
 import drawable.concretes.game.floor.DrawableFloorStructure;
-import drawable.concretes.game.floor.elevatorSpace.ElevatorBorder;
 import drawable.concretes.game.floor.elevatorSpace.ElevatorButton;
 import drawable.concretes.game.customer.DrawableCustomer;
 import drawable.concretes.game.elevator.DrawableElevator;
@@ -16,29 +14,25 @@ import lombok.Getter;
 import lombok.Setter;
 import model.objects.CreatureInterface;
 import model.packageLoader.DrawableCreatureData;
-import model.packageLoader.PackageLoader;
 import protocol.special.CreatureType;
-import protocol.special.GameMapCompactData;
 import settings.RoomRemoteSettings;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
 
 import java.awt.*;
-import java.util.stream.Collectors;
-
 
 public class GameMap extends DrawableRemoteCreature implements Tickable, Transport<Drawable> {
     @Getter
     private final DatabaseOf<Drawable> localDataBase =
             new DatabaseOf<>(this,
-            FlyingText.class,
-            DrawableFloorStructure.class);
+                    FlyingText.class,
+                    DrawableFloorStructure.class);
     @Getter
     @Setter
     RoomRemoteSettings roomRemoteSettings;
 
-    public GameMap(DrawableCreatureData data,LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings) {
-        super(data,new RectangleWithBorder(new Color(255, 0, 0), 7), settings);
+    public GameMap(DrawableCreatureData data, LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings) {
+        super(data, new RectangleWithBorder(new Color(133, 101, 101), 7), settings);
         this.roomRemoteSettings = roomRemoteSettings;
     }
 
@@ -115,7 +109,7 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         localDataBase.addCreature(drawable);
     }
 
-    public Vector2D     getBuildingSize() {
+    public Vector2D getBuildingSize() {
         var randomFloor = localDataBase.streamOf(DrawableFloorStructure.class).findFirst().get();
         var numberOfFloors = (double) localDataBase.countOf(DrawableFloorStructure.class);
         return new Vector2D(randomFloor.getSize()).multiplyY(numberOfFloors);

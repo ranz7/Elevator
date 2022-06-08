@@ -20,7 +20,7 @@ import java.util.Random;
 public class FloorStructure extends Creature implements Transport<Creature>, Transportable<Creature> {
     @Getter
     private final DatabaseOf<Creature> localDataBase = new DatabaseOf<>(this,
-            FloorStructure.class, Elevator.class, Painting.class, ElevatorButton.class
+            FloorStructure.class, Elevator.class, Painting.class, ElevatorButton.class,StandartCustomer.class
     );
 
     @Getter
@@ -153,9 +153,9 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
         });
     }
 
-    public void fillWithButtons() {
+    public void fillWithButtons(ElevatorsController elevatorController) {
         getDefaultPositionOfElevators().forEach(position -> {
-            add(new ElevatorButton(position, settings));
+            add(new ElevatorButton(position,elevatorController, settings));
         });
     }
 
@@ -163,6 +163,8 @@ public class FloorStructure extends Creature implements Transport<Creature>, Tra
     public void add(Creature creature) {
         localDataBase.addCreature(creature);
     }
+
+
 }
 
 

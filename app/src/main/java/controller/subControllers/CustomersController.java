@@ -20,7 +20,7 @@ import tools.Timer;
 public class CustomersController implements Tickable {
     private final GameMap gameMap;
 
-    private final Timer spawnTimer = new Timer();
+    private final Timer spawnTimer = new Timer(1);
 
     @Override
     public void tick(double deltaTime) {
@@ -32,7 +32,7 @@ public class CustomersController implements Tickable {
         var dataBase = gameMap.getLocalDataBase();
         var localCreaturesSettings = gameMap.getLocalCreaturesSettings();
 
-        if (spawnTimer.isReady() && dataBase.countOf(Customer.class) < localCreaturesSettings.maxCustomers()) {
+        if (spawnTimer.isReady() && dataBase.countOf(StandartCustomer.class) < localCreaturesSettings.maxCustomers()) {
 
             var listOfBottomFloors = dataBase.streamOf(FloorStructure.class).filter(FloorStructure::isBottomFloor).toList();
             var randBottomFloor = listOfBottomFloors.get(new Random().nextInt(listOfBottomFloors.size()));

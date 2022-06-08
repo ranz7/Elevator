@@ -52,7 +52,7 @@ public class BestAlgorithm implements ElevatorAlgorithm {
             isGoUp = false;
             return floorToGetDown;
         }
-        return unexistingFloor;
+        return -1;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package drawable.concretes.game.customer;
 
+import drawable.abstracts.Drawable;
+import model.Transport;
+import model.Transportable;
 import model.packageLoader.DrawableCreatureData;
 import settings.RoomRemoteSettings;
 import drawable.abstracts.DrawCenter;
@@ -9,13 +12,16 @@ import lombok.Getter;
 import lombok.Setter;
 import settings.localDraw.LocalDrawSetting;
 
-public class DrawableCustomer extends DrawableRemoteCreature {
+public class DrawableCustomer extends DrawableRemoteCreature implements Transportable<Drawable> {
     @Getter
     @Setter
     private boolean behindElevator = true;
+    @Setter
+    @Getter
+    Transport<Drawable> transport; // floor or elevator
 
-    public DrawableCustomer(DrawableCreatureData creatureData,LocalDrawSetting settings) {
-        super(creatureData,new Rectangle(settings.getRandomCustomerSkin()), settings);
+    public DrawableCustomer(DrawableCreatureData creatureData, LocalDrawSetting settings) {
+        super(creatureData, new Rectangle(settings.getRandomCustomerSkin()), settings);
     }
 
     @Override
@@ -34,4 +40,6 @@ public class DrawableCustomer extends DrawableRemoteCreature {
     public void changeBehindElevator() {
         behindElevator = !behindElevator;
     }
+
+
 }
