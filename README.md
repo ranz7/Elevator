@@ -15,7 +15,7 @@ Download source files.
   git clone https://github.com/ranz7/Elevator.git # install
   cd ./Elevator
   chmod +x prepare_env.sh
-  prepare_env.sh
+  ./prepare_env.sh
 ```
 
 if you don't have git, just download source
