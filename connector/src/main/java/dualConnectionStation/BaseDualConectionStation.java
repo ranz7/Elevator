@@ -45,4 +45,6 @@ public abstract class BaseDualConectionStation implements Uplink {
     }
 
     Map<Socket, List<ProtocolMessage>> streamBuffer = new HashMap<>();
+
+    public abstract void changeIp() ;
 }

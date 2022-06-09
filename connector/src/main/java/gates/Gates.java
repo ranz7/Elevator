@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -54,11 +53,9 @@ public class Gates implements Tickable, Downlink {
         this.uplink = uplink;
         this.listener = listener;
         this.uplink.setDownlink(this);
-        //       Logger.getAnonymousLogger().info("Downlink created . . .");
     }
 
     public void connect() {
-//        Logger.getAnonymousLogger().info("Uplink starting . . .");
         uplink.start();
     }
 
@@ -164,6 +161,10 @@ public class Gates implements Tickable, Downlink {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void changeServer() {
+        uplink.changeIp();
     }
 
     public static class NobodyReceivedMessageException extends Throwable {

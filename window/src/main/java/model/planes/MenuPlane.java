@@ -18,14 +18,17 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class MenuPlane extends Plane {
-    private final MenuDrawable menuDrawable = new MenuDrawable(getSettings());
 
     @Getter
     private final GuiController controller;
+    private final MenuDrawable menuDrawable;
 
     public MenuPlane(GuiController controller, LocalDrawSetting settings) {
         super(settings, new Painter(new Scaler(new Vector2D(0, 0), 1.), settings));
         this.controller = controller;
+        menuDrawable = new MenuDrawable(
+                controller::changeServer,
+                getSettings());
         changeDoorsState(false);
     }
 
