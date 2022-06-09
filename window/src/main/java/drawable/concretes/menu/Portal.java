@@ -21,6 +21,7 @@ import model.planes.graphics.Painter;
 import settings.localDraw.LocalDrawSetting;
 import tools.MathFunctions;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 import java.util.function.Function;
@@ -44,12 +45,12 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
         super(new Vector2D(positionX, 0), settings.portalSize(),
                 new RectangleWithBorder(
                         settings.portalColor(),
-                        new Color(255, 201, 0),
+                        new MutableColor(255, 201, 0),
                         1), settings);
         originalSize = getSize();
         originalPosition = getPosition();
 
-        rainbow = new RainbowColor(getTool().getMainColor());
+        rainbow = new RainbowColor(getTool().getMainColor().getColor());
         add(new ClickableButton(
                 new CircleWithTextInside(getSize().divide(new Vector2D(-5, 2)).addByY(5), settings, "^"), () -> {
             roomId++;
@@ -138,14 +139,15 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
 
 
         if (gamePlane != null) {
+            var gamePlaneNotNull = gamePlane;
             Vector2D sizeOfGame = new Vector2D(
                     gameDrawer.getScaler().getFromGameToRealLength(getSize().getX()),
                     gameDrawer.getScaler().getFromGameToRealLength(getSize().getY()));
-            var sizeOfBuilding = gamePlane.getGameMap().getBuildingSize();
+            var sizeOfBuilding = gamePlaneNotNull.getGameMap().getBuildingSize();
             if (sizeOfBuilding.length() < 1) {
                 sizeOfBuilding = new Vector2D(100, 100);
             }
-            gamePlane.getPainter().getScaler()
+            gamePlaneNotNull.getPainter().getScaler()
                     .updateSizes(sizeOfGame, sizeOfBuilding);
             var startDrawOfSubPlane = getRealDrawPosition();
             var positionOfScaler = gameDrawer.getScaler().getFromGameToRealCoordinate(
@@ -157,9 +159,9 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
                     (int) positionOfScaler.getX(),
                     (int) positionOfScaler.getY()
             );
-            gamePlane.getPainter().setBlackSpaces(1 - changeCoef);
-            gamePlane.draw(gameDrawer.getPureGraphics());
-            gamePlane.getPainter().getPureGraphics().translate(
+            gamePlaneNotNull.getPainter().setBlackSpaces(1 - changeCoef);
+            gamePlaneNotNull.draw(gameDrawer.getPureGraphics());
+            gamePlaneNotNull.getPainter().getPureGraphics().translate(
                     -(int) positionOfScaler.getX(),
                     -(int) positionOfScaler.getY()
             );

@@ -6,6 +6,7 @@ import model.resourceLoader.GameResource;
 import model.resourceLoader.ResourceLoader;
 import tools.Vector2D;
 import model.planes.graphics.Painter;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 import java.util.Random;
@@ -34,7 +35,7 @@ public class Texture extends DrawTool {
     }
 
     @Override
-    public Color getMainColor() {
+    public MutableColor getMainColor() {
         return null;
     }
 

@@ -26,11 +26,13 @@ ____
 To build and run project u can either use gradle (if u have installed one)
 
 ```bat
-  ./gradlew :app:build -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
-  ./gradlew :app:run -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
-  ./gradlew :window:build -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
-  ./gradlew :window:run -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2"
+  ./gradlew :app:build  
+  ./gradlew :app:run  
+  ./gradlew :window:build  
+  ./gradlew :window:run 
  ```
+
+If it cant find jdk 17 u can add flag -Dorg.gradle.java.home="PATH_TO/openjdk-17.0.2" 
 _____
 
 ### Authors

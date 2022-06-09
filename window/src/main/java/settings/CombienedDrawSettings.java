@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 import java.util.Random;
@@ -31,7 +32,7 @@ public class CombienedDrawSettings extends LocalDrawSetting {
         return roomPrepareCompactData.roomId();
     }
 
-    public Color getRandomCustomerSkin() {
+    public MutableColor getRandomCustomerSkin() {
         var colors = customerSkins();
         return colors[((Math.abs(new Random().nextInt())) % colors.length)];
     }

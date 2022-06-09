@@ -7,6 +7,7 @@ import drawable.drawTool.figuresComponent.FiguresComponent;
 import drawable.drawTool.text.Text;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 
@@ -17,7 +18,7 @@ public class CircleWithTextInside extends DrawableCreature {
                 settings.getMenuButtonSize(),
                 new FiguresComponent(
                         new Ellipse(settings.getMenuButtonColor()),
-                        new Text(text, new Color(0, 18, 54))),
+                        new Text(text, new MutableColor(0, 18, 54))),
                 settings
         );
     }

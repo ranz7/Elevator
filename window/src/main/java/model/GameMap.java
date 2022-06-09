@@ -23,6 +23,7 @@ import settings.localDraw.LocalDrawSetting;
 import tools.Pair;
 import tools.Vector2D;
 import view.buttons.GameButtonComponent;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -48,8 +49,9 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
 
     private Gates gates;
     private LocalDrawSetting copySettings;
+
     public GameMap(DrawableCreatureData data, LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings, Gates gates) {
-        super(data, new RectangleWithBorder(new Color(133, 101, 101), 7), new LocalDrawSetting());
+        super(data, new RectangleWithBorder(new MutableColor(133, 101, 101), 7), new LocalDrawSetting());
         this.roomRemoteSettings = roomRemoteSettings;
         this.gates = gates;
         this.copySettings = settings;
@@ -57,15 +59,21 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
 
     @Override
     public void tick(double deltaTime) {
-        getLocalDataBase().tick(roomRemoteSettings.gameSpeed() * deltaTime);
-        updateBuildingSize();
-        var elevators = getLocalDataBase().streamOf(DrawableElevator.class).toList();
-        getLocalDataBase().streamOf(DrawableFloorStructure.class).forEach(
-                drawableFloorStructure ->
-                        drawableFloorStructure.updateElevatorBorders(elevators)
-        );
-        getLocalDataBase().removeIf(CreatureInterface::isDead);
+        try {
+            getLocalDataBase().tick(roomRemoteSettings.gameSpeed() * deltaTime);
+            var elevators = getLocalDataBase().streamOf(DrawableElevator.class).toList();
+            updateBuildingSize();
+            getLocalDataBase().streamOf(DrawableFloorStructure.class).forEach(
+                    drawableFloorStructure ->
+                            drawableFloorStructure.updateElevatorBorders(elevators)
+            );
+
+            getLocalDataBase().removeIf(CreatureInterface::isDead);
+        } catch (Exception e) {
+            System.out.println("CONCURENT");
+        }
     }
+
 
     Vector2D buildingSize = new Vector2D(0, 0);
 
