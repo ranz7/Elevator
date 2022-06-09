@@ -1,7 +1,6 @@
 package model;
 
 import configs.ConnectionSettings;
-import configs.RoomPrepareCompactData;
 import controller.GuiController;
 import controller.Tickable;
 
@@ -112,4 +111,8 @@ public class GuiModel implements Tickable {
         return new SubscribeRequest(gamePlanesUsedInPortals.stream().distinct().collect(Collectors.toList()));
     }
 
+    public void clear() {
+        menuPlane.streamOfPortals().forEach(Portal::close);
+        gameMaps.clear();
+    }
 }

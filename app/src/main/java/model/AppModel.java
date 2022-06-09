@@ -22,9 +22,6 @@ import java.util.List;
 
 public class AppModel implements Tickable {
     @Getter
-    private final LocalCreaturesSettings localCreaturesSettings = new LocalCreaturesSettings();
-
-    @Getter
     LinkedList<GameMap> gameMaps = new LinkedList<>();
 
     @Override
@@ -43,7 +40,7 @@ public class AppModel implements Tickable {
                 roomId -> {
                     var map = gameMaps.stream().filter(gameMap -> gameMap.getRoomId() == roomId).findFirst();
                     if (map.isEmpty()) {
-                        gameMaps.add(new GameMap(controllerGates, roomId, localCreaturesSettings));
+                        gameMaps.add(new GameMap(controllerGates, roomId, new LocalCreaturesSettings(roomId)));
                     }
                 }
         );

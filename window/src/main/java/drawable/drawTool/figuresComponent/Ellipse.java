@@ -20,6 +20,6 @@ public class Ellipse extends Figure {
     @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
         var tmp = afterProportionApply(position,size);
-        drawer.drawFilledEllipse(tmp.getFirst(), tmp.getSecond(), getMainColor(), getMainColor(), 0);
+        drawer.drawFilledEllipse(tmp.getFirst(), tmp.getSecond(), getMainColor(), new Color(0,0,0), 1);
     }
 }

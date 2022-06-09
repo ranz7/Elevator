@@ -14,6 +14,7 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 import java.util.logging.Logger;
@@ -48,6 +49,22 @@ public class Client extends BaseDualConectionStation {
     @Override
     public boolean isConnecting() {
         return connecting;
+    }
+
+    @Override
+    public void changeIp() {
+        try {
+            if(serversSocket!=null) {
+                serversSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Objects.equals(host, ConnectionSettings.HOST)){
+            host = ConnectionSettings.HOST2;
+        }else{
+            host = ConnectionSettings.HOST;
+        }
     }
 
     @Override
@@ -88,7 +105,7 @@ public class Client extends BaseDualConectionStation {
         try {
             ProtocolMessage.PureData[] messages = new ProtocolMessage.PureData[messagesToServer.size()];
             for (int i = 0; i < messages.length; i++) {
-                Logger.getAnonymousLogger().info("SENT : " +  messagesToServer.get(i).getProtocol());
+                Logger.getAnonymousLogger().info("SENT : " + messagesToServer.get(i).getProtocol());
                 messages[i] = messagesToServer.get(i).toPureData();
             }
             objectOutputStream.writeObject(new MessagePacket(messages));

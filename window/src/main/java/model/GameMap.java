@@ -46,12 +46,13 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         localDataBase.streamOfOnlyOwned(GameButtonComponent.class).findFirst().get().destroy();
     }
 
-    Gates gates;
-
+    private Gates gates;
+    private LocalDrawSetting copySettings;
     public GameMap(DrawableCreatureData data, LocalDrawSetting settings, RoomRemoteSettings roomRemoteSettings, Gates gates) {
-        super(data, new RectangleWithBorder(new Color(133, 101, 101), 7), settings);
+        super(data, new RectangleWithBorder(new Color(133, 101, 101), 7), new LocalDrawSetting());
         this.roomRemoteSettings = roomRemoteSettings;
         this.gates = gates;
+        this.copySettings = settings;
     }
 
     @Override
@@ -172,5 +173,13 @@ public class GameMap extends DrawableRemoteCreature implements Tickable, Transpo
         } else {
             gates.sendWithoutCheck(Protocol.CHANGE_GAME_SPEED, getRoomRemoteSettings().roomId(), 1.5);
         }
+    }
+
+    public void changeThisColor() {
+        getSettings().colorRandom();
+    }
+
+    public void changeAllColor() {
+        copySettings.colorRandom();
     }
 }

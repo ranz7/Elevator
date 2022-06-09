@@ -25,6 +25,13 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
         this.toExecute = toExecute;
         set(parasite);
     }
+    private boolean isSwitcher = false;
+    private boolean isSwitched = false;
+
+    public ClickableButton(DrawableCreature parasite, Runnable toExecute, boolean isSwitcher) {
+        this(parasite,toExecute);
+        this.isSwitcher = isSwitcher;
+    }
 
     @Override
     public void tick(double deltaTime) {
@@ -34,6 +41,13 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
 
     @Override
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
+        if(isSwitcher){
+            if(isSwitched){
+                getTool().setAdditionalLightColor(new Color(125, 125, 125));
+            }else{
+                getTool().setAdditionalLightColor(new Color(0,0,0));
+            }
+        }
         if (hovered) {
             setSize(getParasite().getSize().multiply(1.3));
         } else {
@@ -68,6 +82,9 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
 
     public void execute() {
         toExecute.run();
+        if(isSwitcher){
+            isSwitched = !isSwitched;
+        }
     }
 
 }

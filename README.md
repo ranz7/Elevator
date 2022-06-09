@@ -14,7 +14,8 @@ Download source files.
 ```bat
   git clone https://github.com/ranz7/Elevator.git # install
   cd ./Elevator
-  ./prepare_env.sh
+  chmod +x prepare_env.sh
+  prepare_env.sh
 ```
 
 if you don't have git, just download source
@@ -37,3 +38,7 @@ _____
 * Radek Mysliwiec ([@ranz7](https://github.com/ranz7))
 * Michał Miziołek ([@PiJayson](https://github.com/PiJayson))
 * Vladislav Kozulin ([@watislaf](https://github.com/watislaf))
+
+___________________
+1) Ci , auto pull request, docker/install docker, hooks , 
+2) 

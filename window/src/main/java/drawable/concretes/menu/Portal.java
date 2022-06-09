@@ -218,5 +218,8 @@ public class Portal extends DrawableCreature implements Transport<Drawable>, Tra
         return roomId;
     }
 
+    public void close() {
+        gamePlane = null;
+    }
 }
 

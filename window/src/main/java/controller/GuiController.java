@@ -12,7 +12,7 @@ import protocol.MessageApplier;
 import protocol.special.SubscribeRequest;
 import settings.configs.GuiControllerConfig;
 import model.*;
-import tools.Vector2D;
+import tools.Timer;
 import view.gui.Gui;
 import model.planes.Plane;
 
@@ -30,26 +30,30 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
     public final Gates gates = new Gates(new Client(), this);
 
     public void start() {
-        ScenarioBuilder connectedScenario = new ScenarioBuilder()
-                .add(ReciveFilters.catchOnlyHello())
-                .add(ReciveFilters.catchOnlyUpdate());
+        ScenarioBuilder connectedScenario =
+                new ScenarioBuilder()
+                        .add(ReciveFilters.catchOnlyHello())
+                        .add(ReciveFilters.catchOnlyUpdate());
+
+
         windowModel.getMenuPlane().changeDoorsState(true);
+        gates.setOnConnectEvent(() -> {
+            windowModel.getMenuPlane().changeDoorsState(false);
+        });
+
         gates.setOnGatesLostSocketEvent((ignored) -> {
             windowModel.getMenuPlane().changeDoorsState(true);
-            windowModel.streamOfGameMaps().forEach(gameMap -> gameMap.setDead(true));
             gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
             gates.connect();
         });
-        gates.setOnConnectEvent(() -> {
-            windowModel.getMenuPlane().changeDoorsState(false);
 
-        });
         gates.setReceiveScenario(connectedScenario.build(ReciveFilters.noFilter()));
         gates.connect();
 
         addTickable(gates);
         addTickable(gui);
         addTickable(windowModel);
+        addTickable(changeServerTimer);
         super.start(this::updateSubscribes);
     }
 
@@ -62,6 +66,8 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
         switch (protocol) {
             case HELLO_MESSAGE -> {
                 Logger.getAnonymousLogger().info("Controller says Hello!!");
+                lastRoomsToSubscribeFor.clear();
+                windowModel.clear();
                 updateSubscribes();
             }
             case UPDATE_DATA -> {
@@ -109,5 +115,13 @@ public class GuiController extends ControllerEndlessLoop implements MessageAppli
 
     public MenuPlane getMenu() {
         return windowModel.getMenuPlane();
+    }
+
+    Timer changeServerTimer = new Timer(1500);
+
+    public void changeServer() {
+
+        windowModel.getMenuPlane().changeDoorsState(true);
+        changeServerTimer.restart(gates::changeServer);
     }
 }

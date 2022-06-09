@@ -15,16 +15,18 @@ import java.io.Serializable;
  */
 
 class ElevatorSystemConfig implements Serializable {
-    public final Vector2D floorSize = new Vector2D(800,  160);
+    public Vector2D floorSize = new Vector2D(800, 160);
     public final long elevatorAfterCloseAfkTime = 500;
     public final long elevatorWaitAsOpenedTime = 3000;
-    public final Vector2D elevatorSize = new Vector2D(50, 80);
-    public final double buttonRelativePosition = elevatorSize.x / 2. + 7;
-    public final long elevatorOpenCloseTime = 1000;
+
+    public Vector2D elevatorSize = new Vector2D(50, 80);
+
+    public double buttonRelativePosition = elevatorSize.x / 2. + 7;
+    public long elevatorOpenCloseTime = 1000;
     public final int elevatorMaxHumanCapacity = 4;
-    public final double elevatorSpeed = 150;
-    public final int floorsCount =5;
-    public Vector2D buttonSize = new Vector2D(5,5);
+    public double elevatorSpeed = 150;
+    public int floorsCount = 5;
+    public Vector2D buttonSize = new Vector2D(5, 5);
 
     @Getter
     @Setter

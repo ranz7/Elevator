@@ -5,6 +5,7 @@ import drawable.abstracts.Drawable;
 import drawable.abstracts.DrawableCreature;
 import drawable.buttons.ClickableButton;
 import drawable.buttons.RectangleWithTextInside;
+import drawable.buttons.RectangleWithTextInside2;
 import drawable.concretes.game.elevator.ElevatorDoor;
 import drawable.concretes.game.floor.decorations.MenuPainting;
 import drawable.drawTool.figuresComponent.RectangleWithBorder;
@@ -34,7 +35,7 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
 
     double sizeOfLeftRightButtonsInProportion = 1. / 16;
 
-    public MenuDrawable(LocalDrawSetting localDrawSetting) {
+    public MenuDrawable(Runnable changeServer, LocalDrawSetting localDrawSetting) {
         super(new Vector2D(0, 0), new Vector2D(150, 75),
                 new RectangleWithBorder(localDrawSetting.florBetonColor(),
                         new Color(0, 0, 0), 3),
@@ -69,6 +70,14 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
         add(rightDoorButton);
         add(leftDoorButton);
         add(rightDoor);
+
+        add( new ClickableButton(new RectangleWithTextInside2(
+                new Vector2D(15,5),
+                new Vector2D(15,5),
+                localDrawSetting, "RemoteServer"),
+                changeServer,
+                true)
+        );
     }
 
     private Runnable toExecuteIfClosed;

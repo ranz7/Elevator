@@ -114,6 +114,11 @@ public class Server extends BaseDualConectionStation {
         return false;
     }
 
+    @Override
+    public void changeIp() {
+
+    }
+
 
     @Override
     public List<Socket> getReceivers() {

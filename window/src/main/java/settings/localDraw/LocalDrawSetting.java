@@ -102,4 +102,24 @@ public class LocalDrawSetting implements DataBase {
     public Color blackSpacesColor() {
         return colorConfig.blackSpacesColor;
     }
+
+    Color randomColor(Random rand){
+        return new Color(rand.nextInt(255),rand.nextInt(255),rand.nextInt(255));
+    }
+    public void colorRandom() {
+        var rand = new Random();
+        colorConfig.backGroundColor = randomColor(rand);
+        colorConfig.betonOfFloor = randomColor(rand);
+        colorConfig.blackSpacesColor = randomColor(rand);
+        colorConfig.elevatorDoor = randomColor(rand);
+        colorConfig.portalColor = randomColor(rand);
+        colorConfig.elevatorBackGround = randomColor(rand);
+        colorConfig.elevatorBorder = randomColor(rand);
+        colorConfig.elevatorButtonOff = randomColor(rand);
+        colorConfig.elevatorButtonOn = randomColor(rand);
+        colorConfig.menuButtonColor = randomColor(rand);
+        colorConfig.floorWall = randomColor(rand);
+        colorConfig.elevatorFloorNumber = randomColor(rand);
+        colorConfig.elevatorBackGround = randomColor(rand);
+    }
 }

@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$(dirname "$0")
 GIT_HOOKS=${SCRIPT_DIR}"/.git/hooks/"
-PROJECT_HOOKS="${SCRIPT_DIR}/hooks/*"
+PROJECT_HOOKS="${SCRIPT_DIR}/hooks/"
 
 for pre_hook_file_path in ${PROJECT_HOOKS}; do
   NAME_OF_HOOK=$(basename ${pre_hook_file_path})
@@ -10,3 +10,6 @@ for pre_hook_file_path in ${PROJECT_HOOKS}; do
   cat ${pre_hook_file_path} >"${GIT_HOOKS}${NAME_OF_HOOK}"
   chmod +x ${GIT_HOOKS}${NAME_OF_HOOK}
 done
+
+ chmod +x ${SCRIPT_DIR}/setupDocker.sh
+ chmod +x ${SCRIPT_DIR}/installDocker.sh

@@ -22,7 +22,6 @@ import java.util.LinkedList;
 
 public class GameButtonComponent extends DrawableCreature implements Transport<Drawable> {
     @Getter
-    @Setter
     private final  DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
 
     private final LinkedList<ClickableButton> automat = new LinkedList<>();
@@ -99,6 +98,26 @@ public class GameButtonComponent extends DrawableCreature implements Transport<D
                 .getPlane()
                 .getGameMap()
                 .changeGameSpeed(true)
+        ));
+
+        automat.add(new ClickableButton(
+                new MovingSquareWithTextInside(start,
+                        portal.getGamePlane().getGameMap().getBuildingSize().sub(new Vector2D(235, 45)),
+                        new Vector2D(40, 20),
+                        "this",
+                        getSettings()),() -> portal
+                .getPlane()
+                .getGameMap().changeThisColor()
+        ));
+        automat.add(new ClickableButton(
+                new MovingSquareWithTextInside(start,
+                        portal.getGamePlane().getGameMap().getBuildingSize().sub(new Vector2D(295, 45)),
+                        new Vector2D(40, 20),
+                        "all",
+                        getSettings()),() -> portal
+                .getPlane()
+                .getGameMap()
+                .changeAllColor()
         ));
 
 
