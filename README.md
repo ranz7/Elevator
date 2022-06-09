@@ -1,12 +1,10 @@
 # Elevator Emulator ![](https://us-central1-progress-markdown.cloudfunctions.net/progress/1042) [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Franz7%2FElevator%2F&count_bg=%237AAA56&title_bg=%236F1C1C&icon=github.svg&icon_color=%23C17878&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 This project simulates elevators in a building. The project is divided into two parts, the Server part that manipulates
 objects and the Client part that draws them in real time.
+
+https://app.creately.com/d/XYkWBnkDy0x/view
 ___
-
-## Development status
-
-In progress
-
+ 
 ## Install
 
 Download source files.
