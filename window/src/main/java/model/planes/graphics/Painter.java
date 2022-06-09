@@ -86,8 +86,8 @@ public class Painter {
 
     public void drawFilledEllipse(Vector2D position, Vector2D size, Color fillColor,
                                   Color borderColor, int thickness) {
-        fillEllipse(position, size, fillColor);
         drawOnlyBorderEllipse(position, size, borderColor, thickness);
+        fillEllipse(position, size, fillColor);
     }
 
     private void drawOnlyBorderEllipse(Vector2D position, Vector2D size, Color borderColor, int thickness) {

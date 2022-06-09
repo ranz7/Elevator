@@ -100,6 +100,26 @@ public class GameButtonComponent extends DrawableCreature implements Transport<D
                 .changeGameSpeed(true)
         ));
 
+        automat.add(new ClickableButton(
+                new MovingSquareWithTextInside(start,
+                        portal.getGamePlane().getGameMap().getBuildingSize().sub(new Vector2D(235, 45)),
+                        new Vector2D(40, 20),
+                        "this",
+                        getSettings()),() -> portal
+                .getPlane()
+                .getGameMap().changeThisColor()
+        ));
+        automat.add(new ClickableButton(
+                new MovingSquareWithTextInside(start,
+                        portal.getGamePlane().getGameMap().getBuildingSize().sub(new Vector2D(295, 45)),
+                        new Vector2D(40, 20),
+                        "all",
+                        getSettings()),() -> portal
+                .getPlane()
+                .getGameMap()
+                .changeAllColor()
+        ));
+
 
     }
 

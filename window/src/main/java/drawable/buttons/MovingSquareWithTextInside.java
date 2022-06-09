@@ -5,6 +5,7 @@ import drawable.abstracts.DrawCenter;
 import drawable.abstracts.DrawableMovingCreature;
 import drawable.drawTool.figuresComponent.FiguresComponent;
 import drawable.drawTool.figuresComponent.Rectangle;
+import drawable.drawTool.figuresComponent.RectangleWithBorder;
 import drawable.drawTool.text.Text;
 import model.objects.movingObject.trajectory.MoveFunction;
 import model.objects.movingObject.trajectory.SpeedFunction;
@@ -29,7 +30,7 @@ public class MovingSquareWithTextInside extends DrawableMovingCreature {
                         .add(SpeedFunction.WithConstantSpeed(() -> 300.))
                         .add(MoveFunction.GetToDestination(() -> positionEnd)),
                 new FiguresComponent(
-                        new Rectangle(settings.getMenuButtonColor()),
+                        new RectangleWithBorder(settings.getMenuButtonColor(),new Color(0,0,0),2),
                         new Text(text, new Color(0, 18, 54))),
                 settings
         );
