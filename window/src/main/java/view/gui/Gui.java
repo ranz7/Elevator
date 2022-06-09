@@ -11,10 +11,11 @@ import view.gui.windowReacts.ResizeReact;
 
 import java.awt.*;
 
-public class Gui implements Tickable,  MouseReact, ResizeReact {
+public class Gui implements Tickable, MouseReact, ResizeReact {
     private final GuiController controller;
     @Getter
     private final SwingWindow swingWindow;
+
     public Gui(GuiController controller, LocalDrawSetting localDrawSetting) {
         this.controller = controller;
         swingWindow = new SwingWindow(this, localDrawSetting);
@@ -53,7 +54,12 @@ public class Gui implements Tickable,  MouseReact, ResizeReact {
         controller.getActivePlane().leftMouseClicked(point);
         controller.getActivePlane().executeButtonIfCan();
         controller.getMenu().getActivatedPortal().ifPresent(
-                portal -> portal.getPlane().executeButtonIfCan()
+                portal -> {
+                    var plane = portal.getPlane();
+                    if (plane != null) {
+                        plane.executeButtonIfCan();
+                    }
+                }
         );
     }
 

@@ -22,7 +22,6 @@ import java.util.LinkedList;
 
 public class GameButtonComponent extends DrawableCreature implements Transport<Drawable> {
     @Getter
-    @Setter
     private final  DatabaseOf<Drawable> localDataBase = new DatabaseOf<>(this, ClickableButton.class);
 
     private final LinkedList<ClickableButton> automat = new LinkedList<>();

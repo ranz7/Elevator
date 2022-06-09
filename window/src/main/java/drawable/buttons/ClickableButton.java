@@ -43,7 +43,7 @@ public class ClickableButton extends DrawableCreature implements Hoverable {
     public void draw(Vector2D realDrawPosition, Painter gameDrawer) {
         if(isSwitcher){
             if(isSwitched){
-                getTool().setAdditionalLightColor(new Color(185, 19, 19));
+                getTool().setAdditionalLightColor(new Color(125, 125, 125));
             }else{
                 getTool().setAdditionalLightColor(new Color(0,0,0));
             }

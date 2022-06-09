@@ -10,6 +10,25 @@ public class LocalCreaturesSettings {
     private final ElevatorSystemConfig elevatorSystemConfig = new ElevatorSystemConfig();
     private final Random random = new Random();
 
+    public LocalCreaturesSettings(Integer roomId) {
+        var rand = new Random(roomId);
+        elevatorSystemConfig.elevatorSize.set(
+                elevatorSystemConfig.elevatorSize.add(Vector2D.Random(rand).multiply(new Vector2D(10, 20)))
+        );
+        customerConfig.slowSpeedMultiply *= 1 + (rand.nextDouble() - 0.5);
+        customerConfig.fastSpeedMultiply *= 1 + (rand.nextDouble() - 0.5);
+        elevatorSystemConfig.floorSize.set(
+                elevatorSystemConfig.floorSize.add(Vector2D.Random(rand).multiply(new Vector2D(200, 50))));
+        elevatorSystemConfig.floorsCount += (rand.nextInt(5 - 2));
+        elevatorSystemConfig.elevatorsCount += (rand.nextInt(4 - 2));
+        elevatorSystemConfig.elevatorSpeed *= 1 + (rand.nextDouble() - 0.5);
+
+        customerConfig.timeToWalk *= 1 + (rand.nextDouble() - 0.5);
+        customerConfig.spawnRate *= 1 + 2 * (rand.nextDouble() - 0.5);
+        customerConfig.maxCustomers += (rand.nextInt(8 - 2));
+        customerConfig.customerSpeed *= 1 + (rand.nextDouble() - 0.5);
+    }
+
     public Vector2D elevatorSize() {
         return elevatorSystemConfig.elevatorSize;
     }
@@ -17,7 +36,7 @@ public class LocalCreaturesSettings {
     public Vector2D customerSize() {
         return customerConfig.customerSize.multiply(
                 new Vector2D(new Random().nextDouble() / 1.25 + 0.2,
-                new Random().nextDouble() / 1.5 + 0.5));
+                        new Random().nextDouble() / 1.5 + 0.5));
     }
 
     public long elevatorOpenCloseTime() {
@@ -54,7 +73,7 @@ public class LocalCreaturesSettings {
         return elevatorSystemConfig.buttonSize;
     }
 
-    public long spawnTime() {
+    public double spawnTime() {
         return customerConfig.spawnRate;
     }
 
@@ -93,7 +112,7 @@ public class LocalCreaturesSettings {
         return customerConfig.timeToWaitAfterButtonClick;
     }
 
-    public long customerTimeToWalk() {
+    public double customerTimeToWalk() {
         return customerConfig.timeToWalk;
     }
 

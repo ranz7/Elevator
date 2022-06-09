@@ -6,16 +6,23 @@ import lombok.NoArgsConstructor;
 public class Timer implements Tickable {
     private double currentTimeInMillisec;
     private double startTimeInMillisec;
+    Runnable toExecute;
 
     public Timer(double startTimerTime) {
         restart(startTimerTime);
     }
-    public Timer(){
+
+    public Timer() {
         restart();
     }
+
     @Override
     public void tick(double deltaTime) {
         currentTimeInMillisec -= deltaTime;
+        if(isReady()&& toExecute!=null){
+            toExecute.run();
+            toExecute=null;
+        }
     }
 
     public boolean isReady() {
@@ -34,6 +41,12 @@ public class Timer implements Tickable {
     public void restart() {
         isOff = false;
         currentTimeInMillisec = startTimeInMillisec;
+    }
+
+    public void restart(Runnable toExecute) {
+        isOff = false;
+        currentTimeInMillisec = startTimeInMillisec;
+        this.toExecute = toExecute;
     }
 
     public double getPercent() {

@@ -42,7 +42,11 @@ public class Vector2D extends Point2D.Double {
     }
 
     public static Vector2D Random() {
-        return new Vector2D(new Random().nextDouble()-0.5, new Random().nextDouble()-0.5);
+        return new Vector2D(new Random().nextDouble() - 0.5, new Random().nextDouble() - 0.5);
+    }
+
+    public static Vector2D Random(Random rand) {
+        return new Vector2D(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5);
     }
 
     public double distance(Point2D.Double positionA) {
