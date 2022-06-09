@@ -30,7 +30,7 @@ public class GameButtonComponent extends DrawableCreature implements Transport<D
     private final Portal portal;
 
     public GameButtonComponent(Portal portal, LocalDrawSetting setting) {
-        super(new Vector2D(15, 15), new Vector2D(40, 40), new Rectangle(Color.cyan), setting);
+        super(new Vector2D(15, 15), new Vector2D(40, 40), new Rectangle(new MutableColor(Color.cyan)), setting);
         this.portal = portal;
         var start = portal.getGamePlane().getGameMap().getBuildingSize().divide(2);
         automat.add(new ClickableButton(

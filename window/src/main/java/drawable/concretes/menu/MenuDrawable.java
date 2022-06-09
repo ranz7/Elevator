@@ -17,6 +17,7 @@ import model.planes.graphics.Painter;
 import settings.localDraw.LocalDrawSetting;
 import tools.Timer;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 import java.util.Random;
@@ -38,7 +39,7 @@ public class MenuDrawable extends DrawableCreature implements Transport<Drawable
     public MenuDrawable(Runnable changeServer, LocalDrawSetting localDrawSetting) {
         super(new Vector2D(0, 0), new Vector2D(150, 75),
                 new RectangleWithBorder(localDrawSetting.florBetonColor(),
-                        new Color(0, 0, 0), 3),
+                        new MutableColor(0, 0, 0), 3),
                 localDrawSetting);
         secondTimer.turnOff();
         this.leftDoorButton = new ClickableButton(new RectangleWithTextInside(

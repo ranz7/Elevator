@@ -31,7 +31,7 @@ public class SwingWindow extends JPanel implements Tickable {
         jframe.add(counter);
         jframe.add(this);
 
-        setBackground(localDrawSetting.backGroundColor());
+        setBackground(localDrawSetting.backGroundColor().getColor());
         mouseListener = new MouseListener(gui);
         addMouseListener(mouseListener);
         addResizeListener(new ResizeListener(gui));

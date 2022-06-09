@@ -2,11 +2,12 @@ package drawable.drawTool.figuresComponent;
 
 import model.planes.graphics.Painter;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 
 public class Ellipse extends Figure {
-    public Ellipse(Color mainColor) {
+    public Ellipse(MutableColor mainColor) {
         super(mainColor, new Vector2D(0.5, 0.5), new Vector2D(1, 1));
     }
 
@@ -20,6 +21,6 @@ public class Ellipse extends Figure {
     @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
         var tmp = afterProportionApply(position,size);
-        drawer.drawFilledEllipse(tmp.getFirst(), tmp.getSecond(), getMainColor(), new Color(0,0,0), 1);
+        drawer.drawFilledEllipse(tmp.getFirst(), tmp.getSecond(), getMainColor().getColor(), new Color(0,0,0), 1);
     }
 }

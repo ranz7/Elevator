@@ -13,6 +13,7 @@ import model.objects.movingObject.trajectory.Trajectory;
 import model.planes.graphics.Painter;
 import settings.localDraw.LocalDrawSetting;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 
@@ -30,12 +31,12 @@ public class MovingSquareWithTextInside extends DrawableMovingCreature {
                         .add(SpeedFunction.WithConstantSpeed(() -> 300.))
                         .add(MoveFunction.GetToDestination(() -> positionEnd)),
                 new FiguresComponent(
-                        new RectangleWithBorder(settings.getMenuButtonColor(),new Color(0,0,0),2),
-                        new Text(text, new Color(0, 18, 54))),
+                        new RectangleWithBorder(settings.getMenuButtonColor(),new MutableColor(0,0,0),2),
+                        new Text(text, new MutableColor(0, 18, 54))),
                 settings
         );
         start = new Vector2D(getPosition());
-        rainbow = new RainbowColor(settings.getMenuButtonColor());
+        rainbow = new RainbowColor(settings.getMenuButtonColor().getColor());
     }
 
     @Override

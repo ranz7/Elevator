@@ -23,9 +23,9 @@ public class ElevatorButton extends DrawableRemoteCreature {
     public void tick(double deltaTime) {
         buttonOnTimer.tick(deltaTime);
         if (buttonOnTimer.isReady()) {
-            getTool().setColor(getSettings().buttonColorOn());
+            getTool().setColor(getSettings().buttonColorOn().getColor());
         } else {
-            getTool().setColor(getSettings().buttonColorOff());
+            getTool().setColor(getSettings().buttonColorOff().getColor());
         }
     }
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import tools.Vector2D;
 import model.planes.graphics.Painter;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 
@@ -13,12 +14,12 @@ public class Text extends Figure {
     @Setter
     private String text;
 
-    public Text(String text, Color color) {
+    public Text(String text, MutableColor color) {
         super(color, new Vector2D(0.5, 0.5), new Vector2D(1, 1));
         this.text = text;
     }
 
-    public Text(Vector2D positionProportion, Vector2D sizeProportion, String text, Color color) {
+    public Text(Vector2D positionProportion, Vector2D sizeProportion, String text, MutableColor color) {
         super(color, positionProportion, sizeProportion);
         this.text = text;
     }
@@ -32,7 +33,7 @@ public class Text extends Figure {
     @Override
     public void draw(Vector2D position, Vector2D size, Painter drawer) {
           var tmp = afterProportionApply(position, size);
-          drawer.drawText(text, tmp.getFirst(), tmp.getSecond(), getMainColor());
+          drawer.drawText(text, tmp.getFirst(), tmp.getSecond(), getMainColor().getColor());
 
         // TODO tutaj jak x jest 50 to text jest skrocony o 2 razy
     }

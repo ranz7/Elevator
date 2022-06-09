@@ -7,6 +7,7 @@ import lombok.Setter;
 import tools.Pair;
 import tools.Vector2D;
 import model.planes.graphics.Painter;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 
@@ -34,7 +35,7 @@ public abstract class DrawTool {
                 drawSizeBeforeProportion.multiply(sizeProportion));
     }
 
-    public abstract Color getMainColor();
+    public abstract MutableColor getMainColor();
     public abstract void draw(Vector2D position, Vector2D size, Painter drawer);
     public abstract void setColor(Color color);
     public abstract boolean isIntersect(Vector2D objectPosition, Vector2D objectSize, Vector2D gamePosition);

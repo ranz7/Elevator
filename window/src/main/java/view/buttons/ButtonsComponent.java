@@ -14,32 +14,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class ButtonsComponent {
-    private final JComponent window;
-    private LocalDrawSetting settings;
     @Setter
     private ActionListener listenWindow;
-    private ButtonsReact react;
 
     private final List<JButton> ADD_CUSTOMER_BUTTONS = new ArrayList<>();
-    private final List<JButton> ADD_REDUCE_ELEVATORS_BUTTONS = new ArrayList<>();
-    private final List<JButton> CHANGE_SPEED_BUTTONS = new ArrayList<>();
     private final List<JButton> SELECT_FLOOR_BUTTONS = new ArrayList<>();
-
-    public void start() {
-        for (int i = 0; i < 16; i++) {
-            var addClientButton = createButton("->", settings.jButtonsColor(), window);
-            addClientButton.setVisible(false);
-            ADD_CUSTOMER_BUTTONS.add(addClientButton);
-
-            var selectFloorButon = createButton(String.valueOf(1), settings.jButtonsColor(), window);
-            selectFloorButon.setVisible(false);
-            SELECT_FLOOR_BUTTONS.add(selectFloorButon);
-        }
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("^", settings.jButtonsColor(), window));
-        ADD_REDUCE_ELEVATORS_BUTTONS.add(createButton("v", settings.jButtonsColor(), window));
-        CHANGE_SPEED_BUTTONS.add(createButton("<", settings.jButtonsColor(), window));
-        CHANGE_SPEED_BUTTONS.add(createButton(">", settings.jButtonsColor(), window));
-    }
 
     private JButton createButton(String text, Color buttonColor, JComponent buttonCarier) {
         var startButton = new JButton(text);
@@ -117,8 +96,4 @@ public class ButtonsComponent {
         }
     }
 
-    public void addButtonListener(ButtonsReact react) {
-        this.listenWindow = new ButtonsListener(this);
-        this.react = react;
-    }
 }

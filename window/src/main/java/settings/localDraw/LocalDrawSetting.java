@@ -2,6 +2,7 @@ package settings.localDraw;
 
 import tools.DataBase;
 import tools.Vector2D;
+import view.buttons.MutableColor;
 
 import java.awt.*;
 import java.util.Random;
@@ -10,10 +11,11 @@ public class LocalDrawSetting implements DataBase {
     private final DrawConfig drawConfig = new DrawConfig();
     private final ColorConfig colorConfig = new ColorConfig();
 
-    public Color getRandomCustomerSkin() {
+    public MutableColor getRandomCustomerSkin() {
         var colors = customerSkins();
         return colors[(int) ((Math.abs(new Random().nextInt())) % colors.length)];
     }
+
     @Override
     public boolean initialized(Class<?>... classes) {
         return true;
@@ -23,11 +25,11 @@ public class LocalDrawSetting implements DataBase {
         return drawConfig.elevatorButtonSize;
     }
 
-    public Color buttonColorOn() {
+    public MutableColor buttonColorOn() {
         return colorConfig.elevatorButtonOn;
     }
 
-    public Color buttonColorOff() {
+    public MutableColor buttonColorOff() {
         return colorConfig.elevatorButtonOff;
     }
 
@@ -35,27 +37,27 @@ public class LocalDrawSetting implements DataBase {
         return drawConfig.elevatorButtonOnTime;
     }
 
-    public Color doorsColor() {
+    public MutableColor doorsColor() {
         return colorConfig.elevatorDoor;
     }
 
-    public Color doorsBorder() {
+    public MutableColor doorsBorder() {
         return colorConfig.elevatorBorder;
     }
 
-    public Color[] customerSkins() {
+    public MutableColor[] customerSkins() {
         return colorConfig.customersSkin;
     }
 
-    public Color florBetonColor() {
+    public MutableColor florBetonColor() {
         return colorConfig.betonOfFloor;
     }
 
-    public Color backGroundColor() {
+    public MutableColor backGroundColor() {
         return colorConfig.backGroundColor;
     }
 
-    public Color floorWallColor() {
+    public MutableColor floorWallColor() {
         return colorConfig.floorWall;
     }
 
@@ -63,19 +65,19 @@ public class LocalDrawSetting implements DataBase {
         return drawConfig.elevatorBorderThickness;
     }
 
-    public Color borderColor() {
+    public MutableColor borderColor() {
         return colorConfig.elevatorBorder;
     }
 
-    public Color colorOfNumber() {
+    public MutableColor colorOfNumber() {
         return colorConfig.elevatorFloorNumber;
     }
 
-    public Color elevatorBackGroundColor() {
+    public MutableColor elevatorBackGroundColor() {
         return colorConfig.elevatorBackGround;
     }
 
-    public Color jButtonsColor() {
+    public MutableColor jButtonsColor() {
         return colorConfig.jButtonsColor;
     }
 
@@ -87,7 +89,7 @@ public class LocalDrawSetting implements DataBase {
         return drawConfig.menuButtonSize;
     }
 
-    public Color getMenuButtonColor() {
+    public MutableColor getMenuButtonColor() {
         return colorConfig.menuButtonColor;
     }
 
@@ -95,31 +97,32 @@ public class LocalDrawSetting implements DataBase {
         return drawConfig.portalSize;
     }
 
-    public Color portalColor() {
+    public MutableColor portalColor() {
         return colorConfig.portalColor;
     }
 
-    public Color blackSpacesColor() {
+    public MutableColor blackSpacesColor() {
         return colorConfig.blackSpacesColor;
     }
 
-    Color randomColor(Random rand){
-        return new Color(rand.nextInt(255),rand.nextInt(255),rand.nextInt(255));
+    Color randomColor(Random rand) {
+        return new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
     }
+
     public void colorRandom() {
         var rand = new Random();
-        colorConfig.backGroundColor = randomColor(rand);
-        colorConfig.betonOfFloor = randomColor(rand);
-        colorConfig.blackSpacesColor = randomColor(rand);
-        colorConfig.elevatorDoor = randomColor(rand);
-        colorConfig.portalColor = randomColor(rand);
-        colorConfig.elevatorBackGround = randomColor(rand);
-        colorConfig.elevatorBorder = randomColor(rand);
-        colorConfig.elevatorButtonOff = randomColor(rand);
-        colorConfig.elevatorButtonOn = randomColor(rand);
-        colorConfig.menuButtonColor = randomColor(rand);
-        colorConfig.floorWall = randomColor(rand);
-        colorConfig.elevatorFloorNumber = randomColor(rand);
-        colorConfig.elevatorBackGround = randomColor(rand);
+        colorConfig.backGroundColor.setColor(randomColor(rand));
+        colorConfig.betonOfFloor.setColor(randomColor(rand));
+        colorConfig.blackSpacesColor.setColor(randomColor(rand));
+        colorConfig.elevatorDoor.setColor(randomColor(rand));
+        colorConfig.portalColor.setColor(randomColor(rand));
+        colorConfig.elevatorBackGround.setColor(randomColor(rand));
+        colorConfig.elevatorBorder.setColor(randomColor(rand));
+        colorConfig.elevatorButtonOff.setColor(randomColor(rand));
+        colorConfig.elevatorButtonOn.setColor(randomColor(rand));
+        colorConfig.menuButtonColor.setColor(randomColor(rand));
+        colorConfig.floorWall.setColor(randomColor(rand));
+        colorConfig.elevatorFloorNumber.setColor(randomColor(rand));
+        colorConfig.elevatorBackGround.setColor(randomColor(rand));
     }
 }
