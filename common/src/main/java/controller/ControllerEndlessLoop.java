@@ -16,18 +16,22 @@ public abstract class ControllerEndlessLoop {
 
     void start(Runnable additionalMetodToRun) {
         currentTime = System.currentTimeMillis();
+        try {
 
-        while (true) {
-            long deltaTime = System.currentTimeMillis() - currentTime;
-            currentTime += deltaTime;
-            objectsToTick.tick(deltaTime * controllerTimeSpeed);
+            while (true) {
+                long deltaTime = System.currentTimeMillis() - currentTime;
+                currentTime += deltaTime;
+                objectsToTick.tick(deltaTime * controllerTimeSpeed);
 
-            additionalMetodToRun.run();
+                additionalMetodToRun.run();
 
-            try {
-                TimeUnit.MILLISECONDS.sleep(Math.round(1000. / getTickPerSecond()));
-            } catch (InterruptedException ignore) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(Math.round(1000. / getTickPerSecond()));
+                } catch (InterruptedException ignore) {
+                }
             }
+        } catch (Exception e) {
+            
         }
     }
 
@@ -40,7 +44,8 @@ public abstract class ControllerEndlessLoop {
     }
 
     protected void start() {
-        start(() -> {});
+        start(() -> {
+        });
     }
 
     protected abstract int getTickPerSecond();
